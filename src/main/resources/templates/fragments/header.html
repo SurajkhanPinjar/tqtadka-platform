@@ -9,7 +9,7 @@
     <!-- ================= TOP NAV ================= -->
     <nav class="navbar navbar-light bg-white border-bottom px-4">
 
-        <!-- Logo -->
+        <!-- LOGO -->
         <a class="navbar-brand fw-bold"
            th:href="@{/{lang}(lang=${lang})}">
             TQtadka
@@ -17,7 +17,7 @@
 
         <div class="d-flex align-items-center gap-3">
 
-            <!-- Search -->
+            <!-- SEARCH -->
             <input class="form-control form-control-sm rounded-pill header-search"
                    type="search"
                    placeholder="Search">
@@ -54,12 +54,28 @@
 
             <!-- LOGGED IN -->
             <div sec:authorize="isAuthenticated()"
-                 class="d-flex align-items-center gap-2">
+                 class="d-flex align-items-center gap-3">
 
-                <span class="text-muted small">
+                <!-- ADMIN -->
+                <a sec:authorize="hasRole('ADMIN')"
+                   th:href="@{/admin/posts}"
+                   class="fw-semibold text-decoration-none text-dark">
+                    Admin
+                </a>
+
+                <!-- AUTHOR -->
+                <span sec:authorize="hasRole('AUTHOR')"
+                      class="fw-semibold text-dark">
+                    Hello Author
+                </span>
+
+                <!-- NORMAL USER -->
+                <span sec:authorize="!hasAnyRole('ADMIN','AUTHOR')"
+                      class="text-muted small">
                     Hi, <strong sec:authentication="name"></strong>
                 </span>
 
+                <!-- LOGOUT -->
                 <form th:action="@{/logout}" method="post" class="mb-0">
                     <input type="hidden"
                            th:name="${_csrf.parameterName}"

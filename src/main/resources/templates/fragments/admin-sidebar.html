@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<aside th:fragment="adminSidebar"
+       class="border-end bg-white"
+       style="width:240px; min-height:100vh">
+
+    <nav class="p-3">
+
+        <div class="fw-bold mb-3 fs-5">Admin Panel</div>
+
+        <a th:href="@{/admin/dashboard}"
+           class="nav-link mb-2"
+           th:classappend="${currentPath.startsWith('/admin/dashboard')} ? 'active fw-bold' : ''">
+            📊 Dashboard
+        </a>
+
+        <a th:href="@{/admin/posts}"
+           class="nav-link mb-2"
+           th:classappend="${currentPath.startsWith('/admin/posts')} ? 'active fw-bold' : ''">
+            📄 Posts
+        </a>
+
+        <a th:href="@{/admin/posts/create}"
+           class="nav-link mb-2"
+           th:classappend="${currentPath.contains('/create')} ? 'active fw-bold' : ''">
+            ✍️ Create Post
+        </a>
+
+        <a sec:authorize="hasRole('ADMIN')"
+           th:href="@{/admin/users}"
+           class="nav-link mb-2"
+           th:classappend="${currentPath.startsWith('/admin/users')} ? 'active fw-bold' : ''">
+            👤 Users
+        </a>
+
+    </nav>
+
+</aside>
+</html>

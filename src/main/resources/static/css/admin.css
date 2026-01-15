@@ -1,0 +1,49 @@
+/* ================= ADMIN SIDEBAR ================= */
+
+.admin-sidebar {
+    width: 240px;
+    background: #ffffff;
+    border-right: 1px solid #eee;
+    min-height: calc(100vh - 64px); /* header height */
+    position: sticky;
+    top: 64px;
+}
+
+.sidebar-brand {
+    padding: 16px 20px;
+    font-weight: 700;
+    font-size: 16px;
+    border-bottom: 1px solid #eee;
+}
+
+.sidebar-nav {
+    padding: 12px 8px;
+}
+
+.sidebar-link {
+    display: block;
+    padding: 10px 14px;
+    margin: 4px 6px;
+    border-radius: 8px;
+    color: #333;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background 0.15s ease;
+}
+
+.sidebar-link:hover {
+    background: #f5f5f5;
+}
+
+.sidebar-link.active {
+    background: #111;
+    color: #fff;
+}
+
+.sidebar-footer {
+    padding: 12px;
+    text-align: center;
+    font-size: 12px;
+    color: #999;
+    border-top: 1px solid #eee;
+}

@@ -3,6 +3,7 @@ package com.tqtadka.platform.admin;
 import com.tqtadka.platform.entity.*;
 import com.tqtadka.platform.security.CustomUserDetails;
 import com.tqtadka.platform.service.PostService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -27,8 +28,9 @@ public class AdminPostController {
        LIST POSTS
     ============================ */
     @GetMapping
-    public String listPosts(Model model) {
+    public String listPosts(HttpServletRequest request, Model model) {
         model.addAttribute("posts", postService.getAllPostsForAdmin());
+        model.addAttribute("currentPath", request.getRequestURI());
         return "admin/posts";
     }
 
