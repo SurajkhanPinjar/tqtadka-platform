@@ -2,19 +2,30 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
 
-<section th:fragment="hero" class="hero-section py-5">
+<section th:fragment="hero"
+         class="hero-section py-5">
+
     <div class="container">
 
-        <h1 class="hero-title mb-3">
+        <!-- ================= TITLE ================= -->
+        <h1 class="hero-title mb-3"
+            th:text="${lang == 'kn'
+                ? 'ಟಿಕ್ಯೂ ತಡ್ಕಾಗೆ ಸ್ವಾಗತ'
+                : 'Welcome to TQtadka'}">
             Welcome to TQtadka
         </h1>
 
-        <p class="hero-subtitle">
+        <!-- ================= SUBTITLE ================= -->
+        <p class="hero-subtitle"
+           th:text="${lang == 'kn'
+               ? 'ಉದ್ಯೋಗಗಳು, ಶಿಕ್ಷಣ, ಕ್ರೀಡೆ, ಮನರಂಜನೆ ಮತ್ತು ಇನ್ನಷ್ಟು ವಿಷಯಗಳ ಬಗ್ಗೆ ವೇಗವಾಗಿ ಓದಬಹುದಾದ ಸಂಕ್ಷಿಪ್ತ ಮಾಹಿತಿ.'
+               : 'Fast, bullet-based content on Jobs, Education, Sports, Entertainment and more. Built for quick reading.'}">
             Fast, bullet-based content on Jobs, Education, Sports,
             Entertainment and more. Built for quick reading.
         </p>
 
     </div>
+
 </section>
 
 </body>

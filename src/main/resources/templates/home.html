@@ -15,84 +15,71 @@
     <!-- Custom Styles -->
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
+
 <body>
 
 <!-- ================= HEADER ================= -->
-<div th:replace="~{fragments/header :: header}"></div>
+<th:block th:with="
+        lang=${lang ?: 'en'},
+        categories=${categories},
+        activeCategory=${null}
+">
+    <div th:replace="~{fragments/header :: header}"></div>
+</th:block>
 
 <!-- ================= HERO ================= -->
 <div th:replace="~{fragments/hero :: hero}"></div>
 
 <!-- ================= MAIN CONTENT ================= -->
 <div class="container my-5">
-    <div class="row">
 
-        <!-- ================= Latest Posts ================= -->
-        <div class="col-md-8">
+    <!-- ================= TITLE ================= -->
+    <h4 class="fw-bold mb-4"
+        th:text="${lang == 'kn' ? 'ಇತ್ತೀಚಿನ ಲೇಖನಗಳು' : 'Latest Posts'}">
+        Latest Posts
+    </h4>
 
-            <h4 class="fw-bold mb-4">Latest Posts</h4>
-
-            <!-- Empty state -->
-            <div th:if="${#lists.isEmpty(posts)}"
-                 class="alert alert-secondary">
-                No posts yet.
-            </div>
-
-            <div class="row g-4"
-                 th:unless="${#lists.isEmpty(posts)}">
-
-                <div class="col-md-6"
-                     th:each="post : ${posts}">
-
-                    <!-- ✅ FIXED BLOG LINK -->
-                    <a th:href="@{/{lang}/blog/{slug}(lang=${lang}, slug=${post.slug})}"
-                       class="card h-100 text-decoration-none text-dark">
-
-                        <!-- Image -->
-                        <img th:if="${post.imageUrl != null}"
-                             th:src="${post.imageUrl}"
-                             class="card-img-top"
-                             style="height:150px; object-fit:cover;"
-                             alt="Post image">
-
-                        <div class="card-body">
-                            <h6 class="card-title mb-1"
-                                th:text="${post.title}"></h6>
-
-                            <small class="text-muted text-uppercase"
-                                   th:text="${post.category}"></small>
-                        </div>
-
-                    </a>
-                </div>
-            </div>
-
-        </div>
-
-        <!-- ================= Popular ================= -->
-        <div class="col-md-4">
-
-            <h5 class="fw-bold mb-4">Popular</h5>
-
-            <div th:each="post, stat : ${posts}">
-                <div th:if="${stat.index < 5}"
-                     class="mb-3">
-
-                    <span class="fw-bold me-2"
-                          th:text="${stat.index + 1}"></span>
-
-                    <!-- ✅ FIXED BLOG LINK -->
-                    <a th:href="@{/{lang}/blog/{slug}(lang=${lang}, slug=${post.slug})}"
-                       th:text="${post.title}"
-                       class="text-decoration-none text-dark">
-                    </a>
-
-                </div>
-            </div>
-
-        </div>
-
+    <!-- ================= EMPTY ================= -->
+    <div th:if="${posts == null or #lists.isEmpty(posts)}"
+         class="alert alert-secondary">
+        <span th:text="${lang == 'kn'
+            ? 'ಯಾವುದೇ ಲೇಖನಗಳು ಲಭ್ಯವಿಲ್ಲ'
+            : 'No posts yet'}">
+        </span>
     </div>
+
+    <!-- ================= POSTS GRID ================= -->
+    <div class="row g-4"
+         th:if="${posts != null and !#lists.isEmpty(posts)}">
+
+        <div class="col-md-4"
+             th:each="post : ${posts}">
+
+            <!-- ✅ SAME LOGIC FOR EN + KN -->
+            <a th:href="@{/{lang}/blog/{slug}(
+                    lang=${lang},
+                    slug=${post.slug})}"
+               class="card h-100 text-decoration-none text-dark shadow-sm">
+
+                <img th:if="${post.imageUrl != null}"
+                     th:src="${post.imageUrl}"
+                     class="card-img-top"
+                     style="height:160px; object-fit:cover;">
+
+                <div class="card-body">
+                    <h6 class="fw-bold"
+                        th:text="${post.title}">
+                    </h6>
+
+                    <small class="text-muted text-uppercase"
+                           th:text="${post.category}">
+                    </small>
+                </div>
+
+            </a>
+        </div>
+    </div>
+
 </div>
 
 <!-- ================= FOOTER ================= -->

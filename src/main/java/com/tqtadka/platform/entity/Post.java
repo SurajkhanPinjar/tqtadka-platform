@@ -40,6 +40,7 @@ public class Post {
     @Column(length = 500)
     private String imageUrl;
 
+    // ✅ PostgreSQL-safe
     @Lob
     @Column(columnDefinition = "TEXT")
     private String intro;
@@ -48,11 +49,11 @@ public class Post {
        ENUMS
     ========================= */
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, length = 50)
     private CategoryType category;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, length = 10)
     private LanguageType language;
 
     /* =========================
@@ -64,18 +65,14 @@ public class Post {
     /* =========================
        ENGAGEMENT METRICS
     ========================= */
-
-    // 👁️ total views
     @Builder.Default
     @Column(nullable = false)
     private long views = 0;
 
-    // 👏 applause (not just like)
     @Builder.Default
     @Column(nullable = false)
     private long applauseCount = 0;
 
-    // 💬 total comments
     @Builder.Default
     @Column(nullable = false)
     private long commentCount = 0;
@@ -83,23 +80,22 @@ public class Post {
     /* =========================
        AUTHOR INFO
     ========================= */
-
     @Column(length = 120)
     private String authorName;
 
     /* =========================
        TIMESTAMPS
     ========================= */
-
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    // When post was published (important for blog sorting)
     private LocalDateTime publishedAt;
 
     @PrePersist
     protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
+        if (this.createdAt == null) {
+            this.createdAt = LocalDateTime.now();
+        }
     }
 
     /* =========================

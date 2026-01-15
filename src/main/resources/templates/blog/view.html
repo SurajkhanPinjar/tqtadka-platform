@@ -1,9 +1,11 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title th:text="${post.title}">Blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- CSRF -->
+    <meta name="_csrf" th:content="${_csrf.token}"/>
 
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&display=swap"
@@ -13,15 +15,12 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
           rel="stylesheet">
 
-    <!-- Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"
-          rel="stylesheet">
-
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 
 <body>
 
+<!-- HEADER -->
 <div th:replace="~{fragments/header :: header}"></div>
 
 <main class="my-5">
@@ -39,91 +38,98 @@
            th:if="${post.intro != null}"
            th:text="${post.intro}"></p>
 
-        <!-- ================= AUTHOR BAR ================= -->
-        <div class="d-flex justify-content-between align-items-center my-4">
+        <!-- AUTHOR -->
+        <div class="d-flex align-items-center gap-3 my-4">
+            <img src="/images/avatar.png"
+                 class="rounded-circle"
+                 style="width:42px;height:42px">
 
-            <!-- LEFT -->
-            <div class="d-flex align-items-center gap-3">
-                <img src="/images/avatar.png"
-                     class="rounded-circle"
-                     style="width:42px;height:42px">
-
-                <div>
-                    <div class="fw-semibold"
-                         th:text="${post.authorName != null ? post.authorName : 'Admin'}">
-                    </div>
-
-                    <div class="text-muted small">
-                        <span th:text="${post.readTime + ' min read'}">5 min read</span>
-                        ·
-                        <span th:text="${#temporals.format(post.publishedAt,'dd MMM yyyy')}"></span>
-                    </div>
+            <div>
+                <div class="fw-semibold"
+                     th:text="${post.authorName != null ? post.authorName : 'Admin'}">
                 </div>
-            </div>
 
-            <!-- RIGHT -->
-            <div class="d-flex gap-3 fs-5">
-                <a th:if="${post.twitterUrl}" th:href="${post.twitterUrl}" target="_blank">
-                    <i class="bi bi-twitter"></i>
-                </a>
-                <a th:if="${post.instagramUrl}" th:href="${post.instagramUrl}" target="_blank">
-                    <i class="bi bi-instagram"></i>
-                </a>
-                <a th:if="${post.linkedinUrl}" th:href="${post.linkedinUrl}" target="_blank">
-                    <i class="bi bi-linkedin"></i>
-                </a>
+                <div class="text-muted small"
+                     th:if="${post.publishedAt != null}">
+                    <span th:text="${#temporals.format(post.publishedAt,'dd MMM yyyy')}"></span>
+                </div>
             </div>
         </div>
 
-        <!-- ================= ENGAGEMENT ================= -->
+        <!-- ENGAGEMENT -->
         <div class="d-flex align-items-center gap-4 my-3">
-
-            <!-- Applause -->
-            <button class="btn btn-outline-dark d-flex align-items-center gap-2"
+            <button class="btn btn-outline-dark"
                     onclick="giveApplause()">
                 👏 <span id="applauseCount"
                         th:text="${post.applauseCount}">0</span>
             </button>
 
-            <!-- Comments -->
             <div class="text-muted">
                 💬 <span th:text="${post.commentCount}">0</span> comments
             </div>
         </div>
 
-        <!-- Login warning -->
         <div id="loginWarning"
              class="text-danger small"
              style="display:none;">
             To give applause, please login.
         </div>
 
-        <!-- COVER IMAGE -->
+        <!-- IMAGE -->
         <img th:if="${post.imageUrl}"
              th:src="${post.imageUrl}"
              class="img-fluid rounded my-5">
 
-        <!-- ================= CONTENT ================= -->
-        <div class="blog-content">
+        <!-- CONTENT -->
+        <div class="blog-content"
+             th:if="${post.sections != null and !post.sections.isEmpty()}">
+
             <section th:each="section : ${post.sections}">
-                <h3 th:if="${section.title}" th:text="${section.title}"></h3>
-                <img th:if="${section.imageUrl}" th:src="${section.imageUrl}" class="img-fluid my-4">
+
+                <!-- MAIN HTML CONTENT -->
                 <div th:utext="${section.content}"></div>
+
+                <!-- BULLETS (✅ FIXED) -->
+                <div th:if="${section.bulletTitle != null}">
+                    <h5 th:text="${section.bulletTitle}"></h5>
+
+                    <ul th:if="${section.bullets != null}">
+                        <li th:each="b : ${#strings.arraySplit(section.bullets, '\n')}"
+                            th:text="${b}">
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- TIP -->
+                <div th:if="${section.tipTitle != null}"
+                     class="alert alert-info mt-3">
+                    <strong th:text="${section.tipTitle}"></strong>
+                    <p th:text="${section.tipContent}"></p>
+                </div>
+
             </section>
         </div>
 
-        <!-- ================= COMMENTS ================= -->
+        <!-- COMMENTS -->
         <hr class="my-5">
 
         <section>
             <h4 class="mb-4">Leave a comment</h4>
 
-            <form th:action="@{/comment/add}" method="post" class="mb-5">
+            <form th:action="@{/comment/add}" method="post">
                 <input type="hidden" name="slug" th:value="${post.slug}">
                 <input type="hidden" name="language" th:value="${post.language}">
 
-                <input class="form-control mb-2" name="name" placeholder="Your name" required>
-                <input class="form-control mb-2" name="email" type="email" placeholder="Your email" required>
+                <input class="form-control mb-2"
+                       name="name"
+                       placeholder="Your name"
+                       required>
+
+                <input class="form-control mb-2"
+                       name="email"
+                       type="email"
+                       placeholder="Your email"
+                       required>
 
                 <textarea class="form-control mb-3"
                           name="content"
@@ -134,14 +140,20 @@
                 <button class="btn btn-dark">Post Comment</button>
             </form>
 
-            <p th:if="${#lists.isEmpty(comments)}" class="text-muted">
+            <p th:if="${#lists.isEmpty(comments)}"
+               class="text-muted">
                 Be the first one to comment.
             </p>
 
-            <div th:each="c : ${comments}" class="mb-4">
-                <div class="fw-semibold" th:text="${c.name}"></div>
+            <div th:each="c : ${comments}"
+                 class="mb-4">
+                <div class="fw-semibold"
+                     th:text="${c.name}"></div>
+
                 <div class="text-muted small"
-                     th:text="${#temporals.format(c.createdAt,'dd MMM yyyy HH:mm')}"></div>
+                     th:text="${#temporals.format(c.createdAt,'dd MMM yyyy HH:mm')}">
+                </div>
+
                 <p th:utext="${#strings.replace(c.content,'\n','<br/>')}"></p>
             </div>
         </section>
@@ -149,9 +161,9 @@
     </article>
 </main>
 
+<!-- FOOTER -->
 <div th:replace="~{fragments/footer :: footer}"></div>
 
-<!-- ================= JS ================= -->
 <script th:inline="javascript">
     const slug = /*[[${post.slug}]]*/ '';
     const lang = /*[[${post.language.name().toLowerCase()}]]*/ '';
@@ -160,10 +172,10 @@
         fetch(`/api/posts/${lang}/${slug}/applause`, {
             method: "POST",
             headers: {
-                "X-CSRF-TOKEN": document.querySelector('meta[name="_csrf"]')?.content
+                "X-CSRF-TOKEN":
+                    document.querySelector('meta[name="_csrf"]').content
             }
-        })
-        .then(res => {
+        }).then(res => {
             if (res.status === 401) {
                 document.getElementById("loginWarning").style.display = "block";
                 return;

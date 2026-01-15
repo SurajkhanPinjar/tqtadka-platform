@@ -1,14 +1,17 @@
-package com.tqtadka.platform.controller.admin;
+package com.tqtadka.platform.admin;
 
 import com.tqtadka.platform.entity.*;
+import com.tqtadka.platform.security.CustomUserDetails;
 import com.tqtadka.platform.service.PostService;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Set;
 
 @Controller
 @RequestMapping("/admin/posts")
@@ -34,11 +37,15 @@ public class AdminPostController {
     ============================ */
     @GetMapping("/create")
     public String showCreateForm(
-            Authentication auth,
+            @AuthenticationPrincipal CustomUserDetails userDetails,
             Model model
     ) {
 
-        User user = (User) auth.getPrincipal();
+        if (userDetails == null) {
+            throw new AccessDeniedException("Not authenticated");
+        }
+
+        User user = userDetails.getUser();
 
         Set<CategoryType> allowedCategories =
                 user.getRole() == Role.ADMIN
@@ -56,7 +63,7 @@ public class AdminPostController {
     ============================ */
     @PostMapping("/create")
     public String createPost(
-            Authentication auth,
+            @AuthenticationPrincipal CustomUserDetails userDetails,
 
             @RequestParam String title,
             @RequestParam(required = false) String intro,
@@ -70,20 +77,10 @@ public class AdminPostController {
             @RequestParam(required = false) String tipTitle,
             @RequestParam(required = false) String tipContent,
 
-            @RequestParam(defaultValue = "true") boolean publish
+            @RequestParam(required = false) Boolean publish
     ) {
 
-        User user = (User) auth.getPrincipal();
-
-        // 🔐 BACKEND SECURITY CHECK (MANDATORY)
-        if (user.getRole() != Role.ADMIN &&
-                !user.getAllowedCategories().contains(category)) {
-            throw new AccessDeniedException("Category not allowed");
-        }
-
-        if (isBlankRichHtml(sectionContent)) {
-            return "redirect:/admin/posts/create?error=empty";
-        }
+        boolean isPublished = Boolean.TRUE.equals(publish);
 
         PostSection section = buildSection(
                 sectionContent,
@@ -100,7 +97,7 @@ public class AdminPostController {
                 language,
                 clean(imageUrl),
                 List.of(section),
-                publish
+                isPublished
         );
 
         return "redirect:/admin/posts";
@@ -113,11 +110,15 @@ public class AdminPostController {
     public String editPost(
             @PathVariable String slug,
             @PathVariable LanguageType language,
-            Authentication auth,
+            @AuthenticationPrincipal CustomUserDetails userDetails,
             Model model
     ) {
 
-        User user = (User) auth.getPrincipal();
+        if (userDetails == null) {
+            throw new AccessDeniedException("Not authenticated");
+        }
+
+        User user = userDetails.getUser();
         Post post = postService.getPostForEdit(slug, language);
 
         if (user.getRole() != Role.ADMIN &&
@@ -132,6 +133,7 @@ public class AdminPostController {
                         : user.getAllowedCategories());
 
         model.addAttribute("languages", LanguageType.values());
+
         return "admin/edit-post";
     }
 
@@ -162,7 +164,11 @@ public class AdminPostController {
     }
 
     private boolean isBlankRichHtml(String html) {
-        return html == null || html.replaceAll("<[^>]*>", "").trim().isEmpty();
+        return html == null ||
+                html.replaceAll("<[^>]*>", "")
+                        .replace("&nbsp;", "")
+                        .trim()
+                        .isEmpty();
     }
 
     private String normalizeBullets(String bullets) {
@@ -170,5 +176,26 @@ public class AdminPostController {
         return bullets.replace("\r", "")
                 .replaceAll("\n{2,}", "\n")
                 .trim();
+    }
+
+    @PostMapping("/toggle-status")
+    public String togglePostStatus(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestParam String slug,
+            @RequestParam LanguageType language,
+            @RequestParam Boolean publish
+    ) {
+
+        if (userDetails == null) {
+            throw new AccessDeniedException("Not authenticated");
+        }
+
+        postService.togglePublishStatus(
+                slug,
+                language,
+                Boolean.TRUE.equals(publish)
+        );
+
+        return "redirect:/admin/posts";
     }
 }

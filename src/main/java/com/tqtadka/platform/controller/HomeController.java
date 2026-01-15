@@ -18,29 +18,39 @@ public class HomeController {
     }
 
     /* =====================================================
-       HOME (LANGUAGE AWARE)
+       HOME DEFAULT → ENGLISH
+       /
     ===================================================== */
-
     @GetMapping("/")
     public String homeDefault(Model model) {
         return homeByLanguage("en", model);
     }
 
+    /* =====================================================
+       HOME (LANGUAGE AWARE)
+       /en
+       /kn
+    ===================================================== */
     @GetMapping("/{lang:en|kn}")
-    public String homeByLanguage(@PathVariable String lang,
-                                 Model model) {
+    public String homeByLanguage(
+            @PathVariable String lang,
+            Model model
+    ) {
+
+        // ✅ Normalize language
+        String normalizedLang = lang.toLowerCase();
 
         LanguageType language =
-                "kn".equalsIgnoreCase(lang)
+                "kn".equals(normalizedLang)
                         ? LanguageType.KN
                         : LanguageType.EN;
 
-        // ✅ REQUIRED for header fragment
-        model.addAttribute("lang", lang);
+        // ✅ Required for header + routing
+        model.addAttribute("lang", normalizedLang);
         model.addAttribute("categories", CategoryType.values());
         model.addAttribute("activeCategory", null);
 
-        // ✅ Language-specific posts
+        // ✅ Load language-specific posts
         model.addAttribute(
                 "posts",
                 postService.getPublishedPosts(language)

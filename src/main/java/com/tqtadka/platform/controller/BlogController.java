@@ -16,16 +16,27 @@ public class BlogController {
     private final PostService postService;
     private final CommentService commentService;
 
-    public BlogController(
-            PostService postService,
-            CommentService commentService
-    ) {
+    public BlogController(PostService postService,
+                          CommentService commentService) {
         this.postService = postService;
         this.commentService = commentService;
     }
 
     /* ===============================
-       BLOG VIEW (PUBLIC)
+       🔁 SAFE REDIRECT (NO LIST PAGE)
+       /en/blog  -> /en
+       /kn/blog  -> /kn
+    =============================== */
+    @GetMapping({"/{lang}/blog", "/{lang}/blog/"})
+    public String redirectBlogRoot(@PathVariable String lang) {
+        LanguageType language = resolveLanguageOrThrow(lang);
+        return "redirect:/" + language.name().toLowerCase();
+    }
+
+    /* ===============================
+       BLOG VIEW (ONLY PAGE)
+       /en/blog/{slug}
+       /kn/blog/{slug}
     =============================== */
     @GetMapping("/{lang}/blog/{slug}")
     public String viewPost(
@@ -34,44 +45,45 @@ public class BlogController {
             Model model
     ) {
 
-        LanguageType language = resolveLanguage(lang);
-        String resolvedLang = language.name().toLowerCase();
+        LanguageType language = resolveLanguageOrThrow(lang);
 
         Post post;
         try {
-            // ✅ 1. Fetch post WITH sections (no side effects)
             post = postService.getPublishedPost(slug, language);
-
-            // ✅ 2. Increment views separately (atomic, scalable)
             postService.incrementViews(slug, language);
-
         } catch (RuntimeException ex) {
+            // ✅ header-safe 404
+            model.addAttribute("lang", language.name().toLowerCase());
+            model.addAttribute("categories", CategoryType.values());
+            model.addAttribute("activeCategory", null);
             return "error/404";
         }
 
-        // HEADER
-        model.addAttribute("lang", resolvedLang);
+        // Header data
+        model.addAttribute("lang", language.name().toLowerCase());
         model.addAttribute("categories", CategoryType.values());
         model.addAttribute("activeCategory", post.getCategory());
 
-        // BLOG
+        // Page data
         model.addAttribute("post", post);
-
-        // COMMENTS
         model.addAttribute(
                 "comments",
                 commentService.getCommentsForPost(slug, language)
         );
 
-        return "blog/view";
+        return "blog/view"; // ✅ ONLY view page
     }
 
     /* ===============================
-       UTIL
+       LANGUAGE RESOLVER (STRICT)
     =============================== */
-    private LanguageType resolveLanguage(String lang) {
-        return "kn".equalsIgnoreCase(lang)
-                ? LanguageType.KN
-                : LanguageType.EN;
+    private LanguageType resolveLanguageOrThrow(String lang) {
+        if ("en".equalsIgnoreCase(lang)) {
+            return LanguageType.EN;
+        }
+        if ("kn".equalsIgnoreCase(lang)) {
+            return LanguageType.KN;
+        }
+        throw new IllegalArgumentException("Unsupported language: " + lang);
     }
 }

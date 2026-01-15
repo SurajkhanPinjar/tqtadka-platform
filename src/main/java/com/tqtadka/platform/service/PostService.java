@@ -1,9 +1,6 @@
 package com.tqtadka.platform.service;
 
-import com.tqtadka.platform.entity.CategoryType;
-import com.tqtadka.platform.entity.LanguageType;
-import com.tqtadka.platform.entity.Post;
-import com.tqtadka.platform.entity.PostSection;
+import com.tqtadka.platform.entity.*;
 
 import java.util.List;
 
@@ -12,6 +9,11 @@ public interface PostService {
     /* =====================================================
        CREATE (ADMIN)
     ===================================================== */
+
+    /**
+     * Create a new post with sections.
+     * MUST persist Post + PostSection together.
+     */
     Post createPost(
             String title,
             String intro,
@@ -26,23 +28,15 @@ public interface PostService {
        PUBLIC READ (USER)
     ===================================================== */
 
-    /**
-     * Homepage / blog listing
-     */
     List<Post> getPublishedPosts(LanguageType language);
 
-    /**
-     * Category based listing
-     */
     List<Post> getPostsByCategory(
             CategoryType category,
             LanguageType language
     );
 
     /**
-     * Blog detail page
-     * ✅ Fetch published post WITH sections
-     * ❌ No side effects
+     * Fetch published post WITH sections
      */
     Post getPublishedPost(
             String slug,
@@ -53,29 +47,11 @@ public interface PostService {
        ENGAGEMENT (USER ACTIONS)
     ===================================================== */
 
-    /**
-     * 👁️ Increment view count (atomic)
-     */
-    void incrementViews(
-            String slug,
-            LanguageType language
-    );
+    void incrementViews(String slug, LanguageType language);
 
-    /**
-     * 👏 Applause (login required)
-     */
-    void addApplause(
-            String slug,
-            LanguageType language
-    );
+    void addApplause(String slug, LanguageType language);
 
-    /**
-     * 💬 Increment comment counter
-     */
-    void incrementCommentCount(
-            String slug,
-            LanguageType language
-    );
+    void incrementCommentCount(String slug, LanguageType language);
 
     /* =====================================================
        ADMIN READ
@@ -83,10 +59,7 @@ public interface PostService {
 
     List<Post> getAllPostsForAdmin();
 
-    Post getPostForEdit(
-            String slug,
-            LanguageType language
-    );
+    Post getPostForEdit(String slug, LanguageType language);
 
     /* =====================================================
        UPDATE (ADMIN)
@@ -107,8 +80,12 @@ public interface PostService {
        DELETE
     ===================================================== */
 
-    void deletePost(
+    void deletePost(String slug, LanguageType language);
+
+    void togglePublishStatus(
             String slug,
-            LanguageType language
+            LanguageType language,
+            boolean publish
     );
+
 }

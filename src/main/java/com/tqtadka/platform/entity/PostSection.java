@@ -36,7 +36,7 @@ public class PostSection {
     private String title;
 
     @Lob
-    @Column(columnDefinition = "LONGTEXT", nullable = false)
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
     @Column(length = 500)

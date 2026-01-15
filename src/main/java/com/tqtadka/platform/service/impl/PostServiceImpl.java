@@ -4,14 +4,15 @@ import com.tqtadka.platform.entity.*;
 import com.tqtadka.platform.repository.PostRepository;
 import com.tqtadka.platform.service.PostService;
 import com.tqtadka.platform.util.SlugUtil;
-import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Transactional
 public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
@@ -24,7 +25,6 @@ public class PostServiceImpl implements PostService {
        CREATE (ADMIN)
     ===================================================== */
     @Override
-    @Transactional
     public Post createPost(
             String title,
             String intro,
@@ -49,30 +49,33 @@ public class PostServiceImpl implements PostService {
                 .views(0)
                 .applauseCount(0)
                 .commentCount(0)
+                .createdAt(LocalDateTime.now())          // ✅ FIX
                 .publishedAt(publish ? LocalDateTime.now() : null)
                 .sections(new ArrayList<>())
                 .build();
 
         if (sections != null) {
-            for (PostSection section : sections) {
+            sections.forEach(section -> {
                 section.setPost(post);
                 post.getSections().add(section);
-            }
+            });
         }
 
-        return postRepository.save(post);
+        return postRepository.save(post); // ✅ REQUIRED
     }
 
     /* =====================================================
        PUBLIC READ
     ===================================================== */
     @Override
+    @Transactional(readOnly = true)
     public List<Post> getPublishedPosts(LanguageType language) {
         return postRepository
                 .findByLanguageAndPublishedTrueOrderByPublishedAtDesc(language);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Post> getPostsByCategory(CategoryType category, LanguageType language) {
         return postRepository
                 .findByCategoryAndLanguageAndPublishedTrueOrderByPublishedAtDesc(
@@ -80,12 +83,8 @@ public class PostServiceImpl implements PostService {
                 );
     }
 
-    /**
-     * 📖 Blog detail page
-     * ✅ fetch published post WITH sections
-     * ❌ no side effects
-     */
     @Override
+    @Transactional(readOnly = true)
     public Post getPublishedPost(String slug, LanguageType language) {
         return postRepository
                 .findPublishedPostWithSections(slug, language)
@@ -95,21 +94,17 @@ public class PostServiceImpl implements PostService {
     /* =====================================================
        ENGAGEMENT
     ===================================================== */
-
     @Override
-    @Transactional
     public void incrementViews(String slug, LanguageType language) {
         postRepository.incrementViews(slug, language);
     }
 
     @Override
-    @Transactional
     public void addApplause(String slug, LanguageType language) {
         postRepository.incrementApplause(slug, language);
     }
 
     @Override
-    @Transactional
     public void incrementCommentCount(String slug, LanguageType language) {
         postRepository.incrementCommentCount(slug, language);
     }
@@ -118,11 +113,13 @@ public class PostServiceImpl implements PostService {
        ADMIN READ
     ===================================================== */
     @Override
+    @Transactional(readOnly = true)
     public List<Post> getAllPostsForAdmin() {
         return postRepository.findAllByOrderByCreatedAtDesc();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Post getPostForEdit(String slug, LanguageType language) {
         return postRepository
                 .findBySlugAndLanguage(slug, language)
@@ -133,7 +130,6 @@ public class PostServiceImpl implements PostService {
        UPDATE (ADMIN)
     ===================================================== */
     @Override
-    @Transactional
     public Post updatePost(
             String slug,
             String title,
@@ -154,33 +150,32 @@ public class PostServiceImpl implements PostService {
         post.setCategory(category);
         post.setLanguage(language);
         post.setImageUrl(clean(imageUrl));
+        post.setPublished(publish);
 
-        if (publish && !post.isPublished()) {
+        if (publish && post.getPublishedAt() == null) {
             post.setPublishedAt(LocalDateTime.now());
         }
         if (!publish) {
             post.setPublishedAt(null);
         }
 
-        post.setPublished(publish);
-
+        // 🔥 Clear + reattach sections safely
         post.getSections().clear();
 
         if (sections != null) {
-            for (PostSection section : sections) {
+            sections.forEach(section -> {
                 section.setPost(post);
                 post.getSections().add(section);
-            }
+            });
         }
 
-        return post;
+        return postRepository.save(post); // ✅ FIXED
     }
 
     /* =====================================================
        DELETE
     ===================================================== */
     @Override
-    @Transactional
     public void deletePost(String slug, LanguageType language) {
         Post post = postRepository
                 .findBySlugAndLanguage(slug, language)
@@ -204,5 +199,30 @@ public class PostServiceImpl implements PostService {
             slug = baseSlug + "-" + counter++;
         }
         return slug;
+    }
+
+    @Override
+    @Transactional
+    public void togglePublishStatus(
+            String slug,
+            LanguageType language,
+            boolean publish
+    ) {
+
+        Post post = postRepository
+                .findBySlugAndLanguage(slug, language)
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+
+        post.setPublished(publish);
+
+        if (publish) {
+            post.setPublishedAt(
+                    post.getPublishedAt() != null
+                            ? post.getPublishedAt()
+                            : LocalDateTime.now()
+            );
+        } else {
+            post.setPublishedAt(null);
+        }
     }
 }

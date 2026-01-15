@@ -72,12 +72,13 @@
              class="bg-white mb-3"
              style="height:300px;"></div>
 
-        <!-- Safe existing content -->
+        <!-- ✅ FIX #1: store raw HTML safely (no escaping, no script misuse) -->
         <textarea id="existingContent"
                   hidden
-                  th:text="${post.sections != null and !post.sections.isEmpty() ? post.sections[0].content : ''}">
+                  th:utext="${post.sections != null and !post.sections.isEmpty() ? post.sections[0].content : ''}">
         </textarea>
 
+        <!-- REQUIRED -->
         <input type="hidden" name="sectionContent" id="sectionContent">
 
         <!-- BULLETS -->
@@ -106,19 +107,29 @@
                   th:text="${post.sections != null and !post.sections.isEmpty() ? post.sections[0].tipContent : ''}">
         </textarea>
 
-        <!-- PUBLISH -->
+        <!-- ✅ FIX #2: publish checkbox (guaranteed true/false) -->
+        <input type="hidden" name="publish" value="false">
+
         <div class="form-check mb-4">
             <input class="form-check-input"
                    type="checkbox"
+                   id="publish"
                    name="publish"
+                   value="true"
                    th:checked="${post.published}">
-            <label class="form-check-label">Published</label>
+            <label class="form-check-label" for="publish">
+                Published
+            </label>
         </div>
 
         <!-- ACTIONS -->
-        <button class="btn btn-dark">Update Post</button>
+        <button type="submit" class="btn btn-dark">
+            Update Post
+        </button>
         <a th:href="@{/admin/posts}"
-           class="btn btn-outline-secondary ms-2">Cancel</a>
+           class="btn btn-outline-secondary ms-2">
+            Cancel
+        </a>
 
     </form>
 </div>
@@ -140,14 +151,23 @@
         }
     });
 
+    // ✅ FIX #3: load HTML correctly
     const existing = document.getElementById('existingContent').value;
-    if (existing) {
+    if (existing && existing.trim() !== '') {
         quill.root.innerHTML = existing;
     }
 
-    document.getElementById('editForm').addEventListener('submit', () => {
-        document.getElementById('sectionContent').value =
-            quill.root.innerHTML.trim();
+    // Submit protection
+    document.getElementById('editForm').addEventListener('submit', function (e) {
+        const content = quill.root.innerHTML.trim();
+
+        if (!content || content === '<p><br></p>') {
+            e.preventDefault();
+            alert('Post content cannot be empty');
+            return;
+        }
+
+        document.getElementById('sectionContent').value = content;
     });
 </script>
 

@@ -1,77 +1,70 @@
 package com.tqtadka.platform.config;
 
+import com.tqtadka.platform.security.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
+    private final CustomUserDetailsService customUserDetailsService;
+
+    public SecurityConfig(CustomUserDetailsService customUserDetailsService) {
+        this.customUserDetailsService = customUserDetailsService;
+    }
+
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
-                // ================= AUTHORIZATION =================
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                "/en/login",
-                                "/en/signup",
-                                "/login",
-                                "/css/**",
-                                "/js/**",
-                                "/images/**"
-                        ).permitAll()
-
-                        // 🔐 ADMIN ONLY
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
-
+                        .requestMatchers("/en/login", "/en/signup", "/login", "/css/**").permitAll()
+                        .requestMatchers("/admin/**").authenticated()
                         .anyRequest().permitAll()
                 )
-
-                // ================= LOGIN =================
                 .formLogin(form -> form
                         .loginPage("/en/login")
                         .loginProcessingUrl("/login")
-                        .successHandler(authenticationSuccessHandler()) // 🔥 FIX
-                        .permitAll()
+                        .usernameParameter("email")
+                        .passwordParameter("password")
+                        .defaultSuccessUrl("/admin/posts", true)
+                        .failureUrl("/en/login?error")
                 )
-
-                // ================= LOGOUT =================
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/")
-                        .invalidateHttpSession(true)
-                        .clearAuthentication(true)
-                        .permitAll()
                 );
 
         return http.build();
     }
 
-    // ================= ROLE BASED REDIRECT =================
     @Bean
-    public AuthenticationSuccessHandler authenticationSuccessHandler() {
-        return (request, response, authentication) -> {
+    public AuthenticationManager authenticationManager(
+            HttpSecurity http,
+            PasswordEncoder passwordEncoder,
+            CustomUserDetailsService customUserDetailsService
+    ) throws Exception {
 
-            boolean isAdmin = authentication.getAuthorities().stream()
-                    .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+        AuthenticationManagerBuilder builder =
+                http.getSharedObject(AuthenticationManagerBuilder.class);
 
-            if (isAdmin) {
-                response.sendRedirect("/admin/posts");
-            } else {
-                response.sendRedirect("/");
-            }
-        };
+        builder
+                .userDetailsService(customUserDetailsService)
+                .passwordEncoder(passwordEncoder);
+
+        return builder.build();
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
+    PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 }

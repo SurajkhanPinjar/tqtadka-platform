@@ -1,4 +1,4 @@
-package com.tqtadka.platform.config;
+package com.tqtadka.platform.security;
 
 import com.tqtadka.platform.entity.User;
 import org.springframework.security.core.GrantedAuthority;
@@ -21,15 +21,22 @@ public class CustomUserDetails implements UserDetails {
     }
 
     @Override
+    public String getUsername() {
+        return user.getEmail();
+    }
+
+    @Override
+    public String getPassword() {
+        return user.getPassword();
+    }
+
+    @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
     }
 
-    @Override public String getPassword() { return user.getPassword(); }
-    @Override public String getUsername() { return user.getEmail(); }
-    @Override public boolean isEnabled() { return user.isEnabled(); }
-
     @Override public boolean isAccountNonExpired() { return true; }
     @Override public boolean isAccountNonLocked() { return true; }
     @Override public boolean isCredentialsNonExpired() { return true; }
+    @Override public boolean isEnabled() { return user.isEnabled(); }
 }

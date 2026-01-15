@@ -18,22 +18,23 @@ public class CategoryController {
     }
 
     @GetMapping("/{lang}/category/{category}")
-    public String viewByCategory(@PathVariable String lang,
-                                 @PathVariable CategoryType category,
-                                 Model model) {
+    public String viewCategory(
+            @PathVariable String lang,
+            @PathVariable CategoryType category,
+            Model model
+    ) {
 
-        // ✅ SAFE language resolution
         LanguageType language =
                 "kn".equalsIgnoreCase(lang)
                         ? LanguageType.KN
                         : LanguageType.EN;
 
-        // ✅ REQUIRED for header fragment
+        // 🔴 REQUIRED — header depends on these
         model.addAttribute("lang", lang);
         model.addAttribute("categories", CategoryType.values());
         model.addAttribute("activeCategory", category);
 
-        // ✅ Language-aware posts
+        // 🔴 NEVER pass null list
         model.addAttribute(
                 "posts",
                 postService.getPostsByCategory(category, language)

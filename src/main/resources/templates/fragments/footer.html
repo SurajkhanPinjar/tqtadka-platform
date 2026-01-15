@@ -16,19 +16,21 @@
             </div>
 
             <div class="d-flex gap-2 flex-wrap">
-                <a href="/about"
+                <a th:href="@{/{lang}/about(lang=${lang ?: 'en'})}"
                    class="text-decoration-none"
                    style="color:#6b6b6b;">
                     About
                 </a>
                 <span>·</span>
-                <a href="/privacy"
+
+                <a th:href="@{/{lang}/privacy(lang=${lang ?: 'en'})}"
                    class="text-decoration-none"
                    style="color:#6b6b6b;">
                     Privacy
                 </a>
                 <span>·</span>
-                <a href="/contact"
+
+                <a th:href="@{/{lang}/contact(lang=${lang ?: 'en'})}"
                    class="text-decoration-none"
                    style="color:#6b6b6b;">
                     Contact
@@ -40,6 +42,11 @@
     </div>
 
 </footer>
+
+<!-- ================= 120Hz TOUCH OPTIMIZATION ================= -->
+<script>
+    document.addEventListener("touchstart", function () {}, { passive: true });
+</script>
 
 </body>
 </html>

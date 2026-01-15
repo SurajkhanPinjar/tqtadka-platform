@@ -22,18 +22,19 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="fw-bold mb-0">Manage Posts</h2>
 
-        <a href="/admin/posts/create"
+        <a th:href="@{/admin/posts/create}"
            class="btn btn-dark">
             + Create Post
         </a>
     </div>
 
-    <!-- ================= POSTS LIST ================= -->
+    <!-- ================= EMPTY STATE ================= -->
     <div th:if="${#lists.isEmpty(posts)}"
          class="alert alert-secondary">
         No posts created yet.
     </div>
 
+    <!-- ================= POSTS TABLE ================= -->
     <table th:unless="${#lists.isEmpty(posts)}"
            class="table table-bordered align-middle">
 
@@ -50,25 +51,60 @@
 
         <tbody>
         <tr th:each="post : ${posts}">
+
+            <!-- TITLE -->
             <td th:text="${post.title}"></td>
 
+            <!-- LANGUAGE -->
             <td>
                 <span class="badge bg-info text-dark"
                       th:text="${post.language}">
                 </span>
             </td>
 
+            <!-- CATEGORY -->
             <td th:text="${post.category}"></td>
 
+            <!-- ✅ STATUS DROPDOWN -->
             <td>
-                <span th:if="${post.published}"
-                      class="badge bg-success">Published</span>
-                <span th:unless="${post.published}"
-                      class="badge bg-secondary">Draft</span>
+                <form method="post"
+                      th:action="@{/admin/posts/toggle-status}"
+                      class="d-inline">
+
+                    <!-- CSRF -->
+                    <input type="hidden"
+                           th:name="${_csrf.parameterName}"
+                           th:value="${_csrf.token}"/>
+
+                    <input type="hidden"
+                           name="slug"
+                           th:value="${post.slug}"/>
+
+                    <input type="hidden"
+                           name="language"
+                           th:value="${post.language}"/>
+
+                    <select name="publish"
+                            class="form-select form-select-sm"
+                            onchange="this.form.submit()">
+
+                        <option value="true"
+                                th:selected="${post.published}">
+                            Published
+                        </option>
+
+                        <option value="false"
+                                th:selected="${!post.published}">
+                            Draft
+                        </option>
+                    </select>
+                </form>
             </td>
 
-            <td th:text="${post.views != null ? post.views : 0}"></td>
+            <!-- VIEWS -->
+            <td th:text="${post.views}"></td>
 
+            <!-- ACTIONS -->
             <td>
                 <!-- EDIT -->
                 <a th:href="@{/admin/posts/edit/{slug}/{language}(
@@ -78,29 +114,32 @@
                     Edit
                 </a>
 
-                <!-- DELETE (FIXED) -->
+                <!-- DELETE -->
                 <form method="post"
                       th:action="@{/admin/posts/delete}"
                       class="d-inline">
 
-                    <!-- ✅ CSRF -->
+                    <!-- CSRF -->
                     <input type="hidden"
                            th:name="${_csrf.parameterName}"
                            th:value="${_csrf.token}"/>
 
                     <input type="hidden"
                            name="slug"
-                           th:value="${post.slug}">
+                           th:value="${post.slug}"/>
+
                     <input type="hidden"
                            name="language"
-                           th:value="${post.language}">
+                           th:value="${post.language}"/>
 
-                    <button class="btn btn-sm btn-outline-danger"
+                    <button type="submit"
+                            class="btn btn-sm btn-outline-danger"
                             onclick="return confirm('Delete this post?')">
                         Delete
                     </button>
                 </form>
             </td>
+
         </tr>
         </tbody>
     </table>

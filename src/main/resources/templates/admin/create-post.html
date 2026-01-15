@@ -4,7 +4,7 @@
     <title>Create Blog Post</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- Google Font -->
+    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&display=swap"
           rel="stylesheet">
 
@@ -25,7 +25,9 @@
 <div class="container my-5" style="max-width:760px;">
     <h3 class="fw-bold mb-4">Create Blog Post</h3>
 
-    <form method="post" th:action="@{/admin/posts/create}">
+    <form method="post"
+          th:action="@{/admin/posts/create}"
+          id="postForm">
 
         <!-- CSRF -->
         <input type="hidden"
@@ -45,7 +47,7 @@
             <option value="KN">Kannada</option>
         </select>
 
-        <!-- CATEGORY (ROLE-BASED) -->
+        <!-- CATEGORY -->
         <select class="form-select mb-4" name="category" required>
             <option value="">Select Category</option>
             <option th:each="cat : ${categories}"
@@ -54,7 +56,7 @@
             </option>
         </select>
 
-        <!-- MAIN IMAGE URL -->
+        <!-- IMAGE -->
         <input class="form-control mb-4"
                name="imageUrl"
                placeholder="Main image URL (optional)">
@@ -69,6 +71,7 @@
         <h6 class="fw-bold mb-2">Post Content</h6>
         <div id="editor" class="bg-white mb-3" style="height:300px;"></div>
 
+        <!-- REQUIRED: QUILL PAYLOAD -->
         <input type="hidden" name="sectionContent" id="sectionContent">
 
         <!-- BULLETS -->
@@ -91,18 +94,25 @@
                   rows="3"
                   placeholder="Tip explanation"></textarea>
 
-        <!-- PUBLISH -->
+        <!-- 🔴 FIX #1: publish fallback MUST be before checkbox -->
+        <input type="hidden" name="publish" value="false">
+
+        <!-- 🔴 FIX #2: checkbox MUST have value="true" -->
         <div class="form-check mb-4">
             <input class="form-check-input"
                    type="checkbox"
+                   id="publish"
                    name="publish"
+                   value="true"
                    checked>
-            <label class="form-check-label">
+            <label class="form-check-label" for="publish">
                 Publish immediately
             </label>
         </div>
 
-        <button class="btn btn-dark px-4">Publish</button>
+        <button type="submit" class="btn btn-dark px-4">
+            Publish
+        </button>
     </form>
 </div>
 
@@ -123,9 +133,16 @@
         }
     });
 
-    document.querySelector('form').addEventListener('submit', function () {
-        document.getElementById('sectionContent').value =
-            quill.root.innerHTML.trim();
+    document.getElementById('postForm').addEventListener('submit', function (e) {
+        const html = quill.root.innerHTML.trim();
+
+        if (!html || html === '<p><br></p>') {
+            alert('Post content cannot be empty');
+            e.preventDefault();
+            return;
+        }
+
+        document.getElementById('sectionContent').value = html;
     });
 </script>
 
