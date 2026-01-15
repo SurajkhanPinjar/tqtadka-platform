@@ -118,11 +118,10 @@ public class PostServiceImpl implements PostService {
         return postRepository.findAllByOrderByCreatedAtDesc();
     }
 
-    @Override
     @Transactional(readOnly = true)
+    @Override
     public Post getPostForEdit(String slug, LanguageType language) {
-        return postRepository
-                .findBySlugAndLanguage(slug, language)
+        return postRepository.findForEdit(slug, language)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
     }
 
@@ -225,4 +224,6 @@ public class PostServiceImpl implements PostService {
             post.setPublishedAt(null);
         }
     }
+
+
 }

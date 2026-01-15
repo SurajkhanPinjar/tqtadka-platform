@@ -40,10 +40,7 @@ public class AdminPostController {
             @AuthenticationPrincipal CustomUserDetails userDetails,
             Model model
     ) {
-
-        if (userDetails == null) {
-            throw new AccessDeniedException("Not authenticated");
-        }
+        requireAuth(userDetails);
 
         User user = userDetails.getUser();
 
@@ -64,23 +61,19 @@ public class AdminPostController {
     @PostMapping("/create")
     public String createPost(
             @AuthenticationPrincipal CustomUserDetails userDetails,
-
             @RequestParam String title,
             @RequestParam(required = false) String intro,
             @RequestParam CategoryType category,
             @RequestParam LanguageType language,
             @RequestParam(required = false) String imageUrl,
             @RequestParam String sectionContent,
-
             @RequestParam(required = false) String bulletTitle,
             @RequestParam(required = false) String bullets,
             @RequestParam(required = false) String tipTitle,
             @RequestParam(required = false) String tipContent,
-
             @RequestParam(required = false) Boolean publish
     ) {
-
-        boolean isPublished = Boolean.TRUE.equals(publish);
+        requireAuth(userDetails);
 
         PostSection section = buildSection(
                 sectionContent,
@@ -97,7 +90,7 @@ public class AdminPostController {
                 language,
                 clean(imageUrl),
                 List.of(section),
-                isPublished
+                Boolean.TRUE.equals(publish)
         );
 
         return "redirect:/admin/posts";
@@ -113,10 +106,7 @@ public class AdminPostController {
             @AuthenticationPrincipal CustomUserDetails userDetails,
             Model model
     ) {
-
-        if (userDetails == null) {
-            throw new AccessDeniedException("Not authenticated");
-        }
+        requireAuth(userDetails);
 
         User user = userDetails.getUser();
         Post post = postService.getPostForEdit(slug, language);
@@ -132,14 +122,97 @@ public class AdminPostController {
                         ? EnumSet.allOf(CategoryType.class)
                         : user.getAllowedCategories());
 
-        model.addAttribute("languages", LanguageType.values());
-
         return "admin/edit-post";
     }
 
     /* ============================
-       SECTION BUILDER
+       UPDATE POST ✅ FIXED
     ============================ */
+    @PostMapping("/update")
+    public String updatePost(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestParam String slug,
+            @RequestParam LanguageType language,
+            @RequestParam String title,
+            @RequestParam(required = false) String intro,
+            @RequestParam CategoryType category,
+            @RequestParam(required = false) String imageUrl,
+            @RequestParam String sectionContent,
+            @RequestParam(required = false) String bulletTitle,
+            @RequestParam(required = false) String bullets,
+            @RequestParam(required = false) String tipTitle,
+            @RequestParam(required = false) String tipContent,
+            @RequestParam(required = false) Boolean publish
+    ) {
+        requireAuth(userDetails);
+
+        PostSection section = buildSection(
+                sectionContent,
+                bulletTitle,
+                bullets,
+                tipTitle,
+                tipContent
+        );
+
+        postService.updatePost(
+                slug,
+                title.trim(),
+                clean(intro),
+                category,
+                language,
+                clean(imageUrl),
+                List.of(section),
+                Boolean.TRUE.equals(publish)
+        );
+
+        return "redirect:/admin/posts";
+    }
+
+    /* ============================
+       TOGGLE PUBLISH STATUS
+    ============================ */
+    @PostMapping("/toggle-status")
+    public String togglePostStatus(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestParam String slug,
+            @RequestParam LanguageType language,
+            @RequestParam Boolean publish
+    ) {
+        requireAuth(userDetails);
+
+        postService.togglePublishStatus(
+                slug,
+                language,
+                Boolean.TRUE.equals(publish)
+        );
+
+        return "redirect:/admin/posts";
+    }
+
+    /* ============================
+       DELETE POST
+    ============================ */
+    @PostMapping("/delete")
+    public String deletePost(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestParam String slug,
+            @RequestParam LanguageType language
+    ) {
+        requireAuth(userDetails);
+
+        postService.deletePost(slug, language);
+        return "redirect:/admin/posts";
+    }
+
+    /* ============================
+       HELPERS
+    ============================ */
+    private void requireAuth(CustomUserDetails userDetails) {
+        if (userDetails == null) {
+            throw new AccessDeniedException("Not authenticated");
+        }
+    }
+
     private PostSection buildSection(
             String content,
             String bulletTitle,
@@ -156,19 +229,8 @@ public class AdminPostController {
         return section;
     }
 
-    /* ============================
-       UTIL
-    ============================ */
     private String clean(String v) {
         return (v == null || v.isBlank()) ? null : v.trim();
-    }
-
-    private boolean isBlankRichHtml(String html) {
-        return html == null ||
-                html.replaceAll("<[^>]*>", "")
-                        .replace("&nbsp;", "")
-                        .trim()
-                        .isEmpty();
     }
 
     private String normalizeBullets(String bullets) {
@@ -176,26 +238,5 @@ public class AdminPostController {
         return bullets.replace("\r", "")
                 .replaceAll("\n{2,}", "\n")
                 .trim();
-    }
-
-    @PostMapping("/toggle-status")
-    public String togglePostStatus(
-            @AuthenticationPrincipal CustomUserDetails userDetails,
-            @RequestParam String slug,
-            @RequestParam LanguageType language,
-            @RequestParam Boolean publish
-    ) {
-
-        if (userDetails == null) {
-            throw new AccessDeniedException("Not authenticated");
-        }
-
-        postService.togglePublishStatus(
-                slug,
-                language,
-                Boolean.TRUE.equals(publish)
-        );
-
-        return "redirect:/admin/posts";
     }
 }

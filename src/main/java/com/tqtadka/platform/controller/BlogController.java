@@ -22,30 +22,22 @@ public class BlogController {
         this.commentService = commentService;
     }
 
-    /* ===============================
-       🔁 SAFE REDIRECT (NO LIST PAGE)
-       /en/blog  -> /en
-       /kn/blog  -> /kn
-    =============================== */
-    @GetMapping({"/{lang}/blog", "/{lang}/blog/"})
-    public String redirectBlogRoot(@PathVariable String lang) {
-        LanguageType language = resolveLanguageOrThrow(lang);
-        return "redirect:/" + language.name().toLowerCase();
-    }
-
-    /* ===============================
-       BLOG VIEW (ONLY PAGE)
+    /* =====================================================
+       BLOG VIEW (EN + KN ONLY)
        /en/blog/{slug}
        /kn/blog/{slug}
-    =============================== */
-    @GetMapping("/{lang}/blog/{slug}")
+    ===================================================== */
+    @GetMapping("/{lang:en|kn}/blog/{slug}")
     public String viewPost(
             @PathVariable String lang,
             @PathVariable String slug,
             Model model
     ) {
 
-        LanguageType language = resolveLanguageOrThrow(lang);
+        LanguageType language =
+                "kn".equalsIgnoreCase(lang)
+                        ? LanguageType.KN
+                        : LanguageType.EN;
 
         Post post;
         try {
@@ -53,37 +45,39 @@ public class BlogController {
             postService.incrementViews(slug, language);
         } catch (RuntimeException ex) {
             // ✅ header-safe 404
-            model.addAttribute("lang", language.name().toLowerCase());
+            model.addAttribute("lang", lang.toLowerCase());
             model.addAttribute("categories", CategoryType.values());
             model.addAttribute("activeCategory", null);
             return "error/404";
         }
 
-        // Header data
-        model.addAttribute("lang", language.name().toLowerCase());
+        // Header
+        model.addAttribute("lang", lang.toLowerCase());
         model.addAttribute("categories", CategoryType.values());
         model.addAttribute("activeCategory", post.getCategory());
 
-        // Page data
+        // Page
         model.addAttribute("post", post);
         model.addAttribute(
                 "comments",
                 commentService.getCommentsForPost(slug, language)
         );
 
-        return "blog/view"; // ✅ ONLY view page
+        return "blog/view";
     }
 
-    /* ===============================
-       LANGUAGE RESOLVER (STRICT)
-    =============================== */
-    private LanguageType resolveLanguageOrThrow(String lang) {
-        if ("en".equalsIgnoreCase(lang)) {
-            return LanguageType.EN;
-        }
-        if ("kn".equalsIgnoreCase(lang)) {
-            return LanguageType.KN;
-        }
-        throw new IllegalArgumentException("Unsupported language: " + lang);
+    /* =====================================================
+       SAFE REDIRECT — NO BLOG LIST PAGE
+       /en/blog   -> /en
+       /en/blog/  -> /en
+       /kn/blog   -> /kn
+       /kn/blog/  -> /kn
+    ===================================================== */
+    @GetMapping({
+            "/{lang:en|kn}/blog",
+            "/{lang:en|kn}/blog/"
+    })
+    public String redirectBlogRoot(@PathVariable String lang) {
+        return "redirect:/" + lang.toLowerCase();
     }
 }

@@ -17,7 +17,10 @@
 
 <body class="bg-light">
 
-<div th:replace="~{fragments/header :: header}"></div>
+<!-- ================= SAFE ADMIN HEADER ================= -->
+<th:block th:with="lang='en', categories=${categories}, activeCategory=${null}">
+    <div th:replace="~{fragments/header :: header}"></div>
+</th:block>
 
 <div class="container my-5" style="max-width:760px;">
 
@@ -65,49 +68,53 @@
                   th:text="${post.intro}">
         </textarea>
 
-        <!-- CONTENT -->
+        <!-- ================= CONTENT ================= -->
         <h6 class="fw-bold mb-2">Post Content</h6>
 
         <div id="editor"
-             class="bg-white mb-3"
+             class="bg-white mb-3 border rounded"
              style="height:300px;"></div>
-
-        <!-- ✅ FIX #1: store raw HTML safely (no escaping, no script misuse) -->
-        <textarea id="existingContent"
-                  hidden
-                  th:utext="${post.sections != null and !post.sections.isEmpty() ? post.sections[0].content : ''}">
-        </textarea>
 
         <!-- REQUIRED -->
         <input type="hidden" name="sectionContent" id="sectionContent">
 
-        <!-- BULLETS -->
-        <input class="form-control mb-2"
-               name="bulletTitle"
-               th:value="${post.sections != null and !post.sections.isEmpty() ? post.sections[0].bulletTitle : ''}"
-               placeholder="Bullet section heading (optional)">
+        <!-- ================= SECTION SAFE ACCESS ================= -->
+        <th:block th:with="section=${post.sections[0]}">
 
-        <textarea class="form-control mb-4"
-                  name="bullets"
-                  rows="4"
-                  placeholder="One bullet per line"
-                  th:text="${post.sections != null and !post.sections.isEmpty() ? post.sections[0].bullets : ''}">
-        </textarea>
+            <!-- RAW CONTENT -->
+            <input type="hidden"
+                   id="existingContent"
+                   th:value="${section.content}" />
 
-        <!-- TIP -->
-        <input class="form-control mb-2"
-               name="tipTitle"
-               th:value="${post.sections != null and !post.sections.isEmpty() ? post.sections[0].tipTitle : ''}"
-               placeholder="Tip title (optional)">
+            <!-- BULLETS -->
+            <input class="form-control mb-2"
+                   name="bulletTitle"
+                   th:value="${section.bulletTitle}"
+                   placeholder="Bullet section heading (optional)">
 
-        <textarea class="form-control mb-4"
-                  name="tipContent"
-                  rows="3"
-                  placeholder="Tip explanation"
-                  th:text="${post.sections != null and !post.sections.isEmpty() ? post.sections[0].tipContent : ''}">
-        </textarea>
+            <textarea class="form-control mb-4"
+                      name="bullets"
+                      rows="4"
+                      placeholder="One bullet per line"
+                      th:text="${section.bullets}">
+            </textarea>
 
-        <!-- ✅ FIX #2: publish checkbox (guaranteed true/false) -->
+            <!-- TIP -->
+            <input class="form-control mb-2"
+                   name="tipTitle"
+                   th:value="${section.tipTitle}"
+                   placeholder="Tip title (optional)">
+
+            <textarea class="form-control mb-4"
+                      name="tipContent"
+                      rows="3"
+                      placeholder="Tip explanation"
+                      th:text="${section.tipContent}">
+            </textarea>
+
+        </th:block>
+
+        <!-- ================= PUBLISH ================= -->
         <input type="hidden" name="publish" value="false">
 
         <div class="form-check mb-4">
@@ -126,6 +133,7 @@
         <button type="submit" class="btn btn-dark">
             Update Post
         </button>
+
         <a th:href="@{/admin/posts}"
            class="btn btn-outline-secondary ms-2">
             Cancel
@@ -134,6 +142,7 @@
     </form>
 </div>
 
+<!-- ================= SCRIPTS ================= -->
 <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
 
 <script>
@@ -151,13 +160,13 @@
         }
     });
 
-    // ✅ FIX #3: load HTML correctly
+    // Load existing content
     const existing = document.getElementById('existingContent').value;
     if (existing && existing.trim() !== '') {
         quill.root.innerHTML = existing;
     }
 
-    // Submit protection
+    // Submit validation
     document.getElementById('editForm').addEventListener('submit', function (e) {
         const content = quill.root.innerHTML.trim();
 

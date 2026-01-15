@@ -29,13 +29,13 @@
     </div>
 
     <!-- ================= EMPTY STATE ================= -->
-    <div th:if="${#lists.isEmpty(posts)}"
+    <div th:if="${posts == null or #lists.isEmpty(posts)}"
          class="alert alert-secondary">
         No posts created yet.
     </div>
 
     <!-- ================= POSTS TABLE ================= -->
-    <table th:unless="${#lists.isEmpty(posts)}"
+    <table th:if="${posts != null and !#lists.isEmpty(posts)}"
            class="table table-bordered align-middle">
 
         <thead class="table-light">
@@ -58,14 +58,14 @@
             <!-- LANGUAGE -->
             <td>
                 <span class="badge bg-info text-dark"
-                      th:text="${post.language}">
+                      th:text="${post.language.name()}">
                 </span>
             </td>
 
             <!-- CATEGORY -->
-            <td th:text="${post.category}"></td>
+            <td th:text="${post.category.name()}"></td>
 
-            <!-- ✅ STATUS DROPDOWN -->
+            <!-- STATUS DROPDOWN -->
             <td>
                 <form method="post"
                       th:action="@{/admin/posts/toggle-status}"
@@ -80,9 +80,10 @@
                            name="slug"
                            th:value="${post.slug}"/>
 
+                    <!-- ✅ IMPORTANT: enum value -->
                     <input type="hidden"
                            name="language"
-                           th:value="${post.language}"/>
+                           th:value="${post.language.name()}"/>
 
                     <select name="publish"
                             class="form-select form-select-sm"
@@ -109,7 +110,7 @@
                 <!-- EDIT -->
                 <a th:href="@{/admin/posts/edit/{slug}/{language}(
                         slug=${post.slug},
-                        language=${post.language})}"
+                        language=${post.language.name()})}"
                    class="btn btn-sm btn-outline-primary me-1">
                     Edit
                 </a>
@@ -128,9 +129,10 @@
                            name="slug"
                            th:value="${post.slug}"/>
 
+                    <!-- ✅ IMPORTANT: enum value -->
                     <input type="hidden"
                            name="language"
-                           th:value="${post.language}"/>
+                           th:value="${post.language.name()}"/>
 
                     <button type="submit"
                             class="btn btn-sm btn-outline-danger"

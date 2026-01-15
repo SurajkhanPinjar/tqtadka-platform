@@ -81,7 +81,7 @@
             <a th:each="cat : ${categories}"
                th:href="@{/{lang}/category/{cat}(lang=${lang}, cat=${cat})}"
                th:text="${cat}"
-               th:classappend="${activeCategory != null && cat.name() == activeCategory.name()} ? ' active' : ''"
+               th:classappend="${activeCategory != null and cat == activeCategory} ? ' active' : ''"
                class="category-link text-decoration-none">
             </a>
         </div>
