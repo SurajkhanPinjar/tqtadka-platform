@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+
+<div th:fragment="header">
+
+    <!-- ================= TOP NAV ================= -->
+    <nav class="navbar navbar-light bg-white border-bottom px-4">
+
+        <!-- Logo -->
+        <a class="navbar-brand fw-bold"
+           th:href="@{/{lang}(lang=${lang != null ? lang : 'en'})}">
+            TQtadka
+        </a>
+
+        <div class="d-flex align-items-center gap-3">
+
+            <!-- Search -->
+            <input class="form-control form-control-sm rounded-pill header-search"
+                   type="search"
+                   placeholder="Search">
+
+            <!-- ================= LANGUAGE TOGGLE ================= -->
+            <div class="btn-group btn-group-sm">
+                <a th:href="@{/en}"
+                   class="btn btn-outline-dark"
+                   th:classappend="${lang == 'en'} ? ' active' : ''">
+                    EN
+                </a>
+
+                <a th:href="@{/kn}"
+                   class="btn btn-outline-dark"
+                   th:classappend="${lang == 'kn'} ? ' active' : ''">
+                    ಕನ್ನಡ
+                </a>
+            </div>
+
+            <!-- ================= AUTH ================= -->
+
+            <!-- NOT LOGGED IN -->
+            <div sec:authorize="!isAuthenticated()">
+                <a th:href="@{/{lang}/login(lang=${lang != null ? lang : 'en'})}"
+                   class="text-decoration-none text-secondary me-2">
+                    Sign in
+                </a>
+
+                <a th:href="@{/{lang}/signup(lang=${lang != null ? lang : 'en'})}"
+                   class="btn btn-outline-success btn-sm rounded">
+                    Create account
+                </a>
+            </div>
+
+            <!-- LOGGED IN -->
+            <div sec:authorize="isAuthenticated()"
+                 class="d-flex align-items-center gap-2">
+
+                <span class="text-muted small">
+                    Hi, <strong sec:authentication="name"></strong>
+                </span>
+
+                <!-- ✅ CORRECT LOGOUT -->
+                <form th:action="@{/logout}" method="post" class="mb-0">
+                    <input type="hidden"
+                           th:name="${_csrf.parameterName}"
+                           th:value="${_csrf.token}" />
+
+                    <button class="btn btn-outline-danger btn-sm">
+                        Logout
+                    </button>
+                </form>
+            </div>
+
+        </div>
+    </nav>
+
+    <!-- ================= CATEGORY BAR ================= -->
+    <div class="border-bottom px-4 py-2"
+         th:if="${categories != null}">
+        <div class="d-flex gap-4 flex-wrap">
+            <a th:each="cat : ${categories}"
+               th:href="@{/{lang}/category/{cat}(lang=${lang != null ? lang : 'en'}, cat=${cat})}"
+               th:text="${cat}"
+               th:classappend="${activeCategory != null and cat == activeCategory} ? ' active' : ''"
+               class="category-link text-decoration-none">
+            </a>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

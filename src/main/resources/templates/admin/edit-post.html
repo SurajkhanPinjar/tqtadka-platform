@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Edit Blog Post</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <!-- Quill -->
+    <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css"
+          rel="stylesheet">
+
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body class="bg-light">
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="container my-5" style="max-width:760px;">
+
+    <h3 class="fw-bold mb-4">Edit Blog Post</h3>
+
+    <form method="post"
+          th:action="@{/admin/posts/update}"
+          id="editForm">
+
+        <!-- CSRF -->
+        <input type="hidden"
+               th:name="${_csrf.parameterName}"
+               th:value="${_csrf.token}"/>
+
+        <!-- REQUIRED -->
+        <input type="hidden" name="slug" th:value="${post.slug}">
+        <input type="hidden" name="language" th:value="${post.language}">
+
+        <!-- TITLE -->
+        <input class="form-control mb-3"
+               name="title"
+               th:value="${post.title}"
+               required>
+
+        <!-- CATEGORY -->
+        <select class="form-select mb-3" name="category" required>
+            <option th:each="c : ${categories}"
+                    th:value="${c}"
+                    th:text="${c}"
+                    th:selected="${c == post.category}">
+            </option>
+        </select>
+
+        <!-- IMAGE URL -->
+        <input class="form-control mb-3"
+               name="imageUrl"
+               th:value="${post.imageUrl}"
+               placeholder="Main image URL (optional)">
+
+        <!-- INTRO -->
+        <textarea class="form-control mb-4"
+                  name="intro"
+                  rows="4"
+                  placeholder="Intro (optional)"
+                  th:text="${post.intro}">
+        </textarea>
+
+        <!-- CONTENT -->
+        <h6 class="fw-bold mb-2">Post Content</h6>
+
+        <div id="editor"
+             class="bg-white mb-3"
+             style="height:300px;"></div>
+
+        <!-- Safe existing content -->
+        <textarea id="existingContent"
+                  hidden
+                  th:text="${post.sections != null and !post.sections.isEmpty() ? post.sections[0].content : ''}">
+        </textarea>
+
+        <input type="hidden" name="sectionContent" id="sectionContent">
+
+        <!-- BULLETS -->
+        <input class="form-control mb-2"
+               name="bulletTitle"
+               th:value="${post.sections != null and !post.sections.isEmpty() ? post.sections[0].bulletTitle : ''}"
+               placeholder="Bullet section heading (optional)">
+
+        <textarea class="form-control mb-4"
+                  name="bullets"
+                  rows="4"
+                  placeholder="One bullet per line"
+                  th:text="${post.sections != null and !post.sections.isEmpty() ? post.sections[0].bullets : ''}">
+        </textarea>
+
+        <!-- TIP -->
+        <input class="form-control mb-2"
+               name="tipTitle"
+               th:value="${post.sections != null and !post.sections.isEmpty() ? post.sections[0].tipTitle : ''}"
+               placeholder="Tip title (optional)">
+
+        <textarea class="form-control mb-4"
+                  name="tipContent"
+                  rows="3"
+                  placeholder="Tip explanation"
+                  th:text="${post.sections != null and !post.sections.isEmpty() ? post.sections[0].tipContent : ''}">
+        </textarea>
+
+        <!-- PUBLISH -->
+        <div class="form-check mb-4">
+            <input class="form-check-input"
+                   type="checkbox"
+                   name="publish"
+                   th:checked="${post.published}">
+            <label class="form-check-label">Published</label>
+        </div>
+
+        <!-- ACTIONS -->
+        <button class="btn btn-dark">Update Post</button>
+        <a th:href="@{/admin/posts}"
+           class="btn btn-outline-secondary ms-2">Cancel</a>
+
+    </form>
+</div>
+
+<script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
+
+<script>
+    const quill = new Quill('#editor', {
+        theme: 'snow',
+        placeholder: 'Edit your blog content...',
+        modules: {
+            toolbar: [
+                [{ header: [1, 2, 3, false] }],
+                ['bold', 'italic', 'underline'],
+                [{ list: 'ordered' }, { list: 'bullet' }],
+                ['link'],
+                ['clean']
+            ]
+        }
+    });
+
+    const existing = document.getElementById('existingContent').value;
+    if (existing) {
+        quill.root.innerHTML = existing;
+    }
+
+    document.getElementById('editForm').addEventListener('submit', () => {
+        document.getElementById('sectionContent').value =
+            quill.root.innerHTML.trim();
+    });
+</script>
+
+</body>
+</html>

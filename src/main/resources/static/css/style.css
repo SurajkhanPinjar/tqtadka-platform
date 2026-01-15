@@ -1,0 +1,221 @@
+/* ===============================
+   GLOBAL
+================================ */
+* {
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: #222;
+    background: #fff;
+    margin: 0;
+}
+
+/* ===============================
+   HEADER (UNCHANGED)
+================================ */
+.navbar-brand {
+    font-family: "Playfair Display", Georgia, "Times New Roman", serif;
+    font-weight: 700;
+    font-size: 1.6rem;
+    letter-spacing: -0.4px;
+    color: #111;
+}
+
+.navbar-brand:hover {
+    color: #111;
+    text-decoration: none;
+}
+
+.header-search {
+    width: 180px;
+}
+
+/* ===============================
+   CATEGORY BAR (UNCHANGED)
+================================ */
+.category-link {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.09em;
+    color: #6c757d !important;
+    text-transform: uppercase;
+    padding-bottom: 6px;
+}
+
+.category-link:hover {
+    color: #111 !important;
+    text-decoration: none;
+}
+
+.category-link.active {
+    color: #111 !important;
+    border-bottom: 2px solid #111;
+}
+
+/* ===============================
+   HERO / TITLE (UNCHANGED)
+================================ */
+.hero-title {
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 3rem;
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.8px;
+    color: #1a1a1a;
+    margin-bottom: 1.4rem;
+}
+
+.hero-subtitle {
+    font-size: 1.2rem;
+    line-height: 1.65;
+    color: #6b6b6b;
+    max-width: 720px;
+}
+
+/* ======================================================
+   BLOG VIEW — FIXED WIDTH, SPACING & TYPOGRAPHY ONLY
+====================================================== */
+
+/* Blog wrapper */
+.blog-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Blog content = intro-like, dynamic */
+.blog-container .blog-content {
+    max-width: 760px;
+    font-size: clamp(1.05rem, 1.1vw, 1.15rem);
+    line-height: 1.7;
+    color: #4f4f4f;
+}
+
+/* Paragraph rhythm */
+.blog-container .blog-content p {
+    margin: 0 0 1.2rem 0;
+}
+
+/* First paragraph after heading */
+.blog-container .blog-content h2 + p,
+.blog-container .blog-content h3 + p {
+    margin-top: 0.4rem;
+}
+
+/* Section spacing */
+.blog-container .blog-content section {
+    margin-bottom: 2.4rem;
+}
+
+/* Headings inside blog */
+.blog-container .blog-content h2,
+.blog-container .blog-content h3 {
+    font-family: "Playfair Display", Georgia, serif;
+    font-weight: 700;
+    color: #1a1a1a;
+    line-height: 1.25;
+    margin-top: 2.2rem;
+    margin-bottom: 0.6rem;
+}
+
+/* Images */
+.blog-container .blog-content img {
+    display: block;
+    max-width: 100%;
+    margin: 2rem auto;
+    border-radius: 10px;
+}
+
+/* ===============================
+   LISTS
+================================ */
+.blog-container .blog-content ul {
+    padding-left: 1.3rem;
+    margin: 1rem 0 1.6rem;
+}
+
+.blog-container .blog-content li {
+    line-height: 1.65;
+    margin-bottom: 0.45rem;
+    word-break: break-word;
+}
+
+/* ===============================
+   TIP / FIX BLOCK
+================================ */
+.blog-container .tip-box,
+.blog-container .blog-tip {
+    background: #f8f9fa;
+    border-left: 4px solid #111;
+    padding: 1.2rem 1.4rem;
+    border-radius: 6px;
+    margin: 2.2rem 0;
+}
+
+.blog-container .tip-box strong,
+.blog-container .blog-tip strong {
+    display: block;
+    margin-bottom: 0.6rem;
+    font-weight: 600;
+    color: #111;
+}
+
+/* ===============================
+   ADMIN CARDS (UNCHANGED)
+================================ */
+.card {
+    border: 1px solid #eee;
+    border-radius: 8px;
+}
+
+.card-body {
+    padding: 1.1rem;
+}
+
+/* ===============================
+   FOOTER (UNCHANGED)
+================================ */
+footer {
+    color: #6b6b6b;
+    font-size: 13px;
+}
+
+footer a {
+    color: #6b6b6b;
+}
+
+footer a:hover {
+    color: #111;
+    text-decoration: none;
+}
+
+/* ===============================
+   RESPONSIVE
+================================ */
+@media (max-width: 768px) {
+
+    .hero-title {
+        font-size: 2.2rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1.05rem;
+    }
+
+    .blog-container .blog-content {
+        font-size: 1rem;
+    }
+
+    .header-search {
+        width: 140px;
+    }
+
+    .category-link {
+        font-size: 11px;
+    }
+}
