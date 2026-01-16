@@ -22,7 +22,7 @@ public class PostServiceImpl implements PostService {
     }
 
     /* =====================================================
-       CREATE (ADMIN)
+       CREATE (ADMIN / AUTHOR)
     ===================================================== */
     @Override
     public Post createPost(
@@ -32,7 +32,8 @@ public class PostServiceImpl implements PostService {
             LanguageType language,
             String imageUrl,
             List<PostSection> sections,
-            boolean publish
+            boolean publish,
+            User currentUser
     ) {
 
         String baseSlug = SlugUtil.toSlug(title);
@@ -46,10 +47,9 @@ public class PostServiceImpl implements PostService {
                 .language(language)
                 .imageUrl(clean(imageUrl))
                 .published(publish)
-                .views(0)
-                .applauseCount(0)
-                .commentCount(0)
-                .createdAt(LocalDateTime.now())          // ✅ FIX
+                .createdBy(currentUser)
+                .authorName(currentUser.getName())
+                .createdAt(LocalDateTime.now())
                 .publishedAt(publish ? LocalDateTime.now() : null)
                 .sections(new ArrayList<>())
                 .build();
@@ -61,7 +61,7 @@ public class PostServiceImpl implements PostService {
             });
         }
 
-        return postRepository.save(post); // ✅ REQUIRED
+        return postRepository.save(post);
     }
 
     /* =====================================================
@@ -92,6 +92,115 @@ public class PostServiceImpl implements PostService {
     }
 
     /* =====================================================
+       DASHBOARD (ADMIN / AUTHOR)
+    ===================================================== */
+    @Override
+    @Transactional(readOnly = true)
+    public List<Post> getPostsForDashboard(User currentUser) {
+
+        if (currentUser.getRole() == Role.ADMIN) {
+            return postRepository.findAllByOrderByCreatedAtDesc();
+        }
+
+        return postRepository.findByCreatedByOrderByCreatedAtDesc(currentUser);
+    }
+
+    /* =====================================================
+       EDIT (ROLE SAFE)
+    ===================================================== */
+    @Override
+    @Transactional(readOnly = true)
+    public Post getPostForEdit(Long postId, User currentUser) {
+
+        if (currentUser.getRole() == Role.ADMIN) {
+            return postRepository.findForEditByAdmin(postId)
+                    .orElseThrow(() -> new RuntimeException("Post not found"));
+        }
+
+        return postRepository.findForEditByAuthor(postId, currentUser)
+                .orElseThrow(() -> new RuntimeException("Access denied"));
+    }
+
+    /* =====================================================
+       UPDATE (ROLE SAFE)
+    ===================================================== */
+    @Override
+    public Post updatePost(
+            Long postId,
+            String title,
+            String intro,
+            CategoryType category,
+            LanguageType language,
+            String imageUrl,
+            List<PostSection> sections,
+            boolean publish,
+            User currentUser
+    ) {
+
+        Post post = getPostForEdit(postId, currentUser);
+
+        post.setTitle(title.trim());
+        post.setIntro(clean(intro));
+        post.setCategory(category);
+        post.setLanguage(language);
+        post.setImageUrl(clean(imageUrl));
+        post.setPublished(publish);
+
+        if (publish && post.getPublishedAt() == null) {
+            post.setPublishedAt(LocalDateTime.now());
+        }
+        if (!publish) {
+            post.setPublishedAt(null);
+        }
+
+        post.getSections().clear();
+
+        if (sections != null) {
+            sections.forEach(section -> {
+                section.setPost(post);
+                post.getSections().add(section);
+            });
+        }
+
+        return postRepository.save(post);
+    }
+
+    /* =====================================================
+       DELETE (ROLE SAFE)
+    ===================================================== */
+    @Override
+    public void deletePost(Long postId, User currentUser) {
+
+        Post post = getPostForEdit(postId, currentUser);
+        postRepository.delete(post);
+    }
+
+    /* =====================================================
+       ✅ FIXED: TOGGLE PUBLISH STATUS
+    ===================================================== */
+    @Override
+    public void togglePublishStatus(
+            Long postId,
+            boolean publish,
+            User currentUser
+    ) {
+
+        Post post = getPostForEdit(postId, currentUser);
+
+        post.setPublished(publish);
+
+        if (publish) {
+            post.setPublishedAt(
+                    post.getPublishedAt() != null
+                            ? post.getPublishedAt()
+                            : LocalDateTime.now()
+            );
+        } else {
+            post.setPublishedAt(null);
+        }
+    }
+
+    /* =====================================================
        ENGAGEMENT
     ===================================================== */
     @Override
@@ -110,80 +219,6 @@ public class PostServiceImpl implements PostService {
     }
 
     /* =====================================================
-       ADMIN READ
-    ===================================================== */
-    @Override
-    @Transactional(readOnly = true)
-    public List<Post> getAllPostsForAdmin() {
-        return postRepository.findAllByOrderByCreatedAtDesc();
-    }
-
-    @Transactional(readOnly = true)
-    @Override
-    public Post getPostForEdit(String slug, LanguageType language) {
-        return postRepository.findForEdit(slug, language)
-                .orElseThrow(() -> new RuntimeException("Post not found"));
-    }
-
-    /* =====================================================
-       UPDATE (ADMIN)
-    ===================================================== */
-    @Override
-    public Post updatePost(
-            String slug,
-            String title,
-            String intro,
-            CategoryType category,
-            LanguageType language,
-            String imageUrl,
-            List<PostSection> sections,
-            boolean publish
-    ) {
-
-        Post post = postRepository
-                .findBySlugAndLanguage(slug, language)
-                .orElseThrow(() -> new RuntimeException("Post not found"));
-
-        post.setTitle(title.trim());
-        post.setIntro(clean(intro));
-        post.setCategory(category);
-        post.setLanguage(language);
-        post.setImageUrl(clean(imageUrl));
-        post.setPublished(publish);
-
-        if (publish && post.getPublishedAt() == null) {
-            post.setPublishedAt(LocalDateTime.now());
-        }
-        if (!publish) {
-            post.setPublishedAt(null);
-        }
-
-        // 🔥 Clear + reattach sections safely
-        post.getSections().clear();
-
-        if (sections != null) {
-            sections.forEach(section -> {
-                section.setPost(post);
-                post.getSections().add(section);
-            });
-        }
-
-        return postRepository.save(post); // ✅ FIXED
-    }
-
-    /* =====================================================
-       DELETE
-    ===================================================== */
-    @Override
-    public void deletePost(String slug, LanguageType language) {
-        Post post = postRepository
-                .findBySlugAndLanguage(slug, language)
-                .orElseThrow(() -> new RuntimeException("Post not found"));
-
-        postRepository.delete(post);
-    }
-
-    /* =====================================================
        HELPERS
     ===================================================== */
     private String clean(String v) {
@@ -199,31 +234,4 @@ public class PostServiceImpl implements PostService {
         }
         return slug;
     }
-
-    @Override
-    @Transactional
-    public void togglePublishStatus(
-            String slug,
-            LanguageType language,
-            boolean publish
-    ) {
-
-        Post post = postRepository
-                .findBySlugAndLanguage(slug, language)
-                .orElseThrow(() -> new RuntimeException("Post not found"));
-
-        post.setPublished(publish);
-
-        if (publish) {
-            post.setPublishedAt(
-                    post.getPublishedAt() != null
-                            ? post.getPublishedAt()
-                            : LocalDateTime.now()
-            );
-        } else {
-            post.setPublishedAt(null);
-        }
-    }
-
-
 }

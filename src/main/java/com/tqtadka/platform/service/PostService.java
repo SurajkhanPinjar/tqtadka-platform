@@ -7,20 +7,16 @@ import java.util.List;
 public interface PostService {
 
     /* =====================================================
-       CREATE (ADMIN)
+       CREATE
     ===================================================== */
 
     /**
-     * Create a new post with sections.
+     * Create a new post.
      *
-     * 🔒 RULE:
-     * - Slug MUST be generated internally from title
-     * - Slug MUST be unique across language
-     * - Slug MUST NOT be null
-     *
-     * MUST persist:
-     * - Post
-     * - PostSection(s)
+     * RULES:
+     * - Slug generated internally
+     * - Slug unique per language
+     * - createdBy must be set
      */
     Post createPost(
             String title,
@@ -29,38 +25,28 @@ public interface PostService {
             LanguageType language,
             String imageUrl,
             List<PostSection> sections,
-            boolean publish
+            boolean publish,
+            User currentUser
     );
 
     /* =====================================================
-       PUBLIC READ (USER)
+       PUBLIC READ
     ===================================================== */
 
-    /**
-     * Latest published posts by language
-     */
     List<Post> getPublishedPosts(LanguageType language);
 
-    /**
-     * Category page posts
-     */
     List<Post> getPostsByCategory(
             CategoryType category,
             LanguageType language
     );
 
-    /**
-     * Fetch ONE published post by slug + language
-     *
-     * ❌ slug must never be null
-     */
     Post getPublishedPost(
             String slug,
             LanguageType language
     );
 
     /* =====================================================
-       ENGAGEMENT (USER ACTIONS)
+       ENGAGEMENT
     ===================================================== */
 
     void incrementViews(String slug, LanguageType language);
@@ -70,46 +56,45 @@ public interface PostService {
     void incrementCommentCount(String slug, LanguageType language);
 
     /* =====================================================
-       ADMIN READ
+       DASHBOARD (ADMIN / AUTHOR)
     ===================================================== */
 
-    List<Post> getAllPostsForAdmin();
-
     /**
-     * Fetch post for edit (published or draft)
+     * Admin → all posts
+     * Author → only own posts
      */
-    Post getPostForEdit(String slug, LanguageType language);
+    List<Post> getPostsForDashboard(User currentUser);
 
     /* =====================================================
-       UPDATE (ADMIN)
+       ADMIN / AUTHOR EDIT
     ===================================================== */
 
     /**
-     * Update existing post.
-     *
-     * 🔒 RULE:
-     * - Slug must NEVER change once created
+     * Secure edit fetch
      */
+    Post getPostForEdit(Long postId, User currentUser);
+
     Post updatePost(
-            String slug,
+            Long postId,
             String title,
             String intro,
             CategoryType category,
             LanguageType language,
             String imageUrl,
             List<PostSection> sections,
-            boolean publish
+            boolean publish,
+            User currentUser
     );
 
     /* =====================================================
        DELETE
     ===================================================== */
 
-    void deletePost(String slug, LanguageType language);
+    void deletePost(Long postId, User currentUser);
 
     void togglePublishStatus(
-            String slug,
-            LanguageType language,
-            boolean publish
+            Long postId,
+            boolean publish,
+            User currentUser
     );
 }

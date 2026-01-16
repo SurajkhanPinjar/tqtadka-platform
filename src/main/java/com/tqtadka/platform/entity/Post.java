@@ -40,7 +40,6 @@ public class Post {
     @Column(length = 500)
     private String imageUrl;
 
-    // ✅ PostgreSQL-safe
     @Lob
     @Column(columnDefinition = "TEXT")
     private String intro;
@@ -78,7 +77,15 @@ public class Post {
     private long commentCount = 0;
 
     /* =========================
-       AUTHOR INFO
+       🔐 AUTHOR (CRITICAL FIX)
+    ========================= */
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "created_by", nullable = false)
+    private User createdBy;
+
+    /* =========================
+       OPTIONAL DISPLAY NAME
+       (NOT FOR SECURITY)
     ========================= */
     @Column(length = 120)
     private String authorName;
@@ -99,7 +106,7 @@ public class Post {
     }
 
     /* =========================
-       🟢 POST SECTIONS
+       POST SECTIONS
     ========================= */
     @Builder.Default
     @OneToMany(

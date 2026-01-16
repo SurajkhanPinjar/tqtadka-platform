@@ -25,12 +25,24 @@ public class AdminPostController {
     }
 
     /* ============================
-       LIST POSTS
+       LIST POSTS (ADMIN / AUTHOR)
     ============================ */
     @GetMapping
-    public String listPosts(HttpServletRequest request, Model model) {
-        model.addAttribute("posts", postService.getAllPostsForAdmin());
+    public String listPosts(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            HttpServletRequest request,
+            Model model
+    ) {
+        requireAuth(userDetails);
+
+        User currentUser = userDetails.getUser();
+
+        model.addAttribute(
+                "posts",
+                postService.getPostsForDashboard(currentUser)
+        );
         model.addAttribute("currentPath", request.getRequestURI());
+
         return "admin/posts";
     }
 
@@ -77,6 +89,8 @@ public class AdminPostController {
     ) {
         requireAuth(userDetails);
 
+        User currentUser = userDetails.getUser();
+
         PostSection section = buildSection(
                 sectionContent,
                 bulletTitle,
@@ -92,52 +106,50 @@ public class AdminPostController {
                 language,
                 clean(imageUrl),
                 List.of(section),
-                Boolean.TRUE.equals(publish)
+                Boolean.TRUE.equals(publish),
+                currentUser
         );
 
         return "redirect:/admin/posts";
     }
 
     /* ============================
-       EDIT PAGE
+       EDIT PAGE (SECURE)
     ============================ */
-    @GetMapping("/edit/{slug}/{language}")
+    @GetMapping("/edit/{postId}")
     public String editPost(
-            @PathVariable String slug,
-            @PathVariable LanguageType language,
+            @PathVariable Long postId,
             @AuthenticationPrincipal CustomUserDetails userDetails,
             Model model
     ) {
         requireAuth(userDetails);
 
-        User user = userDetails.getUser();
-        Post post = postService.getPostForEdit(slug, language);
+        User currentUser = userDetails.getUser();
 
-        if (user.getRole() != Role.ADMIN &&
-                !user.getAllowedCategories().contains(post.getCategory())) {
-            throw new AccessDeniedException("Edit not allowed");
-        }
+        Post post = postService.getPostForEdit(postId, currentUser);
 
         model.addAttribute("post", post);
-        model.addAttribute("categories",
-                user.getRole() == Role.ADMIN
+        model.addAttribute(
+                "categories",
+                currentUser.getRole() == Role.ADMIN
                         ? EnumSet.allOf(CategoryType.class)
-                        : user.getAllowedCategories());
+                        : currentUser.getAllowedCategories()
+        );
 
         return "admin/edit-post";
     }
 
     /* ============================
-       UPDATE POST ✅ FIXED
+       UPDATE POST
     ============================ */
     @PostMapping("/update")
     public String updatePost(
             @AuthenticationPrincipal CustomUserDetails userDetails,
-            @RequestParam String slug,
-            @RequestParam LanguageType language,
+            @RequestParam Long postId,
             @RequestParam String title,
             @RequestParam(required = false) String intro,
             @RequestParam CategoryType category,
+            @RequestParam LanguageType language,
             @RequestParam(required = false) String imageUrl,
             @RequestParam String sectionContent,
             @RequestParam(required = false) String bulletTitle,
@@ -148,6 +160,8 @@ public class AdminPostController {
     ) {
         requireAuth(userDetails);
 
+        User currentUser = userDetails.getUser();
+
         PostSection section = buildSection(
                 sectionContent,
                 bulletTitle,
@@ -157,35 +171,15 @@ public class AdminPostController {
         );
 
         postService.updatePost(
-                slug,
+                postId,
                 title.trim(),
                 clean(intro),
                 category,
                 language,
                 clean(imageUrl),
                 List.of(section),
-                Boolean.TRUE.equals(publish)
-        );
-
-        return "redirect:/admin/posts";
-    }
-
-    /* ============================
-       TOGGLE PUBLISH STATUS
-    ============================ */
-    @PostMapping("/toggle-status")
-    public String togglePostStatus(
-            @AuthenticationPrincipal CustomUserDetails userDetails,
-            @RequestParam String slug,
-            @RequestParam LanguageType language,
-            @RequestParam Boolean publish
-    ) {
-        requireAuth(userDetails);
-
-        postService.togglePublishStatus(
-                slug,
-                language,
-                Boolean.TRUE.equals(publish)
+                Boolean.TRUE.equals(publish),
+                currentUser
         );
 
         return "redirect:/admin/posts";
@@ -197,12 +191,11 @@ public class AdminPostController {
     @PostMapping("/delete")
     public String deletePost(
             @AuthenticationPrincipal CustomUserDetails userDetails,
-            @RequestParam String slug,
-            @RequestParam LanguageType language
+            @RequestParam Long postId
     ) {
         requireAuth(userDetails);
 
-        postService.deletePost(slug, language);
+        postService.deletePost(postId, userDetails.getUser());
         return "redirect:/admin/posts";
     }
 

@@ -25,6 +25,7 @@ public class SecurityConfig {
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
+                /* ================= AUTHZ ================= */
                 .authorizeHttpRequests(auth -> auth
 
                         /* ---------- PUBLIC ---------- */
@@ -39,36 +40,48 @@ public class SecurityConfig {
                                 "/webjars/**"
                         ).permitAll()
 
-                        /* ---------- ADMIN & AUTHOR ---------- */
-                        .requestMatchers("/admin/**")
-                        .hasAnyRole("ADMIN", "AUTHOR")
+                        /* ---------- ADMIN ONLY ---------- */
+                        .requestMatchers(
+                                "/admin/users/**",
+                                "/admin/dashboard/**"
+                        ).hasRole("ADMIN")
+
+                        /* ---------- ADMIN + AUTHOR ---------- */
+                        .requestMatchers(
+                                "/admin/posts/**"
+                        ).hasAnyRole("ADMIN", "AUTHOR")
 
                         /* ---------- EVERYTHING ELSE ---------- */
                         .anyRequest().permitAll()
                 )
 
+                /* ================= LOGIN ================= */
                 .formLogin(form -> form
                         .loginPage("/en/login")
                         .loginProcessingUrl("/login")
                         .usernameParameter("email")
                         .passwordParameter("password")
-
-                        // After login → admin area
                         .defaultSuccessUrl("/admin/posts", true)
-
                         .failureUrl("/en/login?error")
                 )
 
+                /* ================= LOGOUT ================= */
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/")
                         .invalidateHttpSession(true)
                         .clearAuthentication(true)
+                )
+
+                /* ================= ERROR ================= */
+                .exceptionHandling(ex -> ex
+                        .accessDeniedPage("/403")
                 );
 
         return http.build();
     }
 
+    /* ================= AUTH MANAGER ================= */
     @Bean
     public AuthenticationManager authenticationManager(
             HttpSecurity http,
@@ -85,6 +98,7 @@ public class SecurityConfig {
         return builder.build();
     }
 
+    /* ================= PASSWORD ================= */
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

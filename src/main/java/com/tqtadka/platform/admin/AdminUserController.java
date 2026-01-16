@@ -44,7 +44,7 @@ public class AdminUserController {
         model.addAttribute("pageTitle", "Create User");
         model.addAttribute("content", "admin/users/user-create :: content");
 
-        return "admin/layout";
+        return "admin/users/user-create";
     }
 
     /* =======================
@@ -68,7 +68,6 @@ public class AdminUserController {
     ) {
         User user = adminUserService.getUserForEdit(id);
 
-        // ✅ MAP ENTITY → UPDATE DTO
         AdminUserUpdateRequest updateRequest = new AdminUserUpdateRequest();
         updateRequest.setId(user.getId());
         updateRequest.setName(user.getName());

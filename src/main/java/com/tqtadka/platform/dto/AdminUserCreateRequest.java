@@ -4,6 +4,7 @@ import com.tqtadka.platform.entity.CategoryType;
 import com.tqtadka.platform.entity.Role;
 import lombok.Data;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -13,7 +14,7 @@ public class AdminUserCreateRequest {
     private String email;
     private String password;
     private Role role;
-    private Set<CategoryType> allowedCategories;
+    private Set<CategoryType> allowedCategories = new HashSet<>();
 
     // getters & setters
 }
