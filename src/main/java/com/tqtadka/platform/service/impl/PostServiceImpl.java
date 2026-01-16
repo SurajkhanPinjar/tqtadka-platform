@@ -170,7 +170,6 @@ public class PostServiceImpl implements PostService {
     ===================================================== */
     @Override
     public void deletePost(Long postId, User currentUser) {
-
         Post post = getPostForEdit(postId, currentUser);
         postRepository.delete(post);
     }
@@ -179,11 +178,7 @@ public class PostServiceImpl implements PostService {
        ✅ FIXED: TOGGLE PUBLISH STATUS
     ===================================================== */
     @Override
-    public void togglePublishStatus(
-            Long postId,
-            boolean publish,
-            User currentUser
-    ) {
+    public void togglePublishStatus(Long postId, boolean publish, User currentUser) {
 
         Post post = getPostForEdit(postId, currentUser);
 
@@ -199,7 +194,6 @@ public class PostServiceImpl implements PostService {
             post.setPublishedAt(null);
         }
     }
-
     /* =====================================================
        ENGAGEMENT
     ===================================================== */

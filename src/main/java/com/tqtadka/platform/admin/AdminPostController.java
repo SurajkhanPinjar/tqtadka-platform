@@ -125,12 +125,10 @@ public class AdminPostController {
         requireAuth(userDetails);
 
         User currentUser = userDetails.getUser();
-
         Post post = postService.getPostForEdit(postId, currentUser);
 
         model.addAttribute("post", post);
-        model.addAttribute(
-                "categories",
+        model.addAttribute("categories",
                 currentUser.getRole() == Role.ADMIN
                         ? EnumSet.allOf(CategoryType.class)
                         : currentUser.getAllowedCategories()
@@ -138,7 +136,6 @@ public class AdminPostController {
 
         return "admin/edit-post";
     }
-
     /* ============================
        UPDATE POST
     ============================ */
@@ -233,5 +230,24 @@ public class AdminPostController {
         return bullets.replace("\r", "")
                 .replaceAll("\n{2,}", "\n")
                 .trim();
+    }
+
+    @PostMapping("/toggle-status")
+    public String togglePostStatus(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestParam Long postId,
+            @RequestParam Boolean publish
+    ) {
+        if (userDetails == null) {
+            throw new AccessDeniedException("Not authenticated");
+        }
+
+        postService.togglePublishStatus(
+                postId,
+                publish,
+                userDetails.getUser()
+        );
+
+        return "redirect:/admin/posts";
     }
 }
