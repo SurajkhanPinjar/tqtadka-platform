@@ -1,9 +1,5 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<body>
-
 <div th:fragment="header"
+     xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
      th:with="lang=${lang != null ? lang : 'en'}">
 
     <!-- ================= TOP NAV ================= -->
@@ -105,6 +101,3 @@
     </div>
 
 </div>
-
-</body>
-</html>

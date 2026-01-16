@@ -26,21 +26,44 @@ public class SecurityConfig {
 
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/en/login", "/en/signup", "/login", "/css/**").permitAll()
-                        .requestMatchers("/admin/**").authenticated()
+
+                        /* ---------- PUBLIC ---------- */
+                        .requestMatchers(
+                                "/",
+                                "/en/login",
+                                "/en/signup",
+                                "/login",
+                                "/css/**",
+                                "/js/**",
+                                "/images/**",
+                                "/webjars/**"
+                        ).permitAll()
+
+                        /* ---------- ADMIN & AUTHOR ---------- */
+                        .requestMatchers("/admin/**")
+                        .hasAnyRole("ADMIN", "AUTHOR")
+
+                        /* ---------- EVERYTHING ELSE ---------- */
                         .anyRequest().permitAll()
                 )
+
                 .formLogin(form -> form
                         .loginPage("/en/login")
                         .loginProcessingUrl("/login")
                         .usernameParameter("email")
                         .passwordParameter("password")
+
+                        // After login → admin area
                         .defaultSuccessUrl("/admin/posts", true)
+
                         .failureUrl("/en/login?error")
                 )
+
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/")
+                        .invalidateHttpSession(true)
+                        .clearAuthentication(true)
                 );
 
         return http.build();
@@ -49,8 +72,7 @@ public class SecurityConfig {
     @Bean
     public AuthenticationManager authenticationManager(
             HttpSecurity http,
-            PasswordEncoder passwordEncoder,
-            CustomUserDetailsService customUserDetailsService
+            PasswordEncoder passwordEncoder
     ) throws Exception {
 
         AuthenticationManagerBuilder builder =

@@ -24,7 +24,7 @@
 
         <a th:href="@{/admin/posts/create}"
            class="nav-link mb-2"
-           th:classappend="${currentPath.contains('/create')} ? 'active fw-bold' : ''">
+           th:classappend="${currentPath == '/admin/posts/create'} ? 'active fw-bold' : ''">
             ✍️ Create Post
         </a>
 

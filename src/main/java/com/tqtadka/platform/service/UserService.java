@@ -12,28 +12,49 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository,
-                       PasswordEncoder passwordEncoder) {
+    public UserService(
+            UserRepository userRepository,
+            PasswordEncoder passwordEncoder
+    ) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
+    /* =========================
+       PUBLIC REGISTRATION
+       (AUTHOR only)
+    ========================= */
     public void register(String name, String email, String rawPassword) {
 
         if (userRepository.findByEmail(email).isPresent()) {
-            throw new RuntimeException("Email already exists");
+            throw new IllegalArgumentException("Email already exists");
         }
 
         User user = User.builder()
                 .name(name.trim())
-                .email(email.toLowerCase())
+                .email(email.trim().toLowerCase())
                 .password(passwordEncoder.encode(rawPassword))
                 .role(Role.AUTHOR)   // default role
                 .enabled(true)
                 .build();
 
         userRepository.save(user);
+    }
 
-        userRepository.save(user);
+    /* =========================
+       COMMON UTIL METHODS
+    ========================= */
+    public User getById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+    }
+
+    public User getByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+    }
+
+    public Iterable<User> getAllUsers() {
+        return userRepository.findAll();
     }
 }
