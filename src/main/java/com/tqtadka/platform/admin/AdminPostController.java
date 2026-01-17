@@ -89,10 +89,12 @@ public class AdminPostController {
             @RequestParam(required = false) String tipTitle,
             @RequestParam(required = false) String tipContent,
 
-            // ✅ AI PROMPT ONLY (NEW – NO REGRESSION)
+            // ✅ AI PROMPT META ONLY
             @RequestParam(required = false) AiPostMode aiPostMode,
-            @RequestParam(required = false, name = "promptNames") List<String> promptNames,
-            @RequestParam(required = false, name = "promptTexts") List<String> promptTexts,
+            @RequestParam(required = false, name = "promptNames") String[] promptNames,
+
+            // 🔥 RAW REQUEST (IMPORTANT)
+            HttpServletRequest request,
 
             @RequestParam(required = false) Boolean publish
     ) {
@@ -112,7 +114,20 @@ public class AdminPostController {
         );
 
     /* =========================
-       CALL SERVICE (EXACT MATCH)
+       🔥 SAFE PROMPT TEXT EXTRACTION
+    ========================= */
+        String[] rawPromptTexts = request.getParameterValues("promptTexts");
+
+        List<String> promptTextList =
+                rawPromptTexts == null
+                        ? List.of()
+                        : List.of(rawPromptTexts).stream()
+                        .map(String::trim)
+                        .filter(s -> !s.isEmpty())
+                        .toList();
+
+    /* =========================
+       CALL SERVICE (SAFE)
     ========================= */
         postService.createPost(
                 title.trim(),
@@ -123,9 +138,9 @@ public class AdminPostController {
                 List.of(section),
                 Boolean.TRUE.equals(publish),
                 currentUser,
-                aiPostMode,      // ✅ AI MODE (NULL FOR NORMAL POSTS)
-                promptNames,     // ✅ ONLY USED WHEN aiPostMode == PROMPT
-                promptTexts      // ✅ ONLY USED WHEN aiPostMode == PROMPT
+                aiPostMode,                  // ✅ OK
+                promptNames,                 // ✅ names are safe
+                promptTextList.toArray(new String[0]) // ✅ NO COMMA SPLIT
         );
 
         return "redirect:/admin/posts";
@@ -154,9 +169,6 @@ public class AdminPostController {
 
         return "admin/edit-post";
     }
-    /* ============================
-       UPDATE POST
-    ============================ */
     @PostMapping("/update/{postId}")
     public String updatePost(
             @PathVariable Long postId,
@@ -168,17 +180,19 @@ public class AdminPostController {
             @RequestParam LanguageType language,
             @RequestParam(required = false) String imageUrl,
 
-            // SECTION CONTENT (UNCHANGED)
+            // SECTION CONTENT
             @RequestParam String sectionContent,
             @RequestParam(required = false) String bulletTitle,
             @RequestParam(required = false) String bullets,
             @RequestParam(required = false) String tipTitle,
             @RequestParam(required = false) String tipContent,
 
-            // ✅ AI PROMPT FIELDS (ONLY ADDITION)
+            // ✅ AI PROMPT META ONLY
             @RequestParam(required = false) AiPostMode aiPostMode,
-            @RequestParam(required = false, name = "promptNames") List<String> promptNames,
-            @RequestParam(required = false, name = "promptTexts") List<String> promptTexts,
+            @RequestParam(required = false, name = "promptNames") String[] promptNames,
+
+            // 🔥 RAW REQUEST (IMPORTANT)
+            HttpServletRequest request,
 
             @RequestParam(required = false) Boolean publish
     ) {
@@ -198,7 +212,20 @@ public class AdminPostController {
         );
 
     /* =========================
-       SERVICE CALL (EXACT MATCH)
+       🔥 SAFE PROMPT TEXT EXTRACTION
+    ========================= */
+        String[] rawPromptTexts = request.getParameterValues("promptTexts");
+
+        List<String> promptTextList =
+                rawPromptTexts == null
+                        ? List.of()
+                        : List.of(rawPromptTexts).stream()
+                        .map(String::trim)
+                        .filter(s -> !s.isEmpty())
+                        .toList();
+
+    /* =========================
+       SERVICE CALL (SAFE)
     ========================= */
         postService.updatePost(
                 postId,
@@ -210,9 +237,9 @@ public class AdminPostController {
                 List.of(section),
                 Boolean.TRUE.equals(publish),
                 currentUser,
-                aiPostMode,     // ✅ NULL for normal posts
-                promptNames,    // ✅ used only for PROMPT
-                promptTexts     // ✅ used only for PROMPT
+                aiPostMode,
+                promptNames,
+                promptTextList.toArray(new String[0]) // ✅ NO COMMA SPLIT
         );
 
         return "redirect:/admin/posts";

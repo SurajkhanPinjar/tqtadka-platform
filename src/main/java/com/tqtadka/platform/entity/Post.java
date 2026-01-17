@@ -117,7 +117,7 @@ public class Post {
             orphanRemoval = true,
             fetch = FetchType.LAZY
     )
-    private List<PostSection> sections = new ArrayList<>();
+    private Set<PostSection> sections = new HashSet<>();
 
     @Enumerated(EnumType.STRING)
     @Column(name = "ai_post_mode")

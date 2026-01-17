@@ -176,7 +176,7 @@ body {
 }
 
 /* ===============================
-   PREMIUM CARD MOTION (120Hz)
+   PREMIUM CARD MOTION (SAFE)
 ================================ */
 
 .card {
@@ -189,24 +189,22 @@ body {
     transition:
         transform 180ms cubic-bezier(.2,.8,.2,1),
         box-shadow 180ms cubic-bezier(.2,.8,.2,1);
-
-    cursor: pointer;
 }
 
+/* Hover polish */
 .card:hover {
     transform: translateY(-4px) scale(1.01);
-    box-shadow:
-        0 12px 30px rgba(0,0,0,0.08);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.08);
 }
 
 .card:active {
     transform: translateY(-1px) scale(0.995);
-    box-shadow:
-        0 6px 16px rgba(0,0,0,0.06);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.06);
 }
 
-/* Ensure content never blocks click */
-.card * {
+/* IMPORTANT: only block pseudo overlays, NOT content */
+.card::before,
+.card::after {
     pointer-events: none;
 }
 
@@ -271,7 +269,6 @@ footer a:hover {
 /* ===============================
    INSTANT TAP RESPONSE
 ================================ */
-
 a, button {
     touch-action: manipulation;
     transition:
@@ -288,7 +285,6 @@ button:active {
 /* ===============================
    NAV MICRO-INTERACTIONS
 ================================ */
-
 .category-link {
     position: relative;
     transition: color 120ms ease;
@@ -315,7 +311,6 @@ button:active {
 /* ===============================
    IMAGE SMOOTH LOADING
 ================================ */
-
 img {
     image-rendering: -webkit-optimize-contrast;
     transform: translateZ(0);
@@ -327,4 +322,42 @@ img {
 
 .card:hover img {
     transform: scale(1.04);
+}
+
+/* =========================
+   AI PROMPT CARD (FINAL FIX)
+========================= */
+
+.ai-prompt-card {
+    position: relative;
+    z-index: 2;
+}
+
+/* Ensure ALL interactions work */
+.ai-prompt-card *,
+.ai-prompt-card button,
+.ai-prompt-card pre {
+    pointer-events: auto;
+}
+
+/* Allow text selection */
+.ai-prompt-card pre {
+    user-select: text;
+    white-space: pre-wrap;
+}
+
+/* Gentle hover */
+.ai-prompt-card:hover {
+    transform: translateY(-2px);
+}
+
+.ai-prompt-textarea {
+    white-space: pre-wrap;
+    resize: vertical;
+}
+
+.ai-prompt-textarea {
+    white-space: pre-wrap;
+    word-break: break-word;
+    resize: vertical;
 }

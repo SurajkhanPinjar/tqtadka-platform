@@ -136,4 +136,18 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             @Param("slug") String slug,
             @Param("language") LanguageType language
     );
+
+    @Query("""
+    SELECT DISTINCT p
+    FROM Post p
+    LEFT JOIN FETCH p.sections
+    LEFT JOIN FETCH p.aiPrompts
+    WHERE p.slug = :slug
+      AND p.language = :language
+      AND p.published = true
+""")
+    Optional<Post> findPublishedPostWithSectionsAndPrompts(
+            @Param("slug") String slug,
+            @Param("language") LanguageType language
+    );
 }

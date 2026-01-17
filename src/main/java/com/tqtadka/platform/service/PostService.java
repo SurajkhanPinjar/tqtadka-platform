@@ -28,8 +28,8 @@ public interface PostService {
             boolean publish,
             User currentUser,
             AiPostMode aiPostMode,
-            List<String> promptNames,
-            List<String> promptTexts
+            String[] promptNames,
+            String[] promptTexts
     );
 
     /* =====================================================
@@ -88,8 +88,8 @@ public interface PostService {
             boolean publish,
             User currentUser,
             AiPostMode aiPostMode,
-            List<String> promptNames,
-            List<String> promptTexts
+            String[] promptNames,
+            String[] promptTexts
     );
 
     /* =====================================================

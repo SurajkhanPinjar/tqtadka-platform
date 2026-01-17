@@ -23,83 +23,6 @@ public class PostServiceImpl implements PostService {
     }
 
     /* =====================================================
-       CREATE (ADMIN / AUTHOR)
-    ===================================================== */
-    @Override
-    public Post createPost(
-            String title,
-            String intro,
-            CategoryType category,
-            LanguageType language,
-            String imageUrl,
-            List<PostSection> sections,
-            boolean publish,
-            User currentUser,
-            AiPostMode aiPostMode,
-            List<String> promptNames,
-            List<String> promptTexts
-    ) {
-
-        String baseSlug = SlugUtil.toSlug(title);
-        String slug = generateUniqueSlug(baseSlug, language);
-
-        Post post = Post.builder()
-                .title(title.trim())
-                .slug(slug)
-                .intro(clean(intro))
-                .category(category)
-                .language(language)
-                .imageUrl(clean(imageUrl))
-                .published(publish)
-                .createdBy(currentUser)
-                .authorName(currentUser.getName())
-                .createdAt(LocalDateTime.now())
-                .publishedAt(publish ? LocalDateTime.now() : null)
-                .sections(new ArrayList<>())
-                .aiPrompts(new HashSet<>())
-                .aiPostMode(
-                        category == CategoryType.AI
-                                ? (aiPostMode != null ? aiPostMode : AiPostMode.BLOG)
-                                : null
-                )
-                .build();
-
-        /* ---------- Sections (UNCHANGED) ---------- */
-        if (sections != null) {
-            sections.forEach(section -> {
-                section.setPost(post);
-                post.getSections().add(section);
-            });
-        }
-
-        /* ---------- AI PROMPTS (SAFE & ISOLATED) ---------- */
-        if (category == CategoryType.AI
-                && post.getAiPostMode() == AiPostMode.PROMPT
-                && promptNames != null
-                && promptTexts != null) {
-
-            for (int i = 0; i < promptNames.size(); i++) {
-
-                String name = clean(promptNames.get(i));
-                String text = clean(promptTexts.get(i));
-
-                if (name == null || text == null) continue;
-
-                AiPrompt prompt = AiPrompt.builder()
-                        .name(name)
-                        .promptText(text)
-                        .position(i + 1)
-                        .post(post)
-                        .build();
-
-                post.getAiPrompts().add(prompt);
-            }
-        }
-
-        return postRepository.save(post);
-    }
-
-    /* =====================================================
        PUBLIC READ
     ===================================================== */
     @Override
@@ -122,7 +45,7 @@ public class PostServiceImpl implements PostService {
     @Transactional(readOnly = true)
     public Post getPublishedPost(String slug, LanguageType language) {
         return postRepository
-                .findPublishedPostWithSections(slug, language)
+                .findPublishedPostWithSectionsAndPrompts(slug, language)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
     }
 
@@ -156,86 +79,6 @@ public class PostServiceImpl implements PostService {
                 .orElseThrow(() -> new RuntimeException("Access denied"));
     }
 
-    /* =====================================================
-       UPDATE (ROLE SAFE)
-    ===================================================== */
-    @Override
-    public Post updatePost(
-            Long postId,
-            String title,
-            String intro,
-            CategoryType category,
-            LanguageType language,
-            String imageUrl,
-            List<PostSection> sections,
-            boolean publish,
-            User currentUser,
-            AiPostMode aiPostMode,
-            List<String> promptNames,
-            List<String> promptTexts
-    ) {
-
-        Post post = getPostForEdit(postId, currentUser);
-
-        post.setTitle(title.trim());
-        post.setIntro(clean(intro));
-        post.setCategory(category);
-        post.setLanguage(language);
-        post.setImageUrl(clean(imageUrl));
-        post.setPublished(publish);
-
-        if (publish && post.getPublishedAt() == null) {
-            post.setPublishedAt(LocalDateTime.now());
-        }
-        if (!publish) {
-            post.setPublishedAt(null);
-        }
-
-        /* ---------- Sections (UNCHANGED) ---------- */
-        post.getSections().clear();
-        if (sections != null) {
-            sections.forEach(section -> {
-                section.setPost(post);
-                post.getSections().add(section);
-            });
-        }
-
-        /* ---------- AI MODE ---------- */
-        if (category == CategoryType.AI) {
-            post.setAiPostMode(aiPostMode != null ? aiPostMode : AiPostMode.BLOG);
-        } else {
-            post.setAiPostMode(null);
-            post.getAiPrompts().clear();
-        }
-
-        /* ---------- AI PROMPTS ---------- */
-        post.getAiPrompts().clear();
-
-        if (category == CategoryType.AI
-                && post.getAiPostMode() == AiPostMode.PROMPT
-                && promptNames != null
-                && promptTexts != null) {
-
-            for (int i = 0; i < promptNames.size(); i++) {
-
-                String name = clean(promptNames.get(i));
-                String text = clean(promptTexts.get(i));
-
-                if (name == null || text == null) continue;
-
-                AiPrompt prompt = AiPrompt.builder()
-                        .name(name)
-                        .promptText(text)
-                        .position(i + 1)
-                        .post(post)
-                        .build();
-
-                post.getAiPrompts().add(prompt);
-            }
-        }
-
-        return postRepository.save(post);
-    }
     /* =====================================================
        DELETE (ROLE SAFE)
     ===================================================== */
@@ -281,6 +124,154 @@ public class PostServiceImpl implements PostService {
     @Override
     public void incrementCommentCount(String slug, LanguageType language) {
         postRepository.incrementCommentCount(slug, language);
+    }
+
+    /* =====================================================
+       CREATE
+    ===================================================== */
+    @Override
+    public Post createPost(
+            String title,
+            String intro,
+            CategoryType category,
+            LanguageType language,
+            String imageUrl,
+            List<PostSection> sections,
+            boolean publish,
+            User currentUser,
+            AiPostMode aiPostMode,
+            String[] promptNames,
+            String[] promptTexts
+    ) {
+
+        String baseSlug = SlugUtil.toSlug(title);
+        String slug = generateUniqueSlug(baseSlug, language);
+
+        Post post = Post.builder()
+                .title(title.trim())
+                .slug(slug)
+                .intro(clean(intro))
+                .category(category)
+                .language(language)
+                .imageUrl(clean(imageUrl))
+                .published(publish)
+                .createdBy(currentUser)
+                .authorName(currentUser.getName())
+                .createdAt(LocalDateTime.now())
+                .publishedAt(publish ? LocalDateTime.now() : null)
+                .sections(new HashSet<>())
+                .aiPrompts(new HashSet<>())
+                .aiPostMode(
+                        category == CategoryType.AI
+                                ? (aiPostMode != null ? aiPostMode : AiPostMode.BLOG)
+                                : null
+                )
+                .build();
+
+        attachSingleSection(post, sections);
+        attachAiPrompts(post, category, promptNames, promptTexts);
+
+        return postRepository.save(post);
+    }
+
+    /* =====================================================
+       UPDATE
+    ===================================================== */
+    @Override
+    public Post updatePost(
+            Long postId,
+            String title,
+            String intro,
+            CategoryType category,
+            LanguageType language,
+            String imageUrl,
+            List<PostSection> sections,
+            boolean publish,
+            User currentUser,
+            AiPostMode aiPostMode,
+            String[] promptNames,
+            String[] promptTexts
+    ) {
+
+        Post post = getPostForEdit(postId, currentUser);
+
+        post.setTitle(title.trim());
+        post.setIntro(clean(intro));
+        post.setCategory(category);
+        post.setLanguage(language);
+        post.setImageUrl(clean(imageUrl));
+        post.setPublished(publish);
+
+        post.setPublishedAt(
+                publish
+                        ? (post.getPublishedAt() != null ? post.getPublishedAt() : LocalDateTime.now())
+                        : null
+        );
+
+        post.setAiPostMode(
+                category == CategoryType.AI
+                        ? (aiPostMode != null ? aiPostMode : AiPostMode.BLOG)
+                        : null
+        );
+
+        post.getSections().clear();
+        post.getAiPrompts().clear();
+
+        attachSingleSection(post, sections);
+        attachAiPrompts(post, category, promptNames, promptTexts);
+
+        return postRepository.save(post);
+    }
+
+    /* =====================================================
+       🔥 SINGLE SECTION FIX (CORE FIX)
+    ===================================================== */
+    private void attachSingleSection(Post post, List<PostSection> sections) {
+        if (sections == null || sections.isEmpty()) return;
+
+        PostSection src = sections.get(0);
+
+        PostSection section = new PostSection();
+        section.setPost(post);
+        section.setContent(src.getContent());
+        section.setBulletTitle(src.getBulletTitle());
+        section.setBullets(src.getBullets());
+        section.setTipTitle(src.getTipTitle());
+        section.setTipContent(src.getTipContent());
+
+        post.getSections().add(section);
+    }
+
+    /* =====================================================
+       🔥 AI PROMPTS (NO COMMA SPLIT, SAFE)
+    ===================================================== */
+    private void attachAiPrompts(
+            Post post,
+            CategoryType category,
+            String[] promptNames,
+            String[] promptTexts
+    ) {
+        if (category != CategoryType.AI) return;
+        if (post.getAiPostMode() != AiPostMode.PROMPT) return;
+        if (promptNames == null || promptTexts == null) return;
+
+        int count = Math.min(promptNames.length, promptTexts.length);
+
+        for (int i = 0; i < count; i++) {
+            String name = clean(promptNames[i]);
+            String text = clean(promptTexts[i]);
+
+            if (name == null || text == null) continue;
+
+            AiPrompt prompt = AiPrompt.builder()
+                    .name(name)
+                    .promptText(text)
+                    .position(i + 1)
+                    .post(post)
+                    .build();
+
+            post.getAiPrompts().add(prompt);
+        }
     }
 
     /* =====================================================

@@ -239,32 +239,85 @@
         });
     });
 
-    function addPromptRow() {
-        const row = document.createElement('tr');
+function addPromptRow() {
+    const tbody = document.getElementById('promptTableBody');
 
-        row.innerHTML = `
-            <td>
-                <input class="form-control"
-                       name="promptNames"
-                       placeholder="Prompt name"
-                       required>
-            </td>
-            <td>
-                <textarea class="form-control"
-                          name="promptTexts"
-                          rows="3"
-                          placeholder="Enter AI prompt"
-                          required></textarea>
-            </td>
-            <td class="text-center">
-                <button type="button"
-                        class="btn btn-sm btn-danger"
-                        onclick="this.closest('tr').remove()">✕</button>
-            </td>
-        `;
+    const tr = document.createElement('tr');
 
-        document.getElementById('promptTableBody').appendChild(row);
+    // Prompt Name
+    const nameTd = document.createElement('td');
+    const nameInput = document.createElement('input');
+    nameInput.className = 'form-control';
+    nameInput.name = 'promptNames';
+    nameInput.placeholder = 'Prompt name';
+    nameInput.required = true;
+    nameTd.appendChild(nameInput);
+
+    // Prompt Text
+    const textTd = document.createElement('td');
+    const textarea = document.createElement('textarea');
+    textarea.className = 'form-control ai-prompt-textarea';
+    textarea.name = 'promptTexts';
+    textarea.rows = 4;
+    textarea.placeholder = 'Enter AI prompt (max 1000 characters)';
+    textarea.maxLength = 1000;
+    textarea.spellcheck = false;
+    textarea.wrap = 'soft';
+    textTd.appendChild(textarea);
+
+    // Remove Button
+    const actionTd = document.createElement('td');
+    actionTd.className = 'text-center';
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'btn btn-sm btn-danger';
+    btn.innerText = '✕';
+    btn.onclick = () => tr.remove();
+    actionTd.appendChild(btn);
+
+    tr.appendChild(nameTd);
+    tr.appendChild(textTd);
+    tr.appendChild(actionTd);
+
+    tbody.appendChild(tr);
+}
+
+        function handlePromptKeydown(e, textarea) {
+        const max = parseInt(textarea.dataset.maxChars || '1000');
+        const allowedKeys = [
+            'Backspace', 'Delete',
+            'ArrowLeft', 'ArrowRight',
+            'ArrowUp', 'ArrowDown',
+            'Control', 'Meta'
+        ];
+
+        if (allowedKeys.includes(e.key) || e.ctrlKey || e.metaKey) {
+            return;
+        }
+
+        if (textarea.value.length >= max) {
+            e.preventDefault();
+        }
     }
+
+    function updateCharCount(textarea) {
+        const counter =
+            textarea.parentElement.querySelector('.char-count');
+
+        if (counter) {
+            counter.innerText = textarea.value.length;
+        }
+
+        // auto-grow height
+        textarea.style.height = 'auto';
+        textarea.style.height = textarea.scrollHeight + 'px';
+    }
+
+    // Init counters if rows already exist
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.ai-prompt-textarea')
+            .forEach(t => updateCharCount(t));
+    });
 </script>
 
 </body>
