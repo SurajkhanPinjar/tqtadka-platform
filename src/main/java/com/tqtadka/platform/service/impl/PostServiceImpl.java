@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 @Service
@@ -33,7 +34,10 @@ public class PostServiceImpl implements PostService {
             String imageUrl,
             List<PostSection> sections,
             boolean publish,
-            User currentUser
+            User currentUser,
+            AiPostMode aiPostMode,
+            List<String> promptNames,
+            List<String> promptTexts
     ) {
 
         String baseSlug = SlugUtil.toSlug(title);
@@ -52,13 +56,44 @@ public class PostServiceImpl implements PostService {
                 .createdAt(LocalDateTime.now())
                 .publishedAt(publish ? LocalDateTime.now() : null)
                 .sections(new ArrayList<>())
+                .aiPrompts(new HashSet<>())
+                .aiPostMode(
+                        category == CategoryType.AI
+                                ? (aiPostMode != null ? aiPostMode : AiPostMode.BLOG)
+                                : null
+                )
                 .build();
 
+        /* ---------- Sections (UNCHANGED) ---------- */
         if (sections != null) {
             sections.forEach(section -> {
                 section.setPost(post);
                 post.getSections().add(section);
             });
+        }
+
+        /* ---------- AI PROMPTS (SAFE & ISOLATED) ---------- */
+        if (category == CategoryType.AI
+                && post.getAiPostMode() == AiPostMode.PROMPT
+                && promptNames != null
+                && promptTexts != null) {
+
+            for (int i = 0; i < promptNames.size(); i++) {
+
+                String name = clean(promptNames.get(i));
+                String text = clean(promptTexts.get(i));
+
+                if (name == null || text == null) continue;
+
+                AiPrompt prompt = AiPrompt.builder()
+                        .name(name)
+                        .promptText(text)
+                        .position(i + 1)
+                        .post(post)
+                        .build();
+
+                post.getAiPrompts().add(prompt);
+            }
         }
 
         return postRepository.save(post);
@@ -134,7 +169,10 @@ public class PostServiceImpl implements PostService {
             String imageUrl,
             List<PostSection> sections,
             boolean publish,
-            User currentUser
+            User currentUser,
+            AiPostMode aiPostMode,
+            List<String> promptNames,
+            List<String> promptTexts
     ) {
 
         Post post = getPostForEdit(postId, currentUser);
@@ -153,8 +191,8 @@ public class PostServiceImpl implements PostService {
             post.setPublishedAt(null);
         }
 
+        /* ---------- Sections (UNCHANGED) ---------- */
         post.getSections().clear();
-
         if (sections != null) {
             sections.forEach(section -> {
                 section.setPost(post);
@@ -162,9 +200,42 @@ public class PostServiceImpl implements PostService {
             });
         }
 
+        /* ---------- AI MODE ---------- */
+        if (category == CategoryType.AI) {
+            post.setAiPostMode(aiPostMode != null ? aiPostMode : AiPostMode.BLOG);
+        } else {
+            post.setAiPostMode(null);
+            post.getAiPrompts().clear();
+        }
+
+        /* ---------- AI PROMPTS ---------- */
+        post.getAiPrompts().clear();
+
+        if (category == CategoryType.AI
+                && post.getAiPostMode() == AiPostMode.PROMPT
+                && promptNames != null
+                && promptTexts != null) {
+
+            for (int i = 0; i < promptNames.size(); i++) {
+
+                String name = clean(promptNames.get(i));
+                String text = clean(promptTexts.get(i));
+
+                if (name == null || text == null) continue;
+
+                AiPrompt prompt = AiPrompt.builder()
+                        .name(name)
+                        .promptText(text)
+                        .position(i + 1)
+                        .post(post)
+                        .build();
+
+                post.getAiPrompts().add(prompt);
+            }
+        }
+
         return postRepository.save(post);
     }
-
     /* =====================================================
        DELETE (ROLE SAFE)
     ===================================================== */

@@ -22,19 +22,15 @@
 
 <body class="bg-light">
 
-<!-- HEADER -->
 <header th:replace="~{fragments/header :: header}"></header>
 
-<!-- 🔥 MAIN LAYOUT -->
 <div class="d-flex">
 
-    <!-- SIDEBAR -->
     <aside class="flex-shrink-0"
            sec:authorize="hasAnyRole('ADMIN','AUTHOR')">
         <div th:replace="~{fragments/admin-sidebar :: adminSidebar}"></div>
     </aside>
 
-    <!-- MAIN CONTENT -->
     <main class="flex-grow-1 p-4">
 
         <div class="mx-auto" style="max-width:760px;">
@@ -45,7 +41,6 @@
                   th:action="@{/admin/posts/create}"
                   id="postForm">
 
-                <!-- CSRF -->
                 <input type="hidden"
                        th:name="${_csrf.parameterName}"
                        th:value="${_csrf.token}"/>
@@ -64,13 +59,42 @@
                 </select>
 
                 <!-- CATEGORY -->
-                <select class="form-select mb-4" name="category" required>
+                <select class="form-select mb-3"
+                        name="category"
+                        id="categorySelect"
+                        required>
                     <option value="">Select Category</option>
                     <option th:each="cat : ${categories}"
                             th:value="${cat}"
                             th:text="${cat}">
                     </option>
                 </select>
+
+                <!-- ✅ AI MODE (ONLY FOR AI CATEGORY) -->
+                <div id="aiModeBox" class="mb-4" style="display:none;">
+                    <label class="form-label fw-semibold">AI Post Type</label>
+
+                    <div class="form-check">
+                        <input class="form-check-input"
+                               type="radio"
+                               name="aiPostMode"
+                               value="BLOG"
+                               checked>
+                        <label class="form-check-label">
+                            AI Blog / App / News
+                        </label>
+                    </div>
+
+                    <div class="form-check">
+                        <input class="form-check-input"
+                               type="radio"
+                               name="aiPostMode"
+                               value="PROMPT">
+                        <label class="form-check-label">
+                            AI Prompt
+                        </label>
+                    </div>
+                </div>
 
                 <!-- IMAGE -->
                 <input class="form-control mb-4"
@@ -90,6 +114,28 @@
                      style="height:300px;"></div>
 
                 <input type="hidden" name="sectionContent" id="sectionContent">
+
+                <!-- ✅ AI PROMPT TABLE -->
+                <div id="promptBox" style="display:none;">
+                    <h6 class="fw-bold mt-4">AI Prompts</h6>
+
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th style="width:200px">Prompt Name</th>
+                            <th>Prompt Text</th>
+                            <th style="width:60px"></th>
+                        </tr>
+                        </thead>
+                        <tbody id="promptTableBody"></tbody>
+                    </table>
+
+                    <button type="button"
+                            class="btn btn-outline-dark btn-sm"
+                            onclick="addPromptRow()">
+                        ➕ Add Prompt
+                    </button>
+                </div>
 
                 <!-- BULLETS -->
                 <input class="form-control mb-2"
@@ -162,9 +208,63 @@
             e.preventDefault();
             return;
         }
-
         document.getElementById('sectionContent').value = html;
     });
+
+    /* =========================
+       🔥 AI PROMPT LOGIC (SAFE)
+    ========================= */
+    const categorySelect = document.getElementById('categorySelect');
+    const aiModeBox = document.getElementById('aiModeBox');
+    const promptBox = document.getElementById('promptBox');
+
+    function handleCategoryChange() {
+        if (categorySelect.value === 'AI') {
+            aiModeBox.style.display = 'block';
+        } else {
+            aiModeBox.style.display = 'none';
+            promptBox.style.display = 'none';
+        }
+    }
+
+    categorySelect.addEventListener('change', handleCategoryChange);
+    handleCategoryChange();
+
+    document.querySelectorAll('[name="aiPostMode"]').forEach(radio => {
+        radio.addEventListener('change', () => {
+            promptBox.style.display =
+                radio.value === 'PROMPT' && radio.checked
+                    ? 'block'
+                    : 'none';
+        });
+    });
+
+    function addPromptRow() {
+        const row = document.createElement('tr');
+
+        row.innerHTML = `
+            <td>
+                <input class="form-control"
+                       name="promptNames"
+                       placeholder="Prompt name"
+                       required>
+            </td>
+            <td>
+                <textarea class="form-control"
+                          name="promptTexts"
+                          rows="3"
+                          placeholder="Enter AI prompt"
+                          required></textarea>
+            </td>
+            <td class="text-center">
+                <button type="button"
+                        class="btn btn-sm btn-danger"
+                        onclick="this.closest('tr').remove()">✕</button>
+            </td>
+        `;
+
+        document.getElementById('promptTableBody').appendChild(row);
+    }
 </script>
 
 </body>

@@ -26,7 +26,10 @@ public interface PostService {
             String imageUrl,
             List<PostSection> sections,
             boolean publish,
-            User currentUser
+            User currentUser,
+            AiPostMode aiPostMode,
+            List<String> promptNames,
+            List<String> promptTexts
     );
 
     /* =====================================================
@@ -83,7 +86,10 @@ public interface PostService {
             String imageUrl,
             List<PostSection> sections,
             boolean publish,
-            User currentUser
+            User currentUser,
+            AiPostMode aiPostMode,
+            List<String> promptNames,
+            List<String> promptTexts
     );
 
     /* =====================================================

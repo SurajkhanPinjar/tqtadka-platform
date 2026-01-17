@@ -56,13 +56,14 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             User createdBy
     );
 
+    @EntityGraph(attributePaths = "aiPrompts")
     @Query("""
-        select distinct p
-        from Post p
-        left join fetch p.sections
-        where p.id = :postId
-          and p.createdBy = :author
-    """)
+    select distinct p
+    from Post p
+    left join fetch p.sections
+    where p.id = :postId
+      and p.createdBy = :author
+""")
     Optional<Post> findForEditByAuthor(
             @Param("postId") Long postId,
             @Param("author") User author
@@ -71,15 +72,9 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     /* =====================================================
        ADMIN — EDIT ANY POST
        ===================================================== */
-    @Query("""
-        select distinct p
-        from Post p
-        left join fetch p.sections
-        where p.id = :postId
-    """)
-    Optional<Post> findForEditByAdmin(
-            @Param("postId") Long postId
-    );
+    @EntityGraph(attributePaths = {"sections", "aiPrompts"})
+    @Query("select p from Post p where p.id = :id")
+    Optional<Post> findForEditByAdmin(@Param("id") Long id);
 
     /* =====================================================
        UTIL
@@ -124,6 +119,20 @@ public interface PostRepository extends JpaRepository<Post, Long> {
           and p.language = :language
     """)
     void incrementCommentCount(
+            @Param("slug") String slug,
+            @Param("language") LanguageType language
+    );
+
+    @Query("""
+    select distinct p
+    from Post p
+    left join fetch p.sections
+    left join fetch p.aiPrompts
+    where p.slug = :slug
+      and p.language = :language
+      and p.published = true
+    """)
+    Optional<Post> findPublishedPostWithAllRelations(
             @Param("slug") String slug,
             @Param("language") LanguageType language
     );

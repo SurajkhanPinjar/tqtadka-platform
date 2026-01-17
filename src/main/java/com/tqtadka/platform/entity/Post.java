@@ -5,7 +5,9 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -116,4 +118,16 @@ public class Post {
             fetch = FetchType.LAZY
     )
     private List<PostSection> sections = new ArrayList<>();
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "ai_post_mode")
+    private AiPostMode aiPostMode; // null for non-AI category
+
+    @OneToMany(
+            mappedBy = "post",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY
+    )
+    private Set<AiPrompt> aiPrompts = new HashSet<>();
 }

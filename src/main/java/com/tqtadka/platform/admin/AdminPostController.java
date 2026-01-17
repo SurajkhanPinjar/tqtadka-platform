@@ -75,22 +75,34 @@ public class AdminPostController {
     @PostMapping("/create")
     public String createPost(
             @AuthenticationPrincipal CustomUserDetails userDetails,
+
             @RequestParam String title,
             @RequestParam(required = false) String intro,
             @RequestParam CategoryType category,
             @RequestParam LanguageType language,
             @RequestParam(required = false) String imageUrl,
+
+            // SECTION CONTENT
             @RequestParam String sectionContent,
             @RequestParam(required = false) String bulletTitle,
             @RequestParam(required = false) String bullets,
             @RequestParam(required = false) String tipTitle,
             @RequestParam(required = false) String tipContent,
+
+            // ✅ AI PROMPT ONLY (NEW – NO REGRESSION)
+            @RequestParam(required = false) AiPostMode aiPostMode,
+            @RequestParam(required = false, name = "promptNames") List<String> promptNames,
+            @RequestParam(required = false, name = "promptTexts") List<String> promptTexts,
+
             @RequestParam(required = false) Boolean publish
     ) {
         requireAuth(userDetails);
 
         User currentUser = userDetails.getUser();
 
+    /* =========================
+       BUILD SECTION (UNCHANGED)
+    ========================= */
         PostSection section = buildSection(
                 sectionContent,
                 bulletTitle,
@@ -99,6 +111,9 @@ public class AdminPostController {
                 tipContent
         );
 
+    /* =========================
+       CALL SERVICE (EXACT MATCH)
+    ========================= */
         postService.createPost(
                 title.trim(),
                 clean(intro),
@@ -107,7 +122,10 @@ public class AdminPostController {
                 clean(imageUrl),
                 List.of(section),
                 Boolean.TRUE.equals(publish),
-                currentUser
+                currentUser,
+                aiPostMode,      // ✅ AI MODE (NULL FOR NORMAL POSTS)
+                promptNames,     // ✅ ONLY USED WHEN aiPostMode == PROMPT
+                promptTexts      // ✅ ONLY USED WHEN aiPostMode == PROMPT
         );
 
         return "redirect:/admin/posts";
@@ -139,26 +157,38 @@ public class AdminPostController {
     /* ============================
        UPDATE POST
     ============================ */
-    @PostMapping("/update")
+    @PostMapping("/update/{postId}")
     public String updatePost(
+            @PathVariable Long postId,
             @AuthenticationPrincipal CustomUserDetails userDetails,
-            @RequestParam Long postId,
+
             @RequestParam String title,
             @RequestParam(required = false) String intro,
             @RequestParam CategoryType category,
             @RequestParam LanguageType language,
             @RequestParam(required = false) String imageUrl,
+
+            // SECTION CONTENT (UNCHANGED)
             @RequestParam String sectionContent,
             @RequestParam(required = false) String bulletTitle,
             @RequestParam(required = false) String bullets,
             @RequestParam(required = false) String tipTitle,
             @RequestParam(required = false) String tipContent,
+
+            // ✅ AI PROMPT FIELDS (ONLY ADDITION)
+            @RequestParam(required = false) AiPostMode aiPostMode,
+            @RequestParam(required = false, name = "promptNames") List<String> promptNames,
+            @RequestParam(required = false, name = "promptTexts") List<String> promptTexts,
+
             @RequestParam(required = false) Boolean publish
     ) {
         requireAuth(userDetails);
 
         User currentUser = userDetails.getUser();
 
+    /* =========================
+       BUILD SECTION (UNCHANGED)
+    ========================= */
         PostSection section = buildSection(
                 sectionContent,
                 bulletTitle,
@@ -167,6 +197,9 @@ public class AdminPostController {
                 tipContent
         );
 
+    /* =========================
+       SERVICE CALL (EXACT MATCH)
+    ========================= */
         postService.updatePost(
                 postId,
                 title.trim(),
@@ -176,7 +209,10 @@ public class AdminPostController {
                 clean(imageUrl),
                 List.of(section),
                 Boolean.TRUE.equals(publish),
-                currentUser
+                currentUser,
+                aiPostMode,     // ✅ NULL for normal posts
+                promptNames,    // ✅ used only for PROMPT
+                promptTexts     // ✅ used only for PROMPT
         );
 
         return "redirect:/admin/posts";
