@@ -1,52 +1,26 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<body>
-
 <footer th:fragment="footer"
         class="border-top mt-5 py-4">
 
-    <div class="container"
-         style="max-width: 1100px;">
-
-        <div class="d-flex flex-column gap-2 small"
-             style="color:#6b6b6b;">
+    <div class="container" style="max-width:1100px;">
+        <div class="d-flex flex-column gap-2 small text-muted">
 
             <div>
-                © 2026 <strong style="color:#222;">TQtadka</strong>
+                © 2026 <strong class="text-dark">TQtadka</strong>
             </div>
 
             <div class="d-flex gap-2 flex-wrap">
-                <a th:href="@{/{lang}/about(lang=${lang ?: 'en'})}"
-                   class="text-decoration-none"
-                   style="color:#6b6b6b;">
-                    About
-                </a>
+                <a th:href="@{/{lang}/about(lang=${lang ?: 'en'})}">About</a>
                 <span>·</span>
-
-                <a th:href="@{/{lang}/privacy(lang=${lang ?: 'en'})}"
-                   class="text-decoration-none"
-                   style="color:#6b6b6b;">
-                    Privacy
-                </a>
+                <a th:href="@{/{lang}/privacy(lang=${lang ?: 'en'})}">Privacy</a>
                 <span>·</span>
-
-                <a th:href="@{/{lang}/contact(lang=${lang ?: 'en'})}"
-                   class="text-decoration-none"
-                   style="color:#6b6b6b;">
-                    Contact
-                </a>
+                <a th:href="@{/{lang}/contact(lang=${lang ?: 'en'})}">Contact</a>
             </div>
 
         </div>
-
     </div>
-
 </footer>
 
-<!-- ================= 120Hz TOUCH OPTIMIZATION ================= -->
 <script>
-    document.addEventListener("touchstart", function () {}, { passive: true });
+    // 🔥 Touch latency elimination (SAFE)
+    document.addEventListener("touchstart", () => {}, { passive: true });
 </script>
-
-</body>
-</html>

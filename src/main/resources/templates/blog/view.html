@@ -210,20 +210,33 @@
     const lang = /*[[${post.language.name().toLowerCase()}]]*/ '';
 
     function giveApplause() {
-        fetch(`/api/posts/${lang}/${slug}/applause`, {
-            method: "POST",
-            headers: {
-                "X-CSRF-TOKEN":
-                    document.querySelector('meta[name="_csrf"]').content
-            }
-        }).then(res => {
-            if (res.status === 401) {
-                document.getElementById("loginWarning").style.display = "block";
-                return;
-            }
-            document.getElementById("applauseCount").innerText++;
-        });
-    }
+            fetch(`/api/posts/${lang}/${slug}/applause`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": document
+                        .querySelector('meta[name="_csrf"]')
+                        ?.getAttribute("content")
+                }
+            })
+            .then(res => {
+                if (res.status === 429) {
+                    alert("You already applauded this post 👍");
+                    return;
+                }
+
+                if (!res.ok) {
+                    console.error("Applause failed");
+                    return;
+                }
+
+                const countEl = document.getElementById("applauseCount");
+                countEl.innerText = parseInt(countEl.innerText) + 1;
+            })
+            .catch(err => {
+                console.error("Network error", err);
+            });
+        }
 
     function copyPrompt(btn) {
         const text = btn.getAttribute("data-text");
