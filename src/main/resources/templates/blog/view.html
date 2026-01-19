@@ -58,10 +58,11 @@
 
         <!-- ENGAGEMENT -->
         <div class="d-flex align-items-center gap-4 my-3">
-            <button class="btn btn-outline-dark"
-                    onclick="giveApplause()">
-                👏 <span id="applauseCount"
-                        th:text="${post.applauseCount}">0</span>
+            <button class="applause-btn"
+                    onclick="giveApplause(this)">
+                <span class="applause-icon">👏</span>
+                <span id="applauseCount"
+                      th:text="${post.applauseCount}">0</span>
             </button>
 
             <div class="text-muted">
@@ -154,48 +155,55 @@
         <!-- COMMENTS -->
         <hr class="my-5">
 
-        <section>
-            <h4 class="mb-4">Leave a comment</h4>
+        <section class="comments-section">
+            <h4 class="comments-title">Leave a comment</h4>
 
-            <form th:action="@{/comment/add}" method="post">
-                <input type="hidden" name="slug" th:value="${post.slug}">
-                <input type="hidden" name="language" th:value="${post.language}">
+            <form th:action="@{/comment/add}" method="post" class="comment-form">
 
-                <input class="form-control mb-2"
-                       name="name"
-                       placeholder="Your name"
-                       required>
+                <!-- ✅ REQUIRED: slug -->
+                <input type="hidden"
+                       name="slug"
+                       th:value="${post.slug}" />
 
-                <input class="form-control mb-2"
-                       name="email"
-                       type="email"
-                       placeholder="Your email"
-                       required>
+                <!-- ✅ REQUIRED: language -->
+                <input type="hidden"
+                       name="language"
+                       th:value="${post.language}" />
 
-                <textarea class="form-control mb-3"
+                <div class="comment-row">
+                    <input class="comment-input"
+                           name="name"
+                           placeholder="Your name"
+                           required>
+
+                    <input class="comment-input"
+                           name="email"
+                           type="email"
+                           placeholder="Your email"
+                           required>
+                </div>
+
+                <textarea class="comment-textarea"
                           name="content"
                           rows="4"
                           placeholder="Write your comment..."
                           required></textarea>
 
-                <button class="btn btn-dark">Post Comment</button>
+                <button class="comment-submit">Post comment</button>
             </form>
 
-            <p th:if="${#lists.isEmpty(comments)}"
-               class="text-muted">
-                Be the first one to comment.
-            </p>
+            <div class="comment-list">
+                <div th:each="c : ${comments}" class="comment-card">
+                    <div class="comment-header">
+                        <span class="comment-author" th:text="${c.name}"></span>
+                        <span class="comment-date"
+                              th:text="${#temporals.format(c.createdAt,'dd MMM yyyy HH:mm')}">
+                </span>
+                    </div>
 
-            <div th:each="c : ${comments}"
-                 class="mb-4">
-                <div class="fw-semibold"
-                     th:text="${c.name}"></div>
-
-                <div class="text-muted small"
-                     th:text="${#temporals.format(c.createdAt,'dd MMM yyyy HH:mm')}">
+                    <p class="comment-body"
+                       th:utext="${#strings.replace(c.content,'\n','<br/>')}"></p>
                 </div>
-
-                <p th:utext="${#strings.replace(c.content,'\n','<br/>')}"></p>
             </div>
         </section>
 
@@ -209,34 +217,32 @@
     const slug = /*[[${post.slug}]]*/ '';
     const lang = /*[[${post.language.name().toLowerCase()}]]*/ '';
 
-    function giveApplause() {
-            fetch(`/api/posts/${lang}/${slug}/applause`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": document
-                        .querySelector('meta[name="_csrf"]')
-                        ?.getAttribute("content")
-                }
-            })
-            .then(res => {
-                if (res.status === 429) {
-                    alert("You already applauded this post 👍");
-                    return;
-                }
+    function giveApplause(btn) {
+    if (btn.classList.contains("applauded")) return;
 
-                if (!res.ok) {
-                    console.error("Applause failed");
-                    return;
-                }
-
-                const countEl = document.getElementById("applauseCount");
-                countEl.innerText = parseInt(countEl.innerText) + 1;
-            })
-            .catch(err => {
-                console.error("Network error", err);
-            });
+    fetch(`/api/posts/${lang}/${slug}/applause`, {
+        method: "POST",
+        headers: {
+            "X-CSRF-TOKEN": document
+                .querySelector('meta[name="_csrf"]')
+                ?.getAttribute("content")
         }
+    })
+    .then(res => {
+        if (!res.ok) return;
+
+        const countEl = document.getElementById("applauseCount");
+        countEl.innerText = parseInt(countEl.innerText) + 1;
+
+        btn.classList.add("applauded");
+
+        // subtle haptic-style feedback
+        btn.animate(
+            [{ transform: "scale(1)" }, { transform: "scale(0.96)" }, { transform: "scale(1)" }],
+            { duration: 180, easing: "ease-out" }
+        );
+    });
+}
 
     function copyPrompt(btn) {
         const text = btn.getAttribute("data-text");

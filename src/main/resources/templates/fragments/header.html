@@ -36,7 +36,7 @@
             <!-- ================= AUTH ================= -->
 
             <!-- NOT LOGGED IN -->
-            <div sec:authorize="!isAuthenticated()">
+           <!-- <div sec:authorize="!isAuthenticated()">
                 <a th:href="@{/{lang}/login(lang=${lang})}"
                    class="text-decoration-none text-secondary me-2">
                     Sign in
@@ -46,7 +46,7 @@
                    class="btn btn-outline-success btn-sm rounded">
                     Create account
                 </a>
-            </div>
+            </div>-->
 
             <!-- LOGGED IN -->
             <div sec:authorize="isAuthenticated()"
