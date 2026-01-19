@@ -23,7 +23,7 @@ public class BlogController {
     }
 
     /* =====================================================
-       BLOG VIEW (EN + KN ONLY)
+       BLOG VIEW (PUBLIC)
        /en/blog/{slug}
        /kn/blog/{slug}
     ===================================================== */
@@ -41,22 +41,25 @@ public class BlogController {
 
         Post post;
         try {
-            post = postService.getPublishedPost(slug, language);
+            // ✅ MUST fetch with imageSections + sections + prompts
+            post = postService.getPostForView(slug, language);
+
+            // ✅ atomic DB update (no entity reload)
             postService.incrementViews(slug, language);
+
         } catch (RuntimeException ex) {
-            // ✅ header-safe 404
             model.addAttribute("lang", lang.toLowerCase());
             model.addAttribute("categories", CategoryType.values());
             model.addAttribute("activeCategory", null);
             return "error/404";
         }
 
-        // Header
+        // HEADER DATA
         model.addAttribute("lang", lang.toLowerCase());
         model.addAttribute("categories", CategoryType.values());
         model.addAttribute("activeCategory", post.getCategory());
 
-        // Page
+        // PAGE DATA
         model.addAttribute("post", post);
         model.addAttribute(
                 "comments",
@@ -67,11 +70,7 @@ public class BlogController {
     }
 
     /* =====================================================
-       SAFE REDIRECT — NO BLOG LIST PAGE
-       /en/blog   -> /en
-       /en/blog/  -> /en
-       /kn/blog   -> /kn
-       /kn/blog/  -> /kn
+       SAFE REDIRECTS
     ===================================================== */
     @GetMapping({
             "/{lang:en|kn}/blog",

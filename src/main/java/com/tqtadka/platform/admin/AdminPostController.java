@@ -1,21 +1,24 @@
 package com.tqtadka.platform.admin;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tqtadka.platform.dto.ImageSectionDto;
 import com.tqtadka.platform.entity.*;
 import com.tqtadka.platform.security.CustomUserDetails;
 import com.tqtadka.platform.service.PostService;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Controller
 @RequestMapping("/admin/posts")
+@Slf4j
 public class AdminPostController {
 
     private final PostService postService;
@@ -93,7 +96,10 @@ public class AdminPostController {
             @RequestParam(required = false) AiPostMode aiPostMode,
             @RequestParam(required = false, name = "promptNames") String[] promptNames,
 
-            // 🔥 RAW REQUEST (IMPORTANT)
+            // 🔥 IMAGE SECTIONS JSON (NEW – OPTIONAL)
+            @RequestParam(required = false) String imageSectionsJson,
+
+            // 🔥 RAW REQUEST
             HttpServletRequest request,
 
             @RequestParam(required = false) Boolean publish
@@ -138,9 +144,10 @@ public class AdminPostController {
                 List.of(section),
                 Boolean.TRUE.equals(publish),
                 currentUser,
-                aiPostMode,                  // ✅ OK
-                promptNames,                 // ✅ names are safe
-                promptTextList.toArray(new String[0]) // ✅ NO COMMA SPLIT
+                aiPostMode,
+                promptNames,
+                promptTextList.toArray(new String[0]),
+                imageSectionsJson          // 🔥 NEW (last param)
         );
 
         return "redirect:/admin/posts";
@@ -160,15 +167,24 @@ public class AdminPostController {
         User currentUser = userDetails.getUser();
         Post post = postService.getPostForEdit(postId, currentUser);
 
+        // 🔥 FLATTEN IMAGE SECTIONS (VERY IMPORTANT)
+        List<Map<String, String>> imageSectionDtos =
+                post.getImageSections()
+                        .stream()
+                        .sorted(Comparator.comparingInt(PostImageSection::getDisplayOrder))
+                        .map(s -> Map.of(
+                                "imageUrl", s.getImageUrl(),
+                                "heading", s.getHeading(),
+                                "description", s.getDescription()
+                        ))
+                        .toList();
+
         model.addAttribute("post", post);
-        model.addAttribute("categories",
-                currentUser.getRole() == Role.ADMIN
-                        ? EnumSet.allOf(CategoryType.class)
-                        : currentUser.getAllowedCategories()
-        );
+        model.addAttribute("imageSectionDtos", imageSectionDtos);
 
         return "admin/edit-post";
     }
+
     @PostMapping("/update/{postId}")
     public String updatePost(
             @PathVariable Long postId,
@@ -187,21 +203,21 @@ public class AdminPostController {
             @RequestParam(required = false) String tipTitle,
             @RequestParam(required = false) String tipContent,
 
-            // ✅ AI PROMPT META ONLY
+            // AI
             @RequestParam(required = false) AiPostMode aiPostMode,
             @RequestParam(required = false, name = "promptNames") String[] promptNames,
 
-            // 🔥 RAW REQUEST (IMPORTANT)
-            HttpServletRequest request,
+            // 🔥 IMAGE SECTIONS JSON
+            @RequestParam(required = false) String imageSectionsJson,
 
+            HttpServletRequest request,
             @RequestParam(required = false) Boolean publish
     ) {
         requireAuth(userDetails);
-
         User currentUser = userDetails.getUser();
 
     /* =========================
-       BUILD SECTION (UNCHANGED)
+       BUILD MAIN SECTION
     ========================= */
         PostSection section = buildSection(
                 sectionContent,
@@ -212,20 +228,50 @@ public class AdminPostController {
         );
 
     /* =========================
-       🔥 SAFE PROMPT TEXT EXTRACTION
+       AI PROMPTS (UNCHANGED)
     ========================= */
         String[] rawPromptTexts = request.getParameterValues("promptTexts");
 
         List<String> promptTextList =
                 rawPromptTexts == null
                         ? List.of()
-                        : List.of(rawPromptTexts).stream()
+                        : Arrays.stream(rawPromptTexts)
                         .map(String::trim)
                         .filter(s -> !s.isEmpty())
                         .toList();
 
     /* =========================
-       SERVICE CALL (SAFE)
+   🔥 PARSE IMAGE SECTIONS JSON (SAFE)
+========================= */
+        List<PostImageSection> imageSections = List.of();
+
+        if (imageSectionsJson != null && !imageSectionsJson.isBlank()) {
+            try {
+                ObjectMapper mapper = new ObjectMapper();
+
+                List<ImageSectionDto> dtos = mapper.readValue(
+                        imageSectionsJson,
+                        new TypeReference<List<ImageSectionDto>>() {}
+                );
+
+                imageSections = dtos.stream()
+                        .map(dto -> {
+                            PostImageSection s = new PostImageSection();
+                            s.setImageUrl(dto.getImageUrl());
+                            s.setHeading(dto.getHeading());
+                            s.setDescription(dto.getDescription());
+                            s.setDisplayOrder(dto.getOrder()); // ✅ CRITICAL FIX
+                            return s;
+                        })
+                        .toList();
+
+            } catch (Exception e) {
+                log.error("Failed to parse imageSectionsJson", e);
+            }
+        }
+
+    /* =========================
+       SERVICE CALL (NO REGRESSION)
     ========================= */
         postService.updatePost(
                 postId,
@@ -235,11 +281,12 @@ public class AdminPostController {
                 language,
                 clean(imageUrl),
                 List.of(section),
+                imageSections,              // 🔥 FIX
                 Boolean.TRUE.equals(publish),
                 currentUser,
                 aiPostMode,
                 promptNames,
-                promptTextList.toArray(new String[0]) // ✅ NO COMMA SPLIT
+                promptTextList.toArray(new String[0])
         );
 
         return "redirect:/admin/posts";
@@ -312,5 +359,17 @@ public class AdminPostController {
         );
 
         return "redirect:/admin/posts";
+    }
+
+    @PostMapping("/admin/posts/{postId}/image-section")
+    public String addImageSection(
+            @PathVariable Long postId,
+            @RequestParam String heading,
+            @RequestParam String description,
+            @RequestParam(required = false) String imageUrl,
+            @RequestParam int order
+    ) {
+        postService.addImageSection(postId, heading, description, imageUrl, order);
+        return "redirect:/admin/posts/edit/" + postId;
     }
 }

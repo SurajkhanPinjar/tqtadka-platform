@@ -1,6 +1,7 @@
 package com.tqtadka.platform.service;
 
 import com.tqtadka.platform.entity.*;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -18,7 +19,7 @@ public interface PostService {
      * - Slug unique per language
      * - createdBy must be set
      */
-    Post createPost(
+    public Post createPost(
             String title,
             String intro,
             CategoryType category,
@@ -29,7 +30,8 @@ public interface PostService {
             User currentUser,
             AiPostMode aiPostMode,
             String[] promptNames,
-            String[] promptTexts
+            String[] promptTexts,
+            String imageSectionsJson        // 🔥 NEW (optional)
     );
 
     /* =====================================================
@@ -85,8 +87,9 @@ public interface PostService {
             LanguageType language,
             String imageUrl,
             List<PostSection> sections,
+            List<PostImageSection> imageSections, // ✅ ADD
             boolean publish,
-            User currentUser,
+            User user,
             AiPostMode aiPostMode,
             String[] promptNames,
             String[] promptTexts
@@ -103,4 +106,19 @@ public interface PostService {
             boolean publish,
             User currentUser
     );
+
+    void addImageSection(
+            Long postId,
+            String heading,
+            String description,
+            String imageUrl,
+            int order
+    );
+
+    public Post getPostForView(String slug, LanguageType language);
+
+
+    public Post getPostForPublicView(String slug, LanguageType language);
+
+
 }

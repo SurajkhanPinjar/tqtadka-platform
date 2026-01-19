@@ -99,6 +99,36 @@
                           th:text="${post.intro}">
                 </textarea>
 
+
+                <!-- ===============================
+     IMAGE SECTIONS (EDIT)
+================================ -->
+                <div class="mb-5">
+
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <h6 class="fw-bold mb-0">Image Sections</h6>
+
+                        <button type="button"
+                                class="btn btn-outline-dark btn-sm"
+                                onclick="addImageSection()">
+                            ➕ Add Section
+                        </button>
+                    </div>
+
+                    <div id="imageSectionContainer"
+                         class="d-flex flex-column gap-3">
+                    </div>
+                </div>
+
+                <input type="hidden"
+                       name="imageSectionsJson"
+                       id="imageSectionsJson">
+
+                <!-- 🔥 EXISTING IMAGE SECTIONS (SAFE) -->
+                <script th:inline="javascript">
+                    const existingImageSections = [[${imageSectionDtos}]];
+                </script>
+
                 <!-- CONTENT -->
                 <h6 class="fw-bold mb-2">Post Content</h6>
                 <div id="editor"
@@ -267,6 +297,89 @@
 
     // initial load
     togglePromptSection();
+
+let imageSectionIndex = 0;
+
+function addImageSection(imageUrl = '', heading = '', description = '') {
+    const container = document.getElementById("imageSectionContainer");
+
+    const wrapper = document.createElement("div");
+    wrapper.className = "card p-3";
+
+    wrapper.innerHTML = `
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <strong>Section ${imageSectionIndex + 1}</strong>
+            <button type="button"
+                    class="btn btn-sm btn-danger"
+                    onclick="this.closest('.card').remove()">✕</button>
+        </div>
+
+        <input class="form-control mb-2"
+               placeholder="Image URL"
+               data-field="imageUrl"
+               value="${imageUrl}">
+
+        <input class="form-control mb-2"
+               placeholder="Section heading"
+               data-field="heading"
+               value="${heading}">
+
+        <textarea class="form-control"
+                  rows="3"
+                  placeholder="Section description"
+                  data-field="description">${description}</textarea>
+    `;
+
+    container.appendChild(wrapper);
+    imageSectionIndex++;
+}
+
+/* ===============================
+   🔥 HYDRATE ON PAGE LOAD
+================================ */
+if (Array.isArray(existingImageSections)) {
+    existingImageSections.forEach(s => {
+        addImageSection(
+            s.imageUrl || '',
+            s.heading || '',
+            s.description || ''
+        );
+    });
+}
+
+/* ===============================
+   SERIALIZE ON SUBMIT (UNCHANGED)
+================================ */
+document.getElementById("editForm")
+    .addEventListener("submit", function () {
+
+        const sections = [];
+
+        document
+            .querySelectorAll("#imageSectionContainer .card")
+            .forEach((card, i) => {
+
+                const imageUrl =
+                    card.querySelector('[data-field="imageUrl"]').value.trim();
+                const heading =
+                    card.querySelector('[data-field="heading"]').value.trim();
+                const description =
+                    card.querySelector('[data-field="description"]').value.trim();
+
+                if (imageUrl || heading || description) {
+                    sections.push({
+                        order: i + 1,
+                        imageUrl,
+                        heading,
+                        description
+                    });
+                }
+            });
+
+        document.getElementById("imageSectionsJson").value =
+            JSON.stringify(sections);
+    });
+
 </script>
 
 </body>

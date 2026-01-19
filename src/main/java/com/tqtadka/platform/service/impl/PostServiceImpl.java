@@ -1,9 +1,14 @@
 package com.tqtadka.platform.service.impl;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tqtadka.platform.dto.ImageSectionDto;
 import com.tqtadka.platform.entity.*;
+import com.tqtadka.platform.repository.PostImageSectionRepository;
 import com.tqtadka.platform.repository.PostRepository;
 import com.tqtadka.platform.service.PostService;
 import com.tqtadka.platform.util.SlugUtil;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,8 +23,12 @@ public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
 
-    public PostServiceImpl(PostRepository postRepository) {
+    private final PostImageSectionRepository imageSectionRepository;
+
+
+    public PostServiceImpl(PostRepository postRepository, PostImageSectionRepository imageSectionRepository) {
         this.postRepository = postRepository;
+        this.imageSectionRepository = imageSectionRepository;
     }
 
     /* =====================================================
@@ -66,17 +75,21 @@ public class PostServiceImpl implements PostService {
     /* =====================================================
        EDIT (ROLE SAFE)
     ===================================================== */
-    @Override
     @Transactional(readOnly = true)
-    public Post getPostForEdit(Long postId, User currentUser) {
+    @Override
+    public Post getPostForEdit(Long postId, User user) {
 
-        if (currentUser.getRole() == Role.ADMIN) {
-            return postRepository.findForEditByAdmin(postId)
-                    .orElseThrow(() -> new RuntimeException("Post not found"));
+        Post post = postRepository
+                .findPostForEdit(postId)
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+
+        // security check
+        if (user.getRole() != Role.ADMIN &&
+                !post.getCreatedBy().getId().equals(user.getId())) {
+            throw new AccessDeniedException("Not allowed");
         }
 
-        return postRepository.findForEditByAuthor(postId, currentUser)
-                .orElseThrow(() -> new RuntimeException("Access denied"));
+        return post;
     }
 
     /* =====================================================
@@ -141,7 +154,8 @@ public class PostServiceImpl implements PostService {
             User currentUser,
             AiPostMode aiPostMode,
             String[] promptNames,
-            String[] promptTexts
+            String[] promptTexts,
+            String imageSectionsJson
     ) {
 
         String baseSlug = SlugUtil.toSlug(title);
@@ -161,6 +175,7 @@ public class PostServiceImpl implements PostService {
                 .publishedAt(publish ? LocalDateTime.now() : null)
                 .sections(new HashSet<>())
                 .aiPrompts(new HashSet<>())
+                .imageSections(new ArrayList<>())   // 🔥 SAFE INIT
                 .aiPostMode(
                         category == CategoryType.AI
                                 ? (aiPostMode != null ? aiPostMode : AiPostMode.BLOG)
@@ -168,12 +183,45 @@ public class PostServiceImpl implements PostService {
                 )
                 .build();
 
+        // ===============================
+        // EXISTING LOGIC (UNCHANGED)
+        // ===============================
         attachSingleSection(post, sections);
         attachAiPrompts(post, category, promptNames, promptTexts);
 
+        // ===============================
+        // 🔥 IMAGE SECTIONS (SAFE ADD)
+        // ===============================
+        if (imageSectionsJson != null && !imageSectionsJson.isBlank()) {
+
+            try {
+                ObjectMapper mapper = new ObjectMapper();
+
+                List<ImageSectionDto> imageSections =
+                        mapper.readValue(
+                                imageSectionsJson,
+                                new TypeReference<List<ImageSectionDto>>() {}
+                        );
+
+                for (ImageSectionDto dto : imageSections) {
+
+                    PostImageSection section = new PostImageSection();
+                    section.setHeading(dto.getHeading());
+                    section.setDescription(dto.getDescription());
+                    section.setImageUrl(dto.getImageUrl());
+                    section.setDisplayOrder(dto.getOrder());
+                    section.setPost(post); // 🔥 IMPORTANT
+
+                    post.getImageSections().add(section);
+                }
+
+            } catch (Exception e) {
+                throw new RuntimeException("Invalid image section payload", e);
+            }
+        }
+
         return postRepository.save(post);
     }
-
     /* =====================================================
        UPDATE
     ===================================================== */
@@ -186,6 +234,7 @@ public class PostServiceImpl implements PostService {
             LanguageType language,
             String imageUrl,
             List<PostSection> sections,
+            List<PostImageSection> imageSections, // ✅ NEW
             boolean publish,
             User currentUser,
             AiPostMode aiPostMode,
@@ -204,7 +253,9 @@ public class PostServiceImpl implements PostService {
 
         post.setPublishedAt(
                 publish
-                        ? (post.getPublishedAt() != null ? post.getPublishedAt() : LocalDateTime.now())
+                        ? (post.getPublishedAt() != null
+                        ? post.getPublishedAt()
+                        : LocalDateTime.now())
                         : null
         );
 
@@ -214,15 +265,22 @@ public class PostServiceImpl implements PostService {
                         : null
         );
 
+    /* =========================
+       CLEAR OLD DATA (SAFE)
+    ========================= */
         post.getSections().clear();
         post.getAiPrompts().clear();
+        post.getImageSections().clear(); // 🔥 FIX
 
+    /* =========================
+       ATTACH NEW DATA
+    ========================= */
         attachSingleSection(post, sections);
         attachAiPrompts(post, category, promptNames, promptTexts);
+        attachImageSections(post, imageSections); // 🔥 FIX
 
         return postRepository.save(post);
     }
-
     /* =====================================================
        🔥 SINGLE SECTION FIX (CORE FIX)
     ===================================================== */
@@ -290,4 +348,55 @@ public class PostServiceImpl implements PostService {
         }
         return slug;
     }
+
+
+
+        @Override
+        public void addImageSection(
+                Long postId,
+                String heading,
+                String description,
+                String imageUrl,
+                int order
+        ) {
+
+            Post post = postRepository.findById(postId)
+                    .orElseThrow(() -> new IllegalArgumentException("Post not found"));
+
+            PostImageSection section = new PostImageSection();
+            section.setPost(post);
+            section.setHeading(heading);
+            section.setDescription(description);
+            section.setImageUrl(imageUrl);
+            section.setDisplayOrder(order);
+
+            imageSectionRepository.save(section);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Post getPostForView(String slug, LanguageType language) {
+        return postRepository
+                .findPublishedPostForView(slug, language)
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+    }
+
+    @Transactional(readOnly = true)
+    public Post getPostForPublicView(String slug, LanguageType language) {
+        return postRepository.findPostForPublicView(slug, language)
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+    }
+
+    private void attachImageSections(Post post, List<PostImageSection> imageSections) {
+
+        if (imageSections == null || imageSections.isEmpty()) {
+            return;
+        }
+
+        for (PostImageSection section : imageSections) {
+            section.setPost(post);
+            post.getImageSections().add(section);
+        }
+    }
+
 }

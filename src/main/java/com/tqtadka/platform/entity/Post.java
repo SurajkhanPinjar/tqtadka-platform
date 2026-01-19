@@ -130,4 +130,10 @@ public class Post {
             fetch = FetchType.LAZY
     )
     private Set<AiPrompt> aiPrompts = new HashSet<>();
+
+    @OneToMany(mappedBy = "post",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    @OrderBy("displayOrder ASC")
+    private List<PostImageSection> imageSections = new ArrayList<>();
 }

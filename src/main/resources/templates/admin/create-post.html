@@ -106,6 +106,25 @@
                           name="intro"
                           rows="4"
                           placeholder="Short intro paragraph"></textarea>
+                <!-- ===============================
+                     IMAGE SECTIONS
+                ================================ -->
+                <div class="mb-5">
+
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <h6 class="fw-bold mb-0">Image Sections</h6>
+
+                        <button type="button"
+                                class="btn btn-outline-dark btn-sm"
+                                onclick="addImageSection()">
+                            ➕ Add Section
+                        </button>
+                    </div>
+
+                    <div id="imageSectionContainer"
+                         class="d-flex flex-column gap-3">
+                    </div>
+                </div>
 
                 <!-- CONTENT -->
                 <h6 class="fw-bold mb-2">Post Content</h6>
@@ -159,6 +178,10 @@
 
                 <!-- PUBLISH -->
                 <input type="hidden" name="publish" value="false">
+
+                <input type="hidden"
+                       name="imageSectionsJson"
+                       id="imageSectionsJson">
 
                 <div class="form-check mb-4">
                     <input class="form-check-input"
@@ -317,6 +340,73 @@ function addPromptRow() {
     document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.ai-prompt-textarea')
             .forEach(t => updateCharCount(t));
+    });
+
+let imageSectionIndex = 0;
+
+function addImageSection() {
+    const container = document.getElementById("imageSectionContainer");
+
+    const wrapper = document.createElement("div");
+    wrapper.className = "card p-3";
+    wrapper.dataset.index = imageSectionIndex;
+
+    wrapper.innerHTML = `
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <strong>Section ${imageSectionIndex + 1}</strong>
+            <button type="button"
+                    class="btn btn-sm btn-danger"
+                    onclick="this.closest('.card').remove()">
+                ✕
+            </button>
+        </div>
+
+        <input class="form-control mb-2"
+               placeholder="Image URL"
+               data-field="imageUrl">
+
+        <input class="form-control mb-2"
+               placeholder="Section heading"
+               data-field="heading">
+
+        <textarea class="form-control"
+                  rows="3"
+                  placeholder="Section description"
+                  data-field="description"></textarea>
+    `;
+
+    container.appendChild(wrapper);
+    imageSectionIndex++;
+}
+
+/* ===============================
+   SERIALIZE IMAGE SECTIONS
+================================ */
+document.getElementById("postForm")
+    .addEventListener("submit", function () {
+
+        const sections = [];
+
+        document
+            .querySelectorAll("#imageSectionContainer .card")
+            .forEach((card, i) => {
+
+                const imageUrl = card.querySelector('[data-field="imageUrl"]').value.trim();
+                const heading = card.querySelector('[data-field="heading"]').value.trim();
+                const description = card.querySelector('[data-field="description"]').value.trim();
+
+                if (imageUrl || heading || description) {
+                    sections.push({
+                        order: i + 1,
+                        imageUrl,
+                        heading,
+                        description
+                    });
+                }
+            });
+
+        document.getElementById("imageSectionsJson").value =
+            JSON.stringify(sections);
     });
 </script>
 

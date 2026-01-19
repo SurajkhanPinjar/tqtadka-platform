@@ -728,3 +728,44 @@ img {
     outline: none;
     border-color: rgba(0,0,0,0.28);
 }
+
+/* ===============================
+   IMAGE SECTIONS
+================================ */
+
+.image-sections {
+    margin: 4rem 0;
+}
+
+.image-section {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 32px;
+    align-items: center;
+    margin-bottom: 64px;
+}
+
+.image-section-img {
+    width: 100%;
+    border-radius: 14px;
+    object-fit: cover;
+}
+
+.image-section-text h3 {
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.image-section-text p {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: #555;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .image-section {
+        grid-template-columns: 1fr;
+    }
+}
