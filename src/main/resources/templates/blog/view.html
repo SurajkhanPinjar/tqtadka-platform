@@ -24,7 +24,7 @@
 <div th:replace="~{fragments/header :: header}"></div>
 
 <main class="my-5">
-    <article class="blog-container">
+    <article class="blog-container vignette">
 
         <!-- CATEGORY -->
         <small class="blog-category text-uppercase d-block mb-2"
@@ -82,20 +82,28 @@
              class="img-fluid rounded my-5">
 
         <!-- ===============================
-      IMAGE SECTIONS
-        ================================ -->
+     IMAGE SECTIONS
+================================ -->
         <section th:if="${post.imageSections != null and !post.imageSections.isEmpty()}"
-                 class="image-sections">
+                 class="image-sections my-5">
 
             <div th:each="s : ${post.imageSections}"
-                 class="image-section">
+                 class="image-section mb-5">
 
+                <!-- HEADING -->
+                <h3 class="image-section-heading"
+                    th:if="${s.heading}"
+                    th:text="${s.heading}">
+                </h3>
+
+                <!-- IMAGE -->
                 <img th:if="${s.imageUrl}"
                      th:src="${s.imageUrl}"
                      class="image-section-img"/>
 
-                <div class="image-section-text">
-                    <h3 th:text="${s.heading}"></h3>
+                <!-- TEXT -->
+                <div class="image-section-text"
+                     th:if="${s.description}">
                     <p th:text="${s.description}"></p>
                 </div>
 
@@ -192,6 +200,10 @@
                        name="language"
                        th:value="${post.language}" />
 
+                <div class="scroll-indicator" id="scrollIndicator">
+                    <span class="arrow-down">⌄</span>
+                </div>
+
                 <div class="comment-row">
                     <input class="comment-input"
                            name="name"
@@ -273,6 +285,23 @@
             setTimeout(() => btn.innerText = "📋 Copy Prompt", 1500);
         });
     }
+
+    const scrollIndicator = document.getElementById("scrollIndicator");
+
+    function handleScrollArrow() {
+        const scrollTop = window.scrollY;
+        const windowHeight = window.innerHeight;
+        const docHeight = document.documentElement.scrollHeight;
+
+        // if user reached bottom (with small buffer)
+        if (scrollTop + windowHeight >= docHeight - 40) {
+            scrollIndicator.classList.add("hidden");
+        } else {
+            scrollIndicator.classList.remove("hidden");
+        }
+    }
+
+    window.addEventListener("scroll", handleScrollArrow);
 </script>
 
 </body>

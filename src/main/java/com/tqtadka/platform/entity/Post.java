@@ -131,9 +131,11 @@ public class Post {
     )
     private Set<AiPrompt> aiPrompts = new HashSet<>();
 
-    @OneToMany(mappedBy = "post",
+    @OneToMany(
+            mappedBy = "post",
             cascade = CascadeType.ALL,
-            orphanRemoval = true)
+            orphanRemoval = true
+    )
     @OrderBy("displayOrder ASC")
-    private List<PostImageSection> imageSections = new ArrayList<>();
+    private Set<PostImageSection> imageSections = new HashSet<>();
 }

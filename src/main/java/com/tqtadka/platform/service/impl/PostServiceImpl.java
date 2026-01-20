@@ -175,7 +175,7 @@ public class PostServiceImpl implements PostService {
                 .publishedAt(publish ? LocalDateTime.now() : null)
                 .sections(new HashSet<>())
                 .aiPrompts(new HashSet<>())
-                .imageSections(new ArrayList<>())   // 🔥 SAFE INIT
+                .imageSections(new HashSet<>())   // 🔥 SAFE INIT
                 .aiPostMode(
                         category == CategoryType.AI
                                 ? (aiPostMode != null ? aiPostMode : AiPostMode.BLOG)
@@ -234,7 +234,7 @@ public class PostServiceImpl implements PostService {
             LanguageType language,
             String imageUrl,
             List<PostSection> sections,
-            List<PostImageSection> imageSections, // ✅ NEW
+            List<PostImageSection> imageSections,
             boolean publish,
             User currentUser,
             AiPostMode aiPostMode,
@@ -265,19 +265,15 @@ public class PostServiceImpl implements PostService {
                         : null
         );
 
-    /* =========================
-       CLEAR OLD DATA (SAFE)
-    ========================= */
+        // 🔥 CLEAR OLD DATA
         post.getSections().clear();
         post.getAiPrompts().clear();
-        post.getImageSections().clear(); // 🔥 FIX
+        post.getImageSections().clear();
 
-    /* =========================
-       ATTACH NEW DATA
-    ========================= */
+        // 🔥 ATTACH NEW DATA
         attachSingleSection(post, sections);
         attachAiPrompts(post, category, promptNames, promptTexts);
-        attachImageSections(post, imageSections); // 🔥 FIX
+        attachImageSections(post, imageSections);
 
         return postRepository.save(post);
     }
@@ -387,15 +383,22 @@ public class PostServiceImpl implements PostService {
                 .orElseThrow(() -> new RuntimeException("Post not found"));
     }
 
-    private void attachImageSections(Post post, List<PostImageSection> imageSections) {
-
+    private void attachImageSections(
+            Post post,
+            List<PostImageSection> imageSections
+    ) {
         if (imageSections == null || imageSections.isEmpty()) {
             return;
         }
 
-        for (PostImageSection section : imageSections) {
-            section.setPost(post);
-            post.getImageSections().add(section);
+        int order = 1;
+
+        for (PostImageSection s : imageSections) {
+            s.setId(null);              // force INSERT
+            s.setPost(post);            // owning side
+            s.setDisplayOrder(order++); // 🔥 ALWAYS normalize order
+
+            post.getImageSections().add(s);
         }
     }
 

@@ -3,6 +3,8 @@ package com.tqtadka.platform.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Objects;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -40,4 +42,20 @@ public class PostImageSection {
     ========================= */
     @Column(name = "display_order", nullable = false)
     private int displayOrder;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof PostImageSection)) return false;
+        PostImageSection that = (PostImageSection) o;
+        return displayOrder == that.displayOrder &&
+                post != null &&
+                that.post != null &&
+                post.getId().equals(that.post.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(post != null ? post.getId() : 0, displayOrder);
+    }
 }

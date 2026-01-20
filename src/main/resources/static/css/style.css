@@ -102,9 +102,44 @@ body {
    BLOG VIEW — FIXED WIDTH, SPACING & TYPOGRAPHY ONLY
 ====================================================== */
 .blog-container {
+    position: relative;
+    background: #ffffff;
     max-width: 900px;
     margin: 0 auto;
     padding: 0 20px;
+}
+
+/* subtle top fade */
+.blog-container::before {
+    content: "";
+    position: sticky;
+    top: 0;
+    display: block;
+    height: 64px; /* slightly smaller */
+    background: linear-gradient(
+        to bottom,
+        rgba(255,255,255,0.45) 0%,
+        rgba(255,255,255,0.25) 35%,
+        rgba(255,255,255,0.0) 100%
+    );
+    z-index: 2;
+    pointer-events: none;
+}
+
+/* bottom fade */
+.blog-container::after {
+    content: "";
+    position: sticky;
+    bottom: 0;
+    display: block;
+    height: 120px;
+    background: linear-gradient(
+        to top,
+        #ffffff 0%,
+        rgba(255,255,255,0.95) 40%,
+        rgba(255,255,255,0) 100%
+    );
+    z-index: 2;
 }
 
 .blog-container .blog-content {
@@ -730,7 +765,7 @@ img {
 }
 
 /* ===============================
-   IMAGE SECTIONS
+   IMAGE SECTIONS (VERTICAL FLOW)
 ================================ */
 
 .image-sections {
@@ -738,34 +773,80 @@ img {
 }
 
 .image-section {
-    display: grid;
-    grid-template-columns: 1.1fr 1fr;
-    gap: 32px;
-    align-items: center;
+    display: block;              /* 🔥 remove grid */
+    width: 100%;
     margin-bottom: 64px;
 }
 
-.image-section-img {
-    width: 100%;
-    border-radius: 14px;
-    object-fit: cover;
-}
-
+/* Heading */
 .image-section-text h3 {
-    font-size: 1.6rem;
+    font-size: 1.7rem;
     font-weight: 600;
-    margin-bottom: 10px;
+    margin-bottom: 16px;
 }
 
+/* Image always below heading */
+.image-section-img {
+    display: block;              /* 🔥 key fix */
+    width: 100%;
+    max-height: 420px;
+    object-fit: cover;
+    border-radius: 14px;
+    margin-bottom: 18px;
+}
+
+/* Description */
 .image-section-text p {
     font-size: 1.05rem;
     line-height: 1.7;
     color: #555;
+    margin: 0;
 }
 
-/* Mobile */
+/* Optional: better spacing on mobile */
 @media (max-width: 768px) {
-    .image-section {
-        grid-template-columns: 1fr;
+    .image-section-img {
+        max-height: 300px;
+    }
+}
+
+/* ===============================
+   SCROLL DOWN ARROW
+================================ */
+
+.scroll-indicator {
+    position: fixed;
+    left: 50%;
+    bottom: 32px;
+    transform: translateX(-50%);
+    z-index: 10;
+    pointer-events: none;
+    transition: opacity 0.35s ease;
+}
+
+.scroll-indicator.hidden {
+    opacity: 0;
+}
+
+.arrow-down {
+    font-size: 32px;
+    color: #bbb;
+    display: inline-block;
+    animation: bounceArrow 1.6s infinite ease-in-out;
+    opacity: 0.85;
+}
+
+@keyframes bounceArrow {
+    0% {
+        transform: translateY(0);
+        opacity: 0.4;
+    }
+    50% {
+        transform: translateY(10px);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 0.4;
     }
 }
