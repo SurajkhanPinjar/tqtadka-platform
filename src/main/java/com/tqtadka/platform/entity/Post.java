@@ -136,6 +136,5 @@ public class Post {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
-    @OrderBy("displayOrder ASC")
     private Set<PostImageSection> imageSections = new HashSet<>();
 }

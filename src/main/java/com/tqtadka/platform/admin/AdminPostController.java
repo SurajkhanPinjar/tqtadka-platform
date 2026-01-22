@@ -92,24 +92,21 @@ public class AdminPostController {
             @RequestParam(required = false) String tipTitle,
             @RequestParam(required = false) String tipContent,
 
-            // ✅ AI PROMPT META ONLY
+            // AI PROMPT META
             @RequestParam(required = false) AiPostMode aiPostMode,
             @RequestParam(required = false, name = "promptNames") String[] promptNames,
 
-            // 🔥 IMAGE SECTIONS JSON (NEW – OPTIONAL)
+            // IMAGE SECTIONS JSON
             @RequestParam(required = false) String imageSectionsJson,
 
-            // 🔥 RAW REQUEST
             HttpServletRequest request,
-
             @RequestParam(required = false) Boolean publish
     ) {
         requireAuth(userDetails);
-
         User currentUser = userDetails.getUser();
 
     /* =========================
-       BUILD SECTION (UNCHANGED)
+       BUILD MAIN SECTION
     ========================= */
         PostSection section = buildSection(
                 sectionContent,
@@ -120,7 +117,7 @@ public class AdminPostController {
         );
 
     /* =========================
-       🔥 SAFE PROMPT TEXT EXTRACTION
+       SAFE PROMPT TEXT EXTRACTION
     ========================= */
         String[] rawPromptTexts = request.getParameterValues("promptTexts");
 
@@ -133,7 +130,17 @@ public class AdminPostController {
                         .toList();
 
     /* =========================
-       CALL SERVICE (SAFE)
+       🔥 IMAGE SECTION PAYLOAD FIX
+    ========================= */
+        String safeImageSectionsJson =
+                (imageSectionsJson == null ||
+                        imageSectionsJson.isBlank() ||
+                        imageSectionsJson.equals("[]"))
+                        ? null
+                        : imageSectionsJson;
+
+    /* =========================
+       CALL SERVICE
     ========================= */
         postService.createPost(
                 title.trim(),
@@ -147,12 +154,11 @@ public class AdminPostController {
                 aiPostMode,
                 promptNames,
                 promptTextList.toArray(new String[0]),
-                imageSectionsJson          // 🔥 NEW (last param)
+                safeImageSectionsJson   // ✅ SAFE
         );
 
         return "redirect:/admin/posts";
     }
-
     /* ============================
        EDIT PAGE (SECURE)
     ============================ */

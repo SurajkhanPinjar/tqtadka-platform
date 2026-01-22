@@ -43,19 +43,20 @@ public class PostImageSection {
     @Column(name = "display_order", nullable = false)
     private int displayOrder;
 
+    /* =========================
+       JPA SAFE equals & hashCode
+    ========================= */
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof PostImageSection)) return false;
         PostImageSection that = (PostImageSection) o;
-        return displayOrder == that.displayOrder &&
-                post != null &&
-                that.post != null &&
-                post.getId().equals(that.post.getId());
+        return id != null && id.equals(that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(post != null ? post.getId() : 0, displayOrder);
+        return Objects.hash(id);
     }
 }

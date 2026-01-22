@@ -1,4 +1,4 @@
-import com.tqtadka.platform.entity.LanguageType;
+package com.tqtadka.platform.entity;
 
 public interface RecentPostView {
     Long getId();

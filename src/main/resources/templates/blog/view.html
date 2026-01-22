@@ -24,171 +24,146 @@
 <div th:replace="~{fragments/header :: header}"></div>
 
 <main class="my-5">
-    <article class="blog-container vignette">
 
-        <!-- CATEGORY -->
-        <small class="blog-category text-uppercase d-block mb-2"
-               th:text="${post.category}"></small>
+    <!-- 🔹 LAYOUT WRAPPER (NEW, SAFE) -->
+    <div class="blog-layout">
 
-        <!-- TITLE -->
-        <h1 class="hero-title" th:text="${post.title}"></h1>
+        <!-- =========================
+             MAIN CONTENT
+        ========================== -->
+        <article class="blog-container vignette">
 
-        <!-- INTRO -->
-        <p class="hero-subtitle"
-           th:if="${post.intro != null}"
-           th:text="${post.intro}"></p>
+            <!-- CATEGORY -->
+            <small class="blog-category text-uppercase d-block mb-2"
+                   th:text="${post.category}"></small>
 
-        <!-- AUTHOR -->
-        <div class="d-flex align-items-center gap-3 my-4">
-            <img src="/images/avatar.png"
-                 class="rounded-circle"
-                 style="width:42px;height:42px">
+            <!-- TITLE -->
+            <h1 class="hero-title" th:text="${post.title}"></h1>
 
-            <div>
-                <div class="fw-semibold"
-                     th:text="${post.authorName != null ? post.authorName : 'Admin'}">
-                </div>
+            <!-- INTRO -->
+            <p class="hero-subtitle"
+               th:if="${post.intro != null}"
+               th:text="${post.intro}"></p>
 
-                <div class="text-muted small"
-                     th:if="${post.publishedAt != null}">
-                    <span th:text="${#temporals.format(post.publishedAt,'dd MMM yyyy')}"></span>
-                </div>
-            </div>
-        </div>
+            <!-- AUTHOR -->
+            <div class="d-flex align-items-center gap-3 my-4">
+                <img src="/images/avatar.png"
+                     class="rounded-circle"
+                     style="width:42px;height:42px">
 
-        <!-- ENGAGEMENT -->
-        <div class="d-flex align-items-center gap-4 my-3">
-            <button class="applause-btn"
-                    onclick="giveApplause(this)">
-                <span class="applause-icon">👏</span>
-                <span id="applauseCount"
-                      th:text="${post.applauseCount}">0</span>
-            </button>
-
-            <div class="text-muted">
-                💬 <span th:text="${post.commentCount}">0</span> comments
-            </div>
-        </div>
-
-        <div id="loginWarning"
-             class="text-danger small"
-             style="display:none;">
-            To give applause, please login.
-        </div>
-
-        <!-- IMAGE -->
-        <img th:if="${post.imageUrl}"
-             th:src="${post.imageUrl}"
-             class="img-fluid rounded my-5">
-
-        <!-- ===============================
-     IMAGE SECTIONS
-================================ -->
-        <section th:if="${post.imageSections != null and !post.imageSections.isEmpty()}"
-                 class="image-sections my-5">
-
-            <div th:each="s : ${post.imageSections}"
-                 class="image-section mb-5">
-
-                <!-- HEADING -->
-                <h3 class="image-section-heading"
-                    th:if="${s.heading}"
-                    th:text="${s.heading}">
-                </h3>
-
-                <!-- IMAGE -->
-                <img th:if="${s.imageUrl}"
-                     th:src="${s.imageUrl}"
-                     class="image-section-img"/>
-
-                <!-- TEXT -->
-                <div class="image-section-text"
-                     th:if="${s.description}">
-                    <p th:text="${s.description}"></p>
-                </div>
-
-            </div>
-
-        </section>
-
-        <!-- CONTENT -->
-        <div class="blog-content"
-             th:if="${post.sections != null and !post.sections.isEmpty()}">
-
-            <section th:each="section : ${post.sections}">
-
-                <!-- MAIN HTML CONTENT -->
-                <div th:utext="${section.content}"></div>
-
-                <!-- BULLETS -->
-                <div th:if="${section.bulletTitle != null}">
-                    <h5 th:text="${section.bulletTitle}"></h5>
-
-                    <ul th:if="${section.bullets != null}">
-                        <li th:each="b : ${#strings.arraySplit(section.bullets, '\n')}"
-                            th:text="${b}">
-                        </li>
-                    </ul>
-                </div>
-
-                <!-- TIP -->
-                <div th:if="${section.tipTitle != null}"
-                     class="alert alert-info mt-3">
-                    <strong th:text="${section.tipTitle}"></strong>
-                    <p th:text="${section.tipContent}"></p>
-                </div>
-
-            </section>
-        </div>
-
-        <!-- ===============================
-             AI PROMPTS (PUBLIC VIEW)
-        ================================ -->
-        <section class="mt-5"
-                 th:if="${post.aiPostMode != null and post.aiPostMode.name() == 'PROMPT'}">
-
-            <h3 class="fw-bold mb-4">AI Prompts</h3>
-
-            <div class="row g-4">
-
-                <div class="col-md-6"
-                     th:each="p : ${post.aiPrompts}">
-
-                    <div class="card shadow-sm h-100">
-
-                        <div class="card-body d-flex flex-column">
-
-                            <h5 class="card-title"
-                                th:text="${p.name}">
-                            </h5>
-
-                            <pre class="bg-light p-3 rounded flex-grow-1"
-                                 style="white-space: pre-wrap;"
-                                 th:text="${p.promptText}">
-                            </pre>
-
-                            <button class="btn btn-outline-dark btn-sm mt-3"
-                                    type="button"
-                                    th:attr="data-text=${p.promptText}"
-                                    onclick="copyPrompt(this)">
-                                📋 Copy Prompt
-                            </button>
-
-                        </div>
+                <div>
+                    <div class="fw-semibold"
+                         th:text="${post.authorName != null ? post.authorName : 'Admin'}">
                     </div>
 
+                    <div class="text-muted small"
+                         th:if="${post.publishedAt != null}">
+                        <span th:text="${#temporals.format(post.publishedAt,'dd MMM yyyy')}"></span>
+                    </div>
                 </div>
-
             </div>
-        </section>
 
-        <!-- COMMENTS -->
-        <hr class="my-5">
+            <!-- ENGAGEMENT -->
+            <div class="d-flex align-items-center gap-4 my-3">
+                <button class="applause-btn"
+                        onclick="giveApplause(this)">
+                    <span class="applause-icon">👏</span>
+                    <span id="applauseCount"
+                          th:text="${post.applauseCount}">0</span>
+                </button>
 
-        <section class="comments-section">
-            <h4 class="comments-title">Leave a comment</h4>
+                <div class="text-muted">
+                    💬 <span th:text="${post.commentCount}">0</span> comments
+                </div>
+            </div>
 
-            <form th:action="@{/comment/add}" method="post" class="comment-form">
+            <div id="loginWarning"
+                 class="text-danger small"
+                 style="display:none;">
+                To give applause, please login.
+            </div>
+
+            <!-- IMAGE -->
+            <img th:if="${post.imageUrl}"
+                 th:src="${post.imageUrl}"
+                 class="img-fluid rounded my-5">
+
+            <!-- IMAGE SECTIONS -->
+            <section th:if="${post.imageSections != null and !post.imageSections.isEmpty()}"
+                     class="image-sections my-5">
+
+                <div th:each="s : ${post.imageSections}"
+                     class="image-section mb-5">
+
+                    <h3 class="image-section-heading"
+                        th:if="${s.heading}"
+                        th:text="${s.heading}"></h3>
+
+                    <img th:if="${s.imageUrl}"
+                         th:src="${s.imageUrl}"
+                         class="image-section-img"/>
+
+                    <div class="image-section-text"
+                         th:if="${s.description}">
+                        <p th:text="${s.description}"></p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CONTENT -->
+            <div class="blog-content"
+                 th:if="${post.sections != null and !post.sections.isEmpty()}">
+
+                <section th:each="section : ${post.sections}">
+                    <div th:utext="${section.content}"></div>
+
+                    <div th:if="${section.bulletTitle != null}">
+                        <h5 th:text="${section.bulletTitle}"></h5>
+                        <ul th:if="${section.bullets != null}">
+                            <li th:each="b : ${#strings.arraySplit(section.bullets, '\n')}"
+                                th:text="${b}"></li>
+                        </ul>
+                    </div>
+
+                    <div th:if="${section.tipTitle != null}"
+                         class="alert alert-info mt-3">
+                        <strong th:text="${section.tipTitle}"></strong>
+                        <p th:text="${section.tipContent}"></p>
+                    </div>
+                </section>
+            </div>
+
+            <!-- AI PROMPTS -->
+            <section class="mt-5"
+                     th:if="${post.aiPostMode != null and post.aiPostMode.name() == 'PROMPT'}">
+
+                <h3 class="fw-bold mb-4">AI Prompts</h3>
+
+                <div class="row g-4">
+                    <div class="col-md-6"
+                         th:each="p : ${post.aiPrompts}">
+                        <div class="card shadow-sm h-100">
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title" th:text="${p.name}"></h5>
+                                <pre class="bg-light p-3 rounded flex-grow-1"
+                                     style="white-space: pre-wrap;"
+                                     th:text="${p.promptText}"></pre>
+
+                                <button class="btn btn-outline-dark btn-sm mt-3"
+                                        type="button"
+                                        th:attr="data-text=${p.promptText}"
+                                        onclick="copyPrompt(this)">
+                                    📋 Copy Prompt
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <form class="comment-form"
+                  th:action="@{/comment/add}"
+                  method="post">
 
                 <!-- ✅ REQUIRED: slug -->
                 <input type="hidden"
@@ -200,48 +175,84 @@
                        name="language"
                        th:value="${post.language}" />
 
-                <div class="scroll-indicator" id="scrollIndicator">
-                    <span class="arrow-down">⌄</span>
-                </div>
+                <!-- ✅ REQUIRED: CSRF -->
+                <input type="hidden"
+                       th:name="${_csrf.parameterName}"
+                       th:value="${_csrf.token}" />
 
                 <div class="comment-row">
                     <input class="comment-input"
+                           type="text"
                            name="name"
                            placeholder="Your name"
                            required>
 
                     <input class="comment-input"
-                           name="email"
                            type="email"
+                           name="email"
                            placeholder="Your email"
                            required>
                 </div>
 
                 <textarea class="comment-textarea"
                           name="content"
-                          rows="4"
                           placeholder="Write your comment..."
                           required></textarea>
 
-                <button class="comment-submit">Post comment</button>
+                <button class="comment-submit" type="submit">
+                    Post Comment
+                </button>
             </form>
 
             <div class="comment-list">
                 <div th:each="c : ${comments}" class="comment-card">
+
                     <div class="comment-header">
-                        <span class="comment-author" th:text="${c.name}"></span>
+            <span class="comment-author"
+                  th:text="${c.name}"></span>
+
                         <span class="comment-date"
                               th:text="${#temporals.format(c.createdAt,'dd MMM yyyy HH:mm')}">
-                </span>
+            </span>
                     </div>
 
                     <p class="comment-body"
                        th:utext="${#strings.replace(c.content,'\n','<br/>')}"></p>
                 </div>
             </div>
-        </section>
 
-    </article>
+        </article>
+
+        <!-- =========================
+             RIGHT SIDEBAR
+        ========================== -->
+        <aside class="blog-sidebar">
+            <div class="sidebar-box">
+                <h5 class="sidebar-title">Recent Posts</h5>
+
+                <div class="recent-post"
+                     th:each="p : ${recentPosts}">
+
+                    <a th:href="@{'/' + ${p.language.name().toLowerCase()} + '/blog/' + ${p.slug}}"
+                       class="recent-post-link">
+
+                        <img th:if="${p.imageUrl}"
+                             th:src="${p.imageUrl}"
+                             class="recent-post-img"/>
+
+                        <div class="recent-post-text">
+                            <div class="recent-post-title"
+                                 th:text="${p.title}"></div>
+
+                            <div class="recent-post-date"
+                                 th:text="${#temporals.format(p.publishedAt,'dd MMM yyyy')}"></div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+    </div>
 </main>
 
 <!-- FOOTER -->

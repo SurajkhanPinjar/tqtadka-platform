@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.awt.print.Pageable;
 import java.util.List;
 import java.util.Optional;
 
@@ -200,4 +201,17 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             @Param("language") LanguageType language
     );
 
+    @Query("""
+    select p.id as id,
+           p.title as title,
+           p.slug as slug,
+           p.language as language,
+           p.imageUrl as imageUrl,
+           p.publishedAt as publishedAt
+    from Post p
+    where p.language = :language
+      and p.published = true
+    order by p.publishedAt desc
+""")
+    List<RecentPostView> findRecentPostsForSidebar(@Param("language") LanguageType language);
 }
