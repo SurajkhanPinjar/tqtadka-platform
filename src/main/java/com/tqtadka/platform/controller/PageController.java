@@ -14,9 +14,9 @@ public class PageController {
         return "pages/about";
     }
 
-    @GetMapping("/privacy-policy")
-    public String privacyPolicy(@PathVariable String lang) {
-        return "pages/privacy-policy";
+    @GetMapping("/privacy")
+    public String privacy(@PathVariable String lang) {
+        return "pages/privacy";
     }
 
     @GetMapping("/terms-and-conditions")

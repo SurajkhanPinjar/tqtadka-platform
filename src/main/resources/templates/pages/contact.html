@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Contact Us • TQtadka</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&display=swap"
+          rel="stylesheet">
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+
+<!-- ================= HEADER ================= -->
+<th:block th:with="
+        lang=${lang ?: 'en'},
+        categories=${categories},
+        activeCategory=${null}
+">
+    <div th:replace="~{fragments/header :: header}"></div>
+</th:block>
+
+<!-- ================= MAIN CONTENT ================= -->
+<div class="container my-5" style="max-width: 1000px;">
+
+    <h1 class="hero-title mb-4">Contact Us</h1>
+
+    <p class="hero-subtitle mb-5">
+        We’re happy you’re here! If you have any questions, feedback, suggestions,
+        or just want to say hello — feel free to reach out.
+    </p>
+
+    <section class="mb-5">
+        <p>
+            At TQtadka, we genuinely value communication and try our best to respond to every message.
+        </p>
+    </section>
+
+    <section class="mb-5">
+        <h4 class="fw-bold mb-3">Get in Touch</h4>
+        <p>
+            You can contact us for:
+        </p>
+        <ul class="ps-3">
+            <li>General questions about our content</li>
+            <li>Feedback or suggestions</li>
+            <li>Collaboration or partnership ideas</li>
+            <li>Business inquiries</li>
+            <li>Reporting issues or errors on the website</li>
+        </ul>
+        <p class="mt-3">
+            📧 <strong>Email:</strong> support@tqtadka.com
+        </p>
+        <p>
+            We usually reply within <strong>24–48 hours</strong>.
+        </p>
+    </section>
+
+    <section class="mb-5">
+        <h4 class="fw-bold mb-3">A Small Note</h4>
+        <p>
+            While we do our best to respond to every message, please avoid sending spam,
+            promotional offers, or unrelated requests.
+        </p>
+        <p>
+            Let’s keep this space respectful and meaningful 🙌
+        </p>
+    </section>
+
+    <section class="mb-5">
+        <h4 class="fw-bold mb-3">Optional: Contact Form (Recommended)</h4>
+        <p>
+            If you want to make it even better, add a simple contact form with:
+        </p>
+        <ul class="ps-3">
+            <li>Name</li>
+            <li>Email</li>
+            <li>Message</li>
+            <li>Submit button</li>
+        </ul>
+        <p class="mt-3">
+            This improves:
+        </p>
+        <ul class="ps-3">
+            <li>User trust</li>
+            <li>Brand credibility</li>
+            <li>AdSense approval chances</li>
+        </ul>
+    </section>
+
+</div>
+
+<!-- ================= FOOTER ================= -->
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>
