@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>About • TQtadka</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&display=swap"
+          rel="stylesheet">
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+
+<!-- ================= HEADER ================= -->
+<th:block th:with="
+        lang=${lang ?: 'en'},
+        categories=${categories},
+        activeCategory=${null}
+">
+    <div th:replace="~{fragments/header :: header}"></div>
+</th:block>
+
+<!-- ================= MAIN CONTENT ================= -->
+<div class="container my-5" style="max-width: 1000px;">
+
+    <h1 class="hero-title mb-4">About TQtadka</h1>
+
+    <p class="hero-subtitle mb-5">
+        TQtadka is a modern editorial platform focused on clarity,
+        usefulness, and real-world relevance.
+    </p>
+
+    <section class="mb-5">
+        <h4 class="fw-bold mb-3">What We Publish</h4>
+        <ul class="ps-3">
+            <li>Technology & Artificial Intelligence</li>
+            <li>Health, Skin Care & Fitness</li>
+            <li>Money, Careers & Education</li>
+            <li>Life, Travel & Everyday Insights</li>
+        </ul>
+    </section>
+
+    <section class="mb-5">
+        <h4 class="fw-bold mb-3">Our Philosophy</h4>
+        <p>
+            We believe content should be easy to read, honest, and practical.
+            No clickbait. No noise. Just information that helps you think better.
+        </p>
+    </section>
+
+    <section class="mb-5">
+        <h4 class="fw-bold mb-3">Built for Readers</h4>
+        <p>
+            TQtadka is designed for fast reading, clean layouts,
+            and distraction-free learning — on desktop and mobile.
+        </p>
+    </section>
+
+</div>
+
+<!-- ================= FOOTER ================= -->
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

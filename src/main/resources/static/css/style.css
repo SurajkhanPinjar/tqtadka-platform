@@ -105,9 +105,7 @@ body {
     position: relative;
     background: #ffffff;
     max-width: 900px;
-    margin: 0 auto;
     padding: 0 20px;
-    flex: 1;
     min-width: 0;
     z-index: 1;
 }
@@ -855,13 +853,6 @@ img {
     }
 }
 
-.blog-layout {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 320px;
-    gap: 64px;
-    max-width: 1200px;
-    margin: 0 auto;
-}
 
 /* MAIN */
 .blog-main {
@@ -930,13 +921,395 @@ img {
 
 /* Mobile */
 @media (max-width: 992px) {
+
+    .blog-sidebar {
+        width: 100%;
+        position: static;
+        margin-top: 48px;
+    }
+}
+
+/* ===== MOBILE FIX ===== */
+@media (max-width: 768px) {
+
+    .blog-container {
+        width: 100%;
+    }
+
+    .blog-sidebar {
+        width: 100%;
+        margin-top: 40px;
+    }
+
+    /* Prevent weird text wrapping */
+    .hero-title {
+        font-size: 2rem;
+        line-height: 1.2;
+        word-break: break-word;
+    }
+
+    .recent-post {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+    }
+
+    .recent-post-img {
+        width: 64px;
+        height: 64px;
+        object-fit: cover;
+        border-radius: 8px;
+        flex-shrink: 0;
+    }
+
+    .recent-post-title {
+        font-size: 0.95rem;
+        line-height: 1.3;
+    }
+
+    .recent-post-date {
+        font-size: 0.8rem;
+        color: #777;
+    }
+}
+/* ===== BLOG LAYOUT ===== */
+.blog-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 320px;
+    gap: 64px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Desktop widths */
+
+.blog-sidebar {
+    width: 320px;
+    flex-shrink: 0;
+}
+
+@media (max-width: 992px) {
     .blog-layout {
-        flex-direction: column;
+        grid-template-columns: 1fr;
     }
 
     .blog-sidebar {
         width: 100%;
         position: static;
         margin-top: 48px;
+    }
+}
+
+/* ===============================
+   FOOTER — FINAL (STYLE.CSS)
+================================ */
+
+.site-footer {
+    margin-top: 120px;
+    padding: 64px 0 32px;
+    background: #ffffff;
+    border-top: 1px solid rgba(0,0,0,0.08);
+}
+
+/* 🔥 Alignment fix — matches header & content */
+.site-footer .footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+
+    display: grid;
+    grid-template-columns: 1.2fr 2fr;
+    gap: 64px;
+}
+
+/* ===============================
+   BRAND BLOCK
+================================ */
+
+.footer-brand {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.footer-logo {
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #111;
+}
+
+.footer-description {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #666;
+    max-width: 320px;
+}
+
+/* ===============================
+   FOOTER LINKS
+================================ */
+
+.footer-links {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(120px, 1fr));
+    gap: 32px;
+}
+
+.footer-column {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.footer-column-title {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #111;
+    margin-bottom: 6px;
+}
+
+.footer-link {
+    font-size: 14px;
+    color: #666;
+    text-decoration: none;
+    transition: color 120ms ease;
+}
+
+.footer-link:hover {
+    color: #111;
+}
+
+/* ===============================
+   FOOTER BOTTOM BAR
+================================ */
+
+.footer-bottom {
+    max-width: 1200px;
+    margin: 48px auto 0;
+    padding: 16px 20px 0;
+    border-top: 1px solid rgba(0,0,0,0.06);
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+
+    font-size: 13px;
+    color: #777;
+}
+
+.footer-bottom a {
+    color: #777;
+    text-decoration: none;
+}
+
+.footer-bottom a:hover {
+    color: #111;
+}
+
+/* ===============================
+   MOBILE
+================================ */
+
+@media (max-width: 768px) {
+
+    .site-footer .footer-inner {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+
+    .footer-links {
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+    }
+
+    .footer-bottom {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+}
+
+
+/* ===============================
+   LEGAL MODAL (ABOUT / PRIVACY)
+================================ */
+
+.legal-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    backdrop-filter: blur(6px);
+
+    display: none;                /* 🔥 hidden by default */
+    align-items: center;
+    justify-content: center;
+
+    z-index: 9999;
+}
+
+/* ✅ Visible state */
+.legal-modal.show {
+    display: flex;
+}
+
+/* Modal box */
+.legal-box {
+    background: #fff;
+    max-width: 720px;
+    width: calc(100% - 32px);
+    max-height: 85vh;
+    overflow-y: auto;
+
+    padding: 32px 36px;
+    border-radius: 16px;
+
+    position: relative;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.18);
+
+    animation: modalFadeIn 220ms ease-out;
+}
+
+/* Headings */
+.legal-box h2 {
+    font-family: "Playfair Display", serif;
+    font-size: 2rem;
+    margin-bottom: 12px;
+}
+
+.legal-box h3 {
+    margin-top: 24px;
+    font-size: 1.1rem;
+}
+
+/* Text */
+.legal-box p,
+.legal-box li {
+    font-size: 15px;
+    line-height: 1.65;
+    color: #444;
+}
+
+.legal-intro {
+    color: #666;
+    margin-bottom: 24px;
+}
+
+/* Close button */
+.legal-close {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+
+    opacity: 0.6;
+}
+
+.legal-close:hover {
+    opacity: 1;
+}
+
+/* ===============================
+   MOBILE POLISH
+================================ */
+
+@media (max-width: 640px) {
+    .legal-box {
+        padding: 24px 20px;
+        border-radius: 14px;
+    }
+
+    .legal-box h2 {
+        font-size: 1.6rem;
+    }
+}
+
+/* ===============================
+   ENTRY ANIMATION (SUBTLE)
+================================ */
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.96) translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.footer-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font: inherit;
+    color: inherit;
+    text-align: left;
+}
+
+/* ===============================
+   FOOTER STAMP + SIGNATURE (FINAL)
+================================ */
+
+.footer-stamp-wrapper {
+    position: relative;
+    margin-top: 14px;              /* 🔥 tighter, no dead air */
+    width: 240px;                  /* authoritative presence */
+}
+
+/* Stamp */
+.footer-stamp {
+    width: 210px;                  /* bold but not oversized */
+    opacity: 0.92;
+    filter: saturate(0.9) contrast(1.1);
+    display: block;
+}
+
+/* Signature — REAL overlap */
+.footer-signature {
+    position: absolute;
+    bottom: -6px;                  /* 🔥 intentional touch */
+    right: -4px;
+    width: 135px;                  /* readable, elegant */
+    opacity: 0.85;
+    transform: rotate(-7deg);
+    pointer-events: none;
+}
+
+/* Hover polish (desktop only) */
+.footer-stamp-wrapper:hover .footer-stamp {
+    opacity: 1;
+}
+
+.footer-stamp-wrapper:hover .footer-signature {
+    opacity: 0.95;
+}
+
+/* ===============================
+   MOBILE TUNING
+================================ */
+@media (max-width: 768px) {
+    .footer-stamp-wrapper {
+        margin-top: 10px;
+        width: 180px;
+    }
+
+    .footer-stamp {
+        width: 160px;
+    }
+
+    .footer-signature {
+        width: 95px;
+        bottom: -4px;
+        right: -2px;
     }
 }

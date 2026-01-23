@@ -1,26 +1,66 @@
-<footer th:fragment="footer"
-        class="border-top mt-5 py-4">
+<footer class="site-footer">
+    <div class="footer-inner">
 
-    <div class="container" style="max-width:1100px;">
-        <div class="d-flex flex-column gap-2 small text-muted">
+        <!-- BRAND -->
+        <div class="footer-brand">
+            <div class="footer-logo">TQtadka</div>
+            <p class="footer-description">
+                Thoughtful writing on technology, life, money, and the future.
+            </p>
 
-            <div>
-                © 2026 <strong class="text-dark">TQtadka</strong>
+            <!-- 🔥 Stamp + Signature -->
+            <div class="footer-stamp-wrapper">
+                <img src="/images/tqtadka-stamp.png"
+                     alt="TQtadka Vintage Stamp"
+                     class="footer-stamp">
+
+                <img src="/images/signature.png"
+                     alt="Signature"
+                     class="footer-signature">
+            </div>
+        </div>
+
+        <!-- LINKS -->
+        <div class="footer-links">
+
+            <!-- Explore -->
+            <div class="footer-column">
+                <div class="footer-column-title">Explore</div>
+                <a class="footer-link" th:href="@{/en}">Home</a>
+                <a class="footer-link" th:href="@{/en/blog}">Blog</a>
             </div>
 
-            <div class="d-flex gap-2 flex-wrap">
-                <a th:href="@{/{lang}/about(lang=${lang ?: 'en'})}">About</a>
-                <span>·</span>
-                <a th:href="@{/{lang}/privacy(lang=${lang ?: 'en'})}">Privacy</a>
-                <span>·</span>
-                <a th:href="@{/{lang}/contact(lang=${lang ?: 'en'})}">Contact</a>
+            <!-- Categories -->
+            <div class="footer-column">
+                <div class="footer-column-title">Categories</div>
+                <a class="footer-link" th:href="@{/en/category/AI}">AI</a>
+                <a class="footer-link" th:href="@{/en/category/TECH}">Tech</a>
+                <a class="footer-link" th:href="@{/en/category/SKIN_HEALTH}">
+                    Skin Health
+                </a>
+                <a class="footer-link" th:href="@{/en/category/BEAUTY_AND_STYLE}">
+                    Beauty & Style
+                </a>
+            </div>
+
+            <!-- About -->
+            <div class="footer-column">
+                <div class="footer-column-title">About</div>
+                <a class="footer-link" th:href="@{/en/about}">About Us</a>
+                <a class="footer-link" th:href="@{/en/privacy}">Contact Us</a>
+                <a class="footer-link" th:href="@{/en/privacy}">Privacy Policy</a>
+                <a class="footer-link" th:href="@{/en/privacy}">Terms & Conditions</a>
+                <a class="footer-link" th:href="@{/en/privacy}">Disclaimer</a>
             </div>
 
         </div>
     </div>
-</footer>
 
-<script>
-    // 🔥 Touch latency elimination (SAFE)
-    document.addEventListener("touchstart", () => {}, { passive: true });
-</script>
+    <!-- BOTTOM -->
+    <div class="footer-bottom">
+        <span>
+            © <span th:text="${#dates.year(#dates.createNow())}"></span>
+            TQtadka. Built with clarity.
+        </span>
+    </div>
+</footer>
