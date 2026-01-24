@@ -6,6 +6,7 @@ import com.tqtadka.platform.dto.ImageSectionDto;
 import com.tqtadka.platform.entity.*;
 import com.tqtadka.platform.repository.PostImageSectionRepository;
 import com.tqtadka.platform.repository.PostRepository;
+import com.tqtadka.platform.repository.PostViewEventRepository;
 import com.tqtadka.platform.service.PostService;
 import com.tqtadka.platform.util.SlugUtil;
 import org.springframework.security.access.AccessDeniedException;
@@ -26,9 +27,15 @@ public class PostServiceImpl implements PostService {
     private final PostImageSectionRepository imageSectionRepository;
 
 
-    public PostServiceImpl(PostRepository postRepository, PostImageSectionRepository imageSectionRepository) {
+    private final PostViewEventRepository postViewEventRepository;
+
+
+
+    public PostServiceImpl(PostRepository postRepository, PostImageSectionRepository imageSectionRepository, PostViewEventRepository postViewEventRepository) {
         this.postRepository = postRepository;
         this.imageSectionRepository = imageSectionRepository;
+        this.postViewEventRepository = postViewEventRepository;
+
     }
 
     /* =====================================================
@@ -125,8 +132,26 @@ public class PostServiceImpl implements PostService {
        ENGAGEMENT
     ===================================================== */
     @Override
+    @Transactional
     public void incrementViews(String slug, LanguageType language) {
-        postRepository.incrementViews(slug, language);
+
+        Post post = postRepository
+                .findBySlugAndLanguageAndPublishedTrue(slug, language)
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+
+        // 1️⃣ increment counter (fast aggregate)
+        post.setViews(post.getViews() + 1);
+
+        // 2️⃣ save view event (analytics source)
+        PostViewEvent event = PostViewEvent.builder()
+                .post(post)
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        postViewEventRepository.save(event);
+
+        // 3️⃣ persist post update
+        postRepository.save(post);
     }
 
     @Override

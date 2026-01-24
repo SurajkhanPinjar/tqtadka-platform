@@ -42,13 +42,13 @@ public class SecurityConfig {
 
                         /* ---------- ADMIN ONLY ---------- */
                         .requestMatchers(
-                                "/admin/users/**",
-                                "/admin/dashboard/**"
+                                "/admin/users/**"
                         ).hasRole("ADMIN")
 
                         /* ---------- ADMIN + AUTHOR ---------- */
                         .requestMatchers(
-                                "/admin/posts/**"
+                                "/admin/posts/**",
+                                "/admin/dashboard/**"
                         ).hasAnyRole("ADMIN", "AUTHOR")
 
                         /* ---------- EVERYTHING ELSE ---------- */

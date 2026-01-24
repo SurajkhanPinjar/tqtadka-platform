@@ -54,16 +54,17 @@
 
                 <!-- ADMIN -->
                 <a sec:authorize="hasRole('ADMIN')"
-                   th:href="@{/admin/posts}"
+                   th:href="@{/admin}"
                    class="fw-semibold text-decoration-none text-dark">
                     Admin
                 </a>
 
                 <!-- AUTHOR -->
-                <span sec:authorize="hasRole('AUTHOR')"
-                      class="fw-semibold text-dark">
-                    Hello Author
-                </span>
+                <a sec:authorize="hasRole('AUTHOR')"
+                   th:href="@{/admin}"
+                   class="fw-semibold text-decoration-none text-dark">
+                    Author
+                </a>
 
                 <!-- NORMAL USER -->
                 <span sec:authorize="!hasAnyRole('ADMIN','AUTHOR')"

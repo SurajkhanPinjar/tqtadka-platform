@@ -137,4 +137,7 @@ public class Post {
             orphanRemoval = true
     )
     private Set<PostImageSection> imageSections = new HashSet<>();
+
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
+    private List<PostViewEvent> viewEvents;
 }

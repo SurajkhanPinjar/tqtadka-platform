@@ -1,11 +1,14 @@
 package com.tqtadka.platform.repository;
 
+import com.tqtadka.platform.dto.DashboardPostView;
 import com.tqtadka.platform.entity.*;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.awt.print.Pageable;
+import org.springframework.data.domain.Pageable;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -214,4 +217,160 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     order by p.publishedAt desc
 """)
     List<RecentPostView> findRecentPostsForSidebar(@Param("language") LanguageType language);
+//    @Query("""
+//    select count(p)
+//    from Post p
+//    where p.published = true
+//""")
+//    long countPublishedPosts();
+
+//    long countByAuthorNameAndPublishedTrue(String authorName);
+
+//    @Query("""
+//    select coalesce(sum(p.views), 0)
+//    from Post p
+//    where p.published = true
+//      and (:author is null or p.authorName = :author)
+//""")
+//    Long totalViewsByAuthor(@Param("author") String author);
+
+    @Query("""
+    select coalesce(sum(p.views), 0)
+    from Post p
+    where p.published = true
+      and p.publishedAt >= :start
+      and (:author is null or p.authorName = :author)
+""")
+    Long viewsFromByAuthor(
+            @Param("start") LocalDateTime start,
+            @Param("author") String author
+    );
+
+    @Query("""
+    select p
+    from Post p
+    where (:category is null or p.category = :category)
+      and (:author is null or p.createdBy = :author)
+    order by p.createdAt desc
+""")
+    List<Post> filterPosts(
+            @Param("category") CategoryType category,
+            @Param("author") User author
+    );
+
+    /* =====================
+   DASHBOARD COUNTS
+===================== */
+
+    @Query("""
+    select count(p)
+    from Post p
+    where p.published = true
+""")
+    long countPublishedPosts();
+
+    long countByCreatedBy(User createdBy);
+
+    @Query("""
+    select coalesce(sum(p.views),0)
+    from Post p
+""")
+    Long totalViews();
+
+    @Query("""
+    select coalesce(sum(p.views),0)
+    from Post p
+    where p.createdBy = :author
+""")
+    Long totalViewsByCreatedBy(@Param("author") User author);
+
+    @Query("""
+    select coalesce(sum(p.views),0)
+    from Post p
+    where p.publishedAt >= :start
+""")
+    Long viewsFrom(@Param("start") LocalDateTime start);
+
+    @Query("""
+    select coalesce(sum(p.views),0)
+    from Post p
+    where p.publishedAt >= :start
+      and p.createdBy = :author
+""")
+    Long viewsFromByCreatedBy(
+            @Param("start") LocalDateTime start,
+            @Param("author") User author
+    );
+
+
+    @Query("""
+    select p.id as id,
+           p.title as title,
+           p.category as category,
+           p.publishedAt as publishedAt,
+           p.views as views
+    from Post p
+    where (:category is null or p.category = :category)
+      and (:author is null or p.createdBy = :author)
+    order by p.publishedAt desc
+""")
+    List<DashboardPostView> filterDashboardPosts(
+            @Param("category") CategoryType category,
+            @Param("author") User author
+    );
+
+    @Query("""
+select
+    p.slug as slug,
+    p.title as title,
+    p.category as category,
+    coalesce(p.authorName, u.name) as authorName,
+
+    /* Month analytics from events (safe even if empty) */
+    coalesce(sum(
+        case when v.createdAt >= :monthStart then 1 else 0 end
+    ), 0) as viewsThisMonth,
+
+    coalesce(sum(
+        case when v.createdAt >= :lastMonthStart
+              and v.createdAt < :monthStart then 1 else 0 end
+    ), 0) as viewsLastMonth,
+
+    /* 🔥 TOTAL VIEWS FROM POST TABLE (CRITICAL FIX) */
+    p.views as totalViews,
+
+    p.publishedAt as publishedAt
+
+from Post p
+join p.createdBy u
+left join p.viewEvents v
+
+where (:category is null or p.category = :category)
+  and (:author is null or p.createdBy = :author)
+  and p.published = true
+
+group by
+    p.id,
+    p.views,
+    u.name,
+    p.authorName,
+    p.category,
+    p.title,
+    p.slug,
+    p.publishedAt
+""")
+    List<DashboardPostView> findDashboardPosts(
+            @Param("category") CategoryType category,
+            @Param("author") User author,
+            @Param("monthStart") LocalDateTime monthStart,
+            @Param("lastMonthStart") LocalDateTime lastMonthStart,
+            Sort sort
+    );
+
+    Optional<Post> findBySlugAndLanguageAndPublishedTrue(
+            String slug,
+            LanguageType language
+    );
+
+
 }

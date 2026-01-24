@@ -1313,3 +1313,36 @@ img {
         right: -2px;
     }
 }
+
+/*=============================
+Admin Dashboard Column
+=============================*/
+
+.post-title-text {
+    display: inline-block;
+    max-width: 400px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+}
+
+.post-title-link {
+    color: #111;
+    text-decoration: none;
+}
+
+.post-title-link:hover {
+    text-decoration: underline;
+}
+
+.table thead th {
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 2;
+}
+
+td.text-end, th.text-end {
+    text-align: right;
+}
