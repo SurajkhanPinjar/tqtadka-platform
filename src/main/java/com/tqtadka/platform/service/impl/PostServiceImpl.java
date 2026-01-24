@@ -9,6 +9,7 @@ import com.tqtadka.platform.repository.PostRepository;
 import com.tqtadka.platform.repository.PostViewEventRepository;
 import com.tqtadka.platform.service.PostService;
 import com.tqtadka.platform.util.SlugUtil;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,6 +55,36 @@ public class PostServiceImpl implements PostService {
         return postRepository
                 .findByCategoryAndLanguageAndPublishedTrueOrderByPublishedAtDesc(
                         category, language
+                );
+    }
+
+    public List<Post> getPostsByCategory(
+            CategoryType category,
+            LanguageType language,
+            String sort
+    ) {
+
+        Sort sortSpec;
+
+        switch (sort) {
+            case "popular" ->
+                    sortSpec = Sort.by(Sort.Direction.DESC, "views");
+
+            case "oldest" ->
+                    sortSpec = Sort.by(Sort.Direction.ASC, "publishedAt");
+
+            case "latest" ->
+                    sortSpec = Sort.by(Sort.Direction.DESC, "publishedAt");
+
+            default ->
+                    sortSpec = Sort.by(Sort.Direction.DESC, "publishedAt");
+        }
+
+        return postRepository
+                .findByCategoryAndLanguageAndPublishedTrue(
+                        category,
+                        language,
+                        sortSpec
                 );
     }
 

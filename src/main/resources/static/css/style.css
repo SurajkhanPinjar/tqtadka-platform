@@ -1346,3 +1346,33 @@ Admin Dashboard Column
 td.text-end, th.text-end {
     text-align: right;
 }
+
+/*  Prof Icons
+*/
+
+.post-card .bi-hand-clap { color: #6f42c1; }   /* applause */
+.post-card .bi-chat-dots { color: #0d6efd; }  /* comments */
+.post-card .bi-eye { color: #6c757d; }        /* views */
+
+.post-card span:hover i {
+    opacity: 1;
+    transform: scale(1.1);
+    transition: 0.15s ease;
+}
+.post-card i {
+    font-size: 0.9rem;
+    opacity: 0.75;
+}
+
+.post-card span:hover i {
+    opacity: 1;
+}
+
+.post-card .bi-hand-clap {
+    color: #6f42c1;
+}
+
+.post-card span:hover .bi-hand-clap {
+    transform: scale(1.1);
+    transition: 0.15s ease;
+}

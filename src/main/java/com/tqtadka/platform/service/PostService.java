@@ -1,6 +1,7 @@
 package com.tqtadka.platform.service;
 
 import com.tqtadka.platform.entity.*;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -43,6 +44,12 @@ public interface PostService {
     List<Post> getPostsByCategory(
             CategoryType category,
             LanguageType language
+    );
+
+    List<Post> getPostsByCategory(
+            CategoryType category,
+            LanguageType language,
+            String sort
     );
 
     Post getPublishedPost(

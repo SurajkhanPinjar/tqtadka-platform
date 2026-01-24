@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class CategoryController {
@@ -21,6 +22,10 @@ public class CategoryController {
     public String viewCategory(
             @PathVariable String lang,
             @PathVariable CategoryType category,
+
+            // 🟢 NEW (SAFE)
+            @RequestParam(defaultValue = "latest") String sort,
+
             Model model
     ) {
 
@@ -34,10 +39,13 @@ public class CategoryController {
         model.addAttribute("categories", CategoryType.values());
         model.addAttribute("activeCategory", category);
 
-        // 🔴 NEVER pass null list
+        // 🟢 pass sort to UI (for active button highlight)
+        model.addAttribute("sort", sort);
+
+        // 🟢 SORT-AWARE fetch (fallbacks inside service)
         model.addAttribute(
                 "posts",
-                postService.getPostsByCategory(category, language)
+                postService.getPostsByCategory(category, language, sort)
         );
 
         return "category";

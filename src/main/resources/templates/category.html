@@ -15,8 +15,14 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
           rel="stylesheet">
 
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+          rel="stylesheet">
+
     <!-- Custom Styles -->
     <link rel="stylesheet" th:href="@{/css/style.css}">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+          rel="stylesheet">
 </head>
 
 <body>
@@ -39,13 +45,50 @@
         CATEGORY
     </h2>
 
+    <!-- ================= SORT TABS ================= -->
+    <div class="d-flex gap-2 mb-4">
+
+        <a th:href="@{/{lang}/category/{category}(
+            lang=${lang},
+            category=${activeCategory},
+            sort='latest'
+        )}"
+           class="btn btn-sm btn-outline-dark"
+           th:classappend="${sort == 'latest' ? 'active' : ''}">
+            Latest
+        </a>
+
+        <a th:href="@{/{lang}/category/{category}(
+            lang=${lang},
+            category=${activeCategory},
+            sort='popular'
+        )}"
+           class="btn btn-sm btn-outline-dark"
+           th:classappend="${sort == 'popular' ? 'active' : ''}">
+            Popular
+        </a>
+
+        <a th:href="@{/{lang}/category/{category}(
+            lang=${lang},
+            category=${activeCategory},
+            sort='oldest'
+        )}"
+           class="btn btn-sm btn-outline-dark"
+           th:classappend="${sort == 'oldest' ? 'active' : ''}">
+            Oldest
+        </a>
+
+    </div>
+
     <!-- EMPTY STATE -->
     <div th:if="${posts == null or #lists.isEmpty(posts)}"
          class="alert alert-secondary text-center">
 
         <span th:text="${lang == 'kn'
-            ? 'ಈ ವರ್ಗದಲ್ಲಿ ಯಾವುದೇ ಲೇಖನಗಳು ಲಭ್ಯವಿಲ್ಲ'
-            : 'No posts available in this category'}">
+            ? 'ಇಲ್ಲಿ ಇನ್ನೂ ಏನೂ ಇಲ್ಲ — ಆದರೆ ಅದ್ಭುತವಾದದ್ದು ಶೀಘ್ರದಲ್ಲೇ ಬರುತ್ತಿದೆ ✨
+                ಈ ವಿಭಾಗಕ್ಕಾಗಿ ಅರ್ಥಪೂರ್ಣ ಲೇಖನಗಳನ್ನು ನಾವು ಸಿದ್ಧಪಡಿಸುತ್ತಿದ್ದೇವೆ.'
+            : 'Nothing here yet — but something great is coming ✨
+               We’re working on thoughtful stories for this category.'}">
         </span>
 
     </div>
@@ -95,13 +138,26 @@
                     </div>
 
                     <!-- STATS -->
-                    <div class="d-flex gap-3 mt-auto small text-muted">
+                    <div class="d-flex gap-3 mt-auto small text-muted align-items-center">
 
-                        <span>👏 <span th:text="${post.applauseCount}">0</span></span>
+                        <!-- Applause -->
+                        <!-- Likes / Applause -->
+                        <span class="d-flex align-items-center gap-1">
+                            <i class="bi bi-hand-thumbs-up"></i>
+                            <span th:text="${post.applauseCount}">0</span>
+                        </span>
 
-                        <span>💬 <span th:text="${post.commentCount}">0</span></span>
+                        <!-- Comments -->
+                        <span class="d-flex align-items-center gap-1">
+                            <i class="bi bi-chat-dots"></i>
+                            <span th:text="${post.commentCount}">0</span>
+                        </span>
 
-                        <span>👀 <span th:text="${post.views}">0</span></span>
+                        <!-- Views -->
+                        <span class="d-flex align-items-center gap-1">
+                            <i class="bi bi-eye"></i>
+                            <span th:text="${post.views}">0</span>
+                        </span>
 
                     </div>
 

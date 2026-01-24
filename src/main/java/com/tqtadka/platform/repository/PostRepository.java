@@ -373,4 +373,11 @@ group by
     );
 
 
+    List<Post> findByCategoryAndLanguageAndPublishedTrue(
+            CategoryType category,
+            LanguageType language,
+            Sort sort
+    );
+
+
 }
