@@ -151,75 +151,105 @@
             </div>
 
             <!-- AI PROMPTS -->
-            <section class="mt-5"
+            <section class="mt-5 pt-4 border-top"
                      th:if="${post.aiPostMode != null and post.aiPostMode.name() == 'PROMPT'}">
 
-                <h3 class="fw-bold mb-4">AI Prompts</h3>
+                <div class="mb-4">
+                    <h3 class="fw-bold">AI Prompts</h3>
+                    <p class="text-muted mb-0">
+                        Copy and use these ready-made prompts instantly
+                    </p>
+                </div>
 
                 <div class="row g-4">
                     <div class="col-md-6"
                          th:each="p : ${post.aiPrompts}">
+
                         <div class="card shadow-sm h-100">
-                            <div class="card-body d-flex flex-column">
-                                <h5 class="card-title" th:text="${p.name}"></h5>
-                                <pre class="bg-light p-3 rounded flex-grow-1"
-                                     style="white-space: pre-wrap;"
+                            <div class="card-body d-flex flex-column p-4">
+
+                                <h5 class="card-title mb-3"
+                                    th:text="${p.name}"></h5>
+
+                                <pre class="bg-light p-3 rounded flex-grow-1 mb-4"
+                                     style="white-space: pre-wrap; font-size: 0.9rem;"
                                      th:text="${p.promptText}"></pre>
 
-                                <button class="btn btn-outline-dark btn-sm mt-3"
+                                <button class="btn btn-outline-dark btn-sm d-inline-flex align-items-center gap-2 align-self-start"
                                         type="button"
                                         th:attr="data-text=${p.promptText}"
                                         onclick="copyPrompt(this)">
-                                    📋 Copy Prompt
+                                    <i class="bi bi-clipboard"></i>
+                                    <span>Copy Prompt</span>
                                 </button>
+
                             </div>
                         </div>
+
                     </div>
                 </div>
             </section>
 
-            <form class="comment-form"
-                  th:action="@{/comment/add}"
-                  method="post">
+            <!-- COMMENTS -->
+            <section class="mt-5 pt-5 border-top"
+                     th:if="${post != null}">
 
-                <!-- ✅ REQUIRED: slug -->
-                <input type="hidden"
-                       name="slug"
-                       th:value="${post.slug}" />
+                <h4 class="fw-bold mb-2">Comments</h4>
+                <p class="text-muted mb-4">
+                    Share your thoughts or feedback
+                </p>
 
-                <!-- ✅ REQUIRED: language -->
-                <input type="hidden"
-                       name="language"
-                       th:value="${post.language}" />
+                <form th:action="@{/comment/add}"
+                      method="post"
+                      class="bg-light rounded-4 p-4 shadow-sm">
 
-                <!-- ✅ REQUIRED: CSRF -->
-                <input type="hidden"
-                       th:name="${_csrf.parameterName}"
-                       th:value="${_csrf.token}" />
+                    <!-- ✅ REQUIRED: slug -->
+                    <input type="hidden"
+                           name="slug"
+                           th:value="${post.slug}" />
 
-                <div class="comment-row">
-                    <input class="comment-input"
-                           type="text"
-                           name="name"
-                           placeholder="Your name"
-                           required>
+                    <!-- ✅ REQUIRED: language -->
+                    <input type="hidden"
+                           name="language"
+                           th:value="${post.language}" />
 
-                    <input class="comment-input"
-                           type="email"
-                           name="email"
-                           placeholder="Your email"
-                           required>
-                </div>
+                    <!-- ✅ REQUIRED: CSRF -->
+                    <input type="hidden"
+                           th:name="${_csrf.parameterName}"
+                           th:value="${_csrf.token}" />
 
-                <textarea class="comment-textarea"
-                          name="content"
-                          placeholder="Write your comment..."
-                          required></textarea>
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <input class="form-control"
+                                   type="text"
+                                   name="name"
+                                   placeholder="Your name"
+                                   required>
+                        </div>
 
-                <button class="comment-submit" type="submit">
-                    Post Comment
-                </button>
-            </form>
+                        <div class="col-md-6">
+                            <input class="form-control"
+                                   type="email"
+                                   name="email"
+                                   placeholder="Your email"
+                                   required>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+            <textarea class="form-control"
+                      rows="4"
+                      name="content"
+                      placeholder="Write your comment..."
+                      required></textarea>
+                    </div>
+
+                    <button class="btn btn-dark px-4">
+                        Post Comment
+                    </button>
+                </form>
+
+            </section>
 
             <div class="comment-list">
                 <div th:each="c : ${comments}" class="comment-card">
@@ -306,13 +336,29 @@
     });
 }
 
-    function copyPrompt(btn) {
-        const text = btn.getAttribute("data-text");
-        navigator.clipboard.writeText(text).then(() => {
-            btn.innerText = "✅ Copied";
-            setTimeout(() => btn.innerText = "📋 Copy Prompt", 1500);
-        });
-    }
+function copyPrompt(btn) {
+    const text = btn.getAttribute("data-text");
+
+    navigator.clipboard.writeText(text).then(() => {
+        btn.classList.remove("btn-outline-dark");
+        btn.classList.add("btn-success");
+
+        btn.innerHTML = `
+            <i class="bi bi-check-circle-fill"></i>
+            <span>Copied</span>
+        `;
+
+        setTimeout(() => {
+            btn.classList.remove("btn-success");
+            btn.classList.add("btn-outline-dark");
+
+            btn.innerHTML = `
+                <i class="bi bi-clipboard"></i>
+                <span>Copy Prompt</span>
+            `;
+        }, 1500);
+    });
+}
 
     const scrollIndicator = document.getElementById("scrollIndicator");
 
