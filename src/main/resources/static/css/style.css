@@ -473,8 +473,11 @@ img {
     min-height: 64px;
     padding-top: 0.6rem;
     padding-bottom: 0.6rem;
-    background: #fff;
+    /*background: #fff; */
     border-bottom: 1px solid rgba(0,0,0,0.06);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    background: rgba(255, 255, 255, 0.85);
 }
 
 /* Logo breathing space */
@@ -1375,4 +1378,68 @@ td.text-end, th.text-end {
 .post-card span:hover .bi-hand-clap {
     transform: scale(1.1);
     transition: 0.15s ease;
+}
+
+/* ===============================
+   FIXED GLASS HEADER
+================================ */
+
+.site-header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1050;
+
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+
+    transition: all 0.3s ease-in-out;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+}
+
+/* Glass effect on scroll */
+.site-header.scrolled {
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
+/* Category bar refinement */
+.category-bar {
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.9);
+}
+
+/* Prevent content overlap */
+body {
+    padding-top: 110px; /* navbar + category bar height */
+}
+
+.site-header.scrolled .navbar {
+    padding-top: 0.4rem;
+    padding-bottom: 0.4rem;
+}
+
+@media (max-width: 768px) {
+    .site-header.scrolled {
+        background: rgba(255, 255, 255, 0.92);
+        backdrop-filter: blur(10px);
+    }
+}
+
+.page-content {
+    padding-top: 0px; /* header + category height */
+}
+
+/* Mobile fine-tuning */
+@media (max-width: 768px) {
+    .page-content {
+        padding-top: 122px;
+    }
+}
+
+.hero {
+    margin-top: -16px;
 }
