@@ -1530,3 +1530,15 @@ body {
         padding: 5px 10px;
     }
 }
+
+.tag-pill {
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.tag-pill:hover {
+    background-color: #000;
+    color: #fff !important;
+    border-color: #000;
+}

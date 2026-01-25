@@ -7,17 +7,19 @@ import com.tqtadka.platform.entity.*;
 import com.tqtadka.platform.repository.PostImageSectionRepository;
 import com.tqtadka.platform.repository.PostRepository;
 import com.tqtadka.platform.repository.PostViewEventRepository;
+import com.tqtadka.platform.repository.TagRepository;
 import com.tqtadka.platform.service.PostService;
 import com.tqtadka.platform.util.SlugUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -30,6 +32,8 @@ public class PostServiceImpl implements PostService {
 
     private final PostViewEventRepository postViewEventRepository;
 
+    @Autowired
+    private TagRepository tagRepository;
 
 
     public PostServiceImpl(PostRepository postRepository, PostImageSectionRepository imageSectionRepository, PostViewEventRepository postViewEventRepository) {
@@ -211,7 +215,8 @@ public class PostServiceImpl implements PostService {
             AiPostMode aiPostMode,
             String[] promptNames,
             String[] promptTexts,
-            String imageSectionsJson
+            String imageSectionsJson,
+            String tagsInput
     ) {
 
         String baseSlug = SlugUtil.toSlug(title);
@@ -232,6 +237,7 @@ public class PostServiceImpl implements PostService {
                 .sections(new HashSet<>())
                 .aiPrompts(new HashSet<>())
                 .imageSections(new HashSet<>())   // 🔥 SAFE INIT
+                .tags(new HashSet<>())
                 .aiPostMode(
                         category == CategoryType.AI
                                 ? (aiPostMode != null ? aiPostMode : AiPostMode.BLOG)
@@ -244,6 +250,12 @@ public class PostServiceImpl implements PostService {
         // ===============================
         attachSingleSection(post, sections);
         attachAiPrompts(post, category, promptNames, promptTexts);
+
+        // ===============================
+// 🔖 TAGS (SAFE & OPTIONAL)
+// ===============================
+        Set<Tag> tags = resolveTags(tagsInput);
+        post.setTags(tags);
 
         // ===============================
         // 🔥 IMAGE SECTIONS (SAFE ADD)
@@ -295,7 +307,8 @@ public class PostServiceImpl implements PostService {
             User currentUser,
             AiPostMode aiPostMode,
             String[] promptNames,
-            String[] promptTexts
+            String[] promptTexts,
+            String tags
     ) {
 
         Post post = getPostForEdit(postId, currentUser);
@@ -325,11 +338,18 @@ public class PostServiceImpl implements PostService {
         post.getSections().clear();
         post.getAiPrompts().clear();
         post.getImageSections().clear();
+        post.getTags().clear();                 // ✅ TAGS CLEAR
 
         // 🔥 ATTACH NEW DATA
         attachSingleSection(post, sections);
         attachAiPrompts(post, category, promptNames, promptTexts);
         attachImageSections(post, imageSections);
+
+        // 🔥 TAGS (SAFE, CLEAN)
+        if (tags != null && !tags.isBlank()) {
+            Set<Tag> resolvedTags = resolveTags(tags);
+            post.getTags().addAll(resolvedTags);
+        }
 
         return postRepository.save(post);
     }
@@ -429,7 +449,8 @@ public class PostServiceImpl implements PostService {
     @Override
     public Post getPostForView(String slug, LanguageType language) {
         return postRepository
-                .findPublishedPostForView(slug, language)
+                .findPostForView(slug, language)
+//                .findPublishedPostWithTags(slug, language)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
     }
 
@@ -457,5 +478,37 @@ public class PostServiceImpl implements PostService {
             post.getImageSections().add(s);
         }
     }
+
+    // tag
+
+    private Set<Tag> resolveTags(String tagInput) {
+
+        if (tagInput == null || tagInput.isBlank()) {
+            return Set.of();
+        }
+
+        return Arrays.stream(tagInput.split(","))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .map(this::getOrCreateTag)
+                .collect(Collectors.toSet());
+    }
+
+    private Tag getOrCreateTag(String name) {
+        String slug = name.toLowerCase()
+                .replaceAll("[^a-z0-9]+", "-")
+                .replaceAll("(^-|-$)", "");
+
+        return tagRepository.findBySlug(slug)
+                .orElseGet(() ->
+                        tagRepository.save(
+                                Tag.builder()
+                                        .name(name)
+                                        .slug(slug)
+                                        .build()
+                        )
+                );
+    }
+
 
 }

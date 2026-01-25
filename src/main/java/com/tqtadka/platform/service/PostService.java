@@ -3,6 +3,7 @@ package com.tqtadka.platform.service;
 import com.tqtadka.platform.entity.*;
 import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -32,7 +33,8 @@ public interface PostService {
             AiPostMode aiPostMode,
             String[] promptNames,
             String[] promptTexts,
-            String imageSectionsJson        // 🔥 NEW (optional)
+            String imageSectionsJson,
+            String tagsInput// 🔥 NEW (optional)
     );
 
     /* =====================================================
@@ -99,7 +101,8 @@ public interface PostService {
             User user,
             AiPostMode aiPostMode,
             String[] promptNames,
-            String[] promptTexts
+            String[] promptTexts,
+            String tags
     );
 
     /* =====================================================

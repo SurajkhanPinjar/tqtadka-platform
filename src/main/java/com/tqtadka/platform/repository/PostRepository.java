@@ -169,11 +169,10 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     left join fetch p.sections s
     left join fetch p.imageSections i
     left join fetch p.aiPrompts ap
+    left join fetch p.tags t
     where p.id = :postId
 """)
-    Optional<Post> findPostForEdit(
-            @Param("postId") Long postId
-    );
+    Optional<Post> findPostForEdit(@Param("postId") Long postId);
 
     @Query("""
     select distinct p
@@ -378,6 +377,75 @@ group by
             LanguageType language,
             Sort sort
     );
+
+
+    //Tags
+    @Query("""
+    select p from Post p
+    left join fetch p.tags
+    where p.slug = :slug
+      and p.language = :language
+      and p.published = true
+""")
+    Optional<Post> findPostForViewWithTags(
+            @Param("slug") String slug,
+            @Param("language") LanguageType language
+    );
+
+
+    @Query("""
+    select distinct p from Post p
+    left join fetch p.imageSections
+    left join fetch p.sections
+    left join fetch p.aiPrompts
+    left join fetch p.tags
+    where p.slug = :slug
+      and p.language = :language
+      and p.published = true
+""")
+    Optional<Post> findPostForView(
+            @Param("slug") String slug,
+            @Param("language") LanguageType language
+    );
+
+    @Query("""
+    select distinct p
+    from Post p
+    left join fetch p.tags
+    where p.id = :id
+""")
+    Optional<Post> findPostForEditWithTags(@Param("id") Long id);
+
+    @Query("""
+    select distinct p
+    from Post p
+    left join fetch p.sections
+    left join fetch p.imageSections
+    left join fetch p.tags
+    where p.slug = :slug
+      and p.language = :language
+      and p.published = true
+""")
+    Optional<Post> findPublishedPostWithTags(
+            @Param("slug") String slug,
+            @Param("language") LanguageType language
+    );
+
+    @Query("""
+    select distinct p
+    from Post p
+    join p.tags t
+    where t.slug = :slug
+      and p.language = :language
+      and p.published = true
+""")
+    List<Post> findPublishedPostsByTag(
+            @Param("slug") String slug,
+            @Param("language") LanguageType language
+    );
+
+
+
 
 
 }

@@ -99,6 +99,20 @@
                           th:text="${post.intro}">
                 </textarea>
 
+                <!-- TAGS -->
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">
+                        Tags <span class="text-muted small">(comma separated)</span>
+                    </label>
+
+                    <input type="text"
+                           class="form-control"
+                           name="tags"
+                           placeholder="AI, Java, Backend"
+                           th:value="${tagString}">
+                </div>
+
+
 
                 <!-- ===============================
      IMAGE SECTIONS (EDIT)

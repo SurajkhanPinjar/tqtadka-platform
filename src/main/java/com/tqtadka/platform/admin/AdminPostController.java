@@ -15,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/admin/posts")
@@ -100,7 +101,8 @@ public class AdminPostController {
             @RequestParam(required = false) String imageSectionsJson,
 
             HttpServletRequest request,
-            @RequestParam(required = false) Boolean publish
+            @RequestParam(required = false) Boolean publish,
+            @RequestParam(required = false) String tags
     ) {
         requireAuth(userDetails);
         User currentUser = userDetails.getUser();
@@ -154,7 +156,8 @@ public class AdminPostController {
                 aiPostMode,
                 promptNames,
                 promptTextList.toArray(new String[0]),
-                safeImageSectionsJson   // ✅ SAFE
+                safeImageSectionsJson,   // ✅ SAFE
+                tags
         );
 
         return "redirect:/admin/posts";
@@ -185,8 +188,18 @@ public class AdminPostController {
                         ))
                         .toList();
 
+        // 🔥 ADD THIS (ONLY THIS)
+        String tagString =
+                post.getTags() == null
+                        ? ""
+                        : post.getTags()
+                        .stream()
+                        .map(Tag::getName)
+                        .collect(Collectors.joining(", "));
+
         model.addAttribute("post", post);
         model.addAttribute("imageSectionDtos", imageSectionDtos);
+        model.addAttribute("tagString", tagString);
 
         return "admin/edit-post";
     }
@@ -215,6 +228,8 @@ public class AdminPostController {
 
             // 🔥 IMAGE SECTIONS JSON
             @RequestParam(required = false) String imageSectionsJson,
+
+            @RequestParam(required = false) String tags,
 
             HttpServletRequest request,
             @RequestParam(required = false) Boolean publish
@@ -292,7 +307,8 @@ public class AdminPostController {
                 currentUser,
                 aiPostMode,
                 promptNames,
-                promptTextList.toArray(new String[0])
+                promptTextList.toArray(new String[0]),
+                tags
         );
 
         return "redirect:/admin/posts";
