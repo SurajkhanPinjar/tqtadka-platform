@@ -151,6 +151,14 @@ body {
     color: #4f4f4f;
 }
 
+.blog-content p {
+    font-size: 1.06rem;
+    line-height: 1.8;
+    color: #333;
+    margin-bottom: 1.2rem;
+}
+
+
 .blog-container .blog-content p {
     margin: 0 0 1.2rem 0;
 }
@@ -170,8 +178,34 @@ body {
     font-weight: 700;
     color: #1a1a1a;
     line-height: 1.25;
-    margin-top: 2.2rem;
+    margin-top: 3rem;
+    margin-bottom: 1rem;
+    letter-spacing: -0.01em;
+}
+
+
+.blog-content h2 {
+    font-size: 2rem;
+}
+
+.blog-content h3 {
+    font-size: 1.6rem;
+}
+
+.blog-content ul {
+    padding-left: 1.2rem;
+    margin-top: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.blog-content li {
     margin-bottom: 0.6rem;
+    line-height: 1.7;
+    color: #444;
+}
+
+.blog-content li::marker {
+    color: #888;
 }
 
 .blog-container .blog-content img {
@@ -194,6 +228,11 @@ body {
     margin-bottom: 0.45rem;
     word-break: break-word;
 }
+.blog-content strong {
+    color: #111;
+    font-weight: 600;
+}
+
 
 /* ===============================
    TIP / FIX BLOCK
@@ -860,6 +899,7 @@ img {
 /* MAIN */
 .blog-main {
     min-width: 0;
+    max-width: 850px;
 }
 
 /* SIDEBAR */
@@ -940,8 +980,8 @@ img {
     }
 
     .blog-sidebar {
-        width: 100%;
-        margin-top: 40px;
+        margin-top: 0px;
+        width: 320px;
     }
 
     /* Prevent weird text wrapping */
@@ -980,7 +1020,7 @@ img {
     display: grid;
     grid-template-columns: minmax(0, 1fr) 320px;
     gap: 64px;
-    max-width: 1200px;
+    max-width: 1300px;
     margin: 0 auto;
 }
 
@@ -994,7 +1034,15 @@ img {
 @media (max-width: 992px) {
     .blog-layout {
         grid-template-columns: 1fr;
+        flex-direction: column;
+        margin-left: auto;
+        margin-right: auto;
+        gap: 2rem;
     }
+
+    .blog-container {
+            max-width: 100%;
+        }
 
     .blog-sidebar {
         width: 100%;
@@ -1442,4 +1490,43 @@ body {
 
 .hero {
     margin-top: -16px;
+}
+
+/* =========================
+   POST TAGS (Editorial Style)
+========================= */
+
+.post-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.post-tag {
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+
+    padding: 6px 12px;
+    border-radius: 999px;
+
+    background: rgba(0, 0, 0, 0.04);
+    color: #333;
+    text-decoration: none;
+
+    transition: all 0.2s ease;
+}
+
+.post-tag:hover {
+    background: rgba(0, 0, 0, 0.08);
+    color: #000;
+    transform: translateY(-1px);
+}
+
+/* Mobile polish */
+@media (max-width: 576px) {
+    .post-tag {
+        font-size: 0.7rem;
+        padding: 5px 10px;
+    }
 }
