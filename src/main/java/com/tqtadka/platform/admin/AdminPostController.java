@@ -67,6 +67,12 @@ public class AdminPostController {
                         ? EnumSet.allOf(CategoryType.class)
                         : user.getAllowedCategories();
 
+        // ✅ REQUIRED: empty Post for create
+        Post post = new Post();
+        post.setRelatedPostSlugs(new HashSet<>());
+        post.setTags(new HashSet<>());
+
+        model.addAttribute("post", post);
         model.addAttribute("categories", allowedCategories);
         model.addAttribute("languages", LanguageType.values());
 
@@ -102,7 +108,8 @@ public class AdminPostController {
 
             HttpServletRequest request,
             @RequestParam(required = false) Boolean publish,
-            @RequestParam(required = false) String tags
+            @RequestParam(required = false) String tags,
+            @RequestParam(required = false) List<String> relatedSlugs
     ) {
         requireAuth(userDetails);
         User currentUser = userDetails.getUser();
@@ -157,7 +164,8 @@ public class AdminPostController {
                 promptNames,
                 promptTextList.toArray(new String[0]),
                 safeImageSectionsJson,   // ✅ SAFE
-                tags
+                tags,
+                relatedSlugs
         );
 
         return "redirect:/admin/posts";
@@ -201,6 +209,8 @@ public class AdminPostController {
         model.addAttribute("imageSectionDtos", imageSectionDtos);
         model.addAttribute("tagString", tagString);
 
+        model.addAttribute("relatedSlugs", post.getRelatedPostSlugs());
+
         return "admin/edit-post";
     }
 
@@ -232,7 +242,8 @@ public class AdminPostController {
             @RequestParam(required = false) String tags,
 
             HttpServletRequest request,
-            @RequestParam(required = false) Boolean publish
+            @RequestParam(required = false) Boolean publish,
+            @RequestParam(required = false) List<String> relatedSlugs
     ) {
         requireAuth(userDetails);
         User currentUser = userDetails.getUser();
@@ -308,7 +319,8 @@ public class AdminPostController {
                 aiPostMode,
                 promptNames,
                 promptTextList.toArray(new String[0]),
-                tags
+                tags,
+                relatedSlugs
         );
 
         return "redirect:/admin/posts";

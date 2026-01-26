@@ -117,18 +117,32 @@ public class PostServiceImpl implements PostService {
     /* =====================================================
        EDIT (ROLE SAFE)
     ===================================================== */
+//    @Transactional(readOnly = true)
+//    @Override
+//    public Post getPostForEdit(Long postId, User user) {
+//
+//        Post post = postRepository
+//                .findPostForEdit(postId)
+//                .orElseThrow(() -> new RuntimeException("Post not found"));
+//
+//        // security check
+//        if (user.getRole() != Role.ADMIN &&
+//                !post.getCreatedBy().getId().equals(user.getId())) {
+//            throw new AccessDeniedException("Not allowed");
+//        }
+//
+//        return post;
+//    }
+
     @Transactional(readOnly = true)
     @Override
     public Post getPostForEdit(Long postId, User user) {
-
-        Post post = postRepository
-                .findPostForEdit(postId)
+        Post post = postRepository.findPostForEditFull(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
 
-        // security check
-        if (user.getRole() != Role.ADMIN &&
-                !post.getCreatedBy().getId().equals(user.getId())) {
-            throw new AccessDeniedException("Not allowed");
+        // optional auth check
+        if (!user.isAdmin() && !post.getCreatedBy().equals(user)) {
+            throw new RuntimeException("Unauthorized");
         }
 
         return post;
@@ -216,7 +230,8 @@ public class PostServiceImpl implements PostService {
             String[] promptNames,
             String[] promptTexts,
             String imageSectionsJson,
-            String tagsInput
+            String tagsInput,
+            List<String> relatedSlugs
     ) {
 
         String baseSlug = SlugUtil.toSlug(title);
@@ -288,6 +303,10 @@ public class PostServiceImpl implements PostService {
             }
         }
 
+        post.setRelatedPostSlugs(
+                normalizeRelatedSlugs(relatedSlugs)
+        );
+
         return postRepository.save(post);
     }
     /* =====================================================
@@ -308,7 +327,8 @@ public class PostServiceImpl implements PostService {
             AiPostMode aiPostMode,
             String[] promptNames,
             String[] promptTexts,
-            String tags
+            String tags,
+            List<String> relatedSlugs
     ) {
 
         Post post = getPostForEdit(postId, currentUser);
@@ -349,6 +369,13 @@ public class PostServiceImpl implements PostService {
         if (tags != null && !tags.isBlank()) {
             Set<Tag> resolvedTags = resolveTags(tags);
             post.getTags().addAll(resolvedTags);
+        }
+
+        // ✅ safe mutation
+        post.getRelatedPostSlugs().clear();
+
+        if (relatedSlugs != null) {
+            post.getRelatedPostSlugs().addAll(relatedSlugs);
         }
 
         return postRepository.save(post);
@@ -448,16 +475,34 @@ public class PostServiceImpl implements PostService {
     @Transactional(readOnly = true)
     @Override
     public Post getPostForView(String slug, LanguageType language) {
-        return postRepository
+
+        Post post = postRepository
                 .findPostForView(slug, language)
-//                .findPublishedPostWithTags(slug, language)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
+
+        // 🔥 FORCE INITIALIZATION (CRITICAL)
+        post.getTags().size();
+        post.getSections().size();
+        post.getImageSections().size();
+        post.getRelatedPostSlugs().size();
+
+        if (post.getAiPrompts() != null) {
+            post.getAiPrompts().size();
+        }
+
+        return post;
     }
 
     @Transactional(readOnly = true)
     public Post getPostForPublicView(String slug, LanguageType language) {
-        return postRepository.findPostForPublicView(slug, language)
+        Post post = postRepository.findPostForPublicView(slug, language)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
+
+        // ✅ FORCE INIT (cheap & safe)
+        post.getTags().size();                // tags
+        post.getRelatedPostSlugs().size();    // related blogs
+
+        return post;
     }
 
     private void attachImageSections(
@@ -509,6 +554,21 @@ public class PostServiceImpl implements PostService {
                         )
                 );
     }
+
+    private Set<String> normalizeRelatedSlugs(List<String> slugs) {
+        if (slugs == null) return Set.of();
+
+        return slugs.stream()
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .map(s -> s
+                        .replaceAll("^/+", "")
+                        .replaceAll(".*/blog/", "")
+                )
+                .collect(Collectors.toSet()); // 👈 IMPORTANT
+    }
+
+
 
 
 }

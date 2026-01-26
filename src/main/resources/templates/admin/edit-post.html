@@ -225,6 +225,66 @@
                     </button>
                 </div>
 
+                <!-- =========================
+     RELATED BLOGS (EDIT)
+========================= -->
+                <div class="mb-4">
+                    <label class="form-label fw-bold">
+                        🔗 Related Blogs
+                    </label>
+
+                    <div id="relatedBlogsContainer">
+
+                        <!-- Prefill existing related slugs -->
+                        <div class="input-group mb-2"
+                             th:each="slug : ${post.relatedPostSlugs}">
+                            <input
+                                    type="text"
+                                    name="relatedSlugs"
+                                    class="form-control"
+                                    th:value="${slug}"
+                                    placeholder="Paste blog URL or slug"/>
+
+                            <button
+                                    type="button"
+                                    class="btn btn-outline-danger"
+                                    onclick="removeRelatedBlog(this)">
+                                ✕
+                            </button>
+                        </div>
+
+                        <!-- If no related blogs exist -->
+                        <div class="input-group mb-2"
+                             th:if="${#lists.isEmpty(post.relatedPostSlugs)}">
+                            <input
+                                    type="text"
+                                    name="relatedSlugs"
+                                    class="form-control"
+                                    placeholder="Paste blog URL or slug"/>
+                            <button
+                                    type="button"
+                                    class="btn btn-outline-danger"
+                                    onclick="removeRelatedBlog(this)">
+                                ✕
+                            </button>
+                        </div>
+
+                    </div>
+
+                    <button
+                            type="button"
+                            class="btn btn-sm btn-outline-primary mt-2"
+                            onclick="addRelatedBlog()">
+                        ➕ Add Related Blog
+                    </button>
+
+                    <small class="text-muted d-block mt-2">
+                        • One blog per input<br>
+                        • You can paste full URLs or just the slug<br>
+                        • These posts will appear as “Related Blogs” on the blog page
+                    </small>
+                </div>
+
                 <!-- PUBLISH -->
                 <input type="hidden" name="publish" value="false">
 
@@ -394,6 +454,35 @@ document.getElementById("editForm")
             JSON.stringify(sections);
     });
 
+</script>
+
+<script>
+    function addRelatedBlog() {
+        const container = document.getElementById("relatedBlogsContainer");
+
+        const div = document.createElement("div");
+        div.className = "input-group mb-2";
+
+        div.innerHTML = `
+            <input
+                type="text"
+                name="relatedSlugs"
+                class="form-control"
+                placeholder="Paste blog URL or slug"/>
+            <button
+                type="button"
+                class="btn btn-outline-danger"
+                onclick="removeRelatedBlog(this)">
+                ✕
+            </button>
+        `;
+
+        container.appendChild(div);
+    }
+
+    function removeRelatedBlog(button) {
+        button.closest(".input-group").remove();
+    }
 </script>
 
 </body>

@@ -34,7 +34,8 @@ public interface PostService {
             String[] promptNames,
             String[] promptTexts,
             String imageSectionsJson,
-            String tagsInput// 🔥 NEW (optional)
+            String tagsInput, // 🔥 NEW (optional)
+            List<String> slugs
     );
 
     /* =====================================================
@@ -102,7 +103,8 @@ public interface PostService {
             AiPostMode aiPostMode,
             String[] promptNames,
             String[] promptTexts,
-            String tags
+            String tags,
+            List<String> relatedSlugs
     );
 
     /* =====================================================
@@ -129,6 +131,7 @@ public interface PostService {
 
 
     public Post getPostForPublicView(String slug, LanguageType language);
+
 
 
 }

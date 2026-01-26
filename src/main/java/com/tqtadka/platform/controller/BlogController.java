@@ -1,5 +1,6 @@
 package com.tqtadka.platform.controller;
 
+import com.tqtadka.platform.dto.RelatedPostView;
 import com.tqtadka.platform.entity.CategoryType;
 import com.tqtadka.platform.entity.LanguageType;
 import com.tqtadka.platform.entity.Post;
@@ -8,11 +9,15 @@ import com.tqtadka.platform.service.CommentService;
 import com.tqtadka.platform.service.PostService;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
+
+import java.util.List;
+import java.util.Set;
 
 @Controller
 public class BlogController {
@@ -48,13 +53,59 @@ public class BlogController {
                         ? LanguageType.KN
                         : LanguageType.EN;
 
-        Post post;
         try {
-            // SAFE READ
-            post = postService.getPostForView(slug, language);
+            // ✅ PURE READ (no heavy joins, no LOBs)
+            Post post = postService.getPostForPublicView(slug, language);
 
-            // WRITE in separate TX
+            // =========================
+            // MODEL BASICS
+            // =========================
+            model.addAttribute("lang", lang.toLowerCase());
+            model.addAttribute("categories", CategoryType.values());
+            model.addAttribute("activeCategory", post.getCategory());
+            model.addAttribute("post", post);
+
+            // =========================
+            // COMMENTS
+            // =========================
+            model.addAttribute(
+                    "comments",
+                    commentService.getCommentsForPost(slug, language)
+            );
+
+            // =========================
+            // SIDEBAR
+            // =========================
+            model.addAttribute(
+                    "recentPosts",
+                    postRepository.findRecentPostsForSidebar(language)
+            );
+
+            // =========================
+            // 🔗 RELATED POSTS (SAFE)
+            // =========================
+            Set<String> relatedSlugs =
+                    post.getRelatedPostSlugs() == null
+                            ? Set.of()
+                            : post.getRelatedPostSlugs();
+
+            List<RelatedPostView> relatedPosts =
+                    relatedSlugs.isEmpty()
+                            ? List.of()
+                            : postRepository.findRelatedPostViews(
+                            relatedSlugs,
+                            language
+                    );
+
+            model.addAttribute("relatedPosts", relatedPosts);
+
+
+            // =========================
+            // 🔥 WRITE IN SEPARATE TX
+            // =========================
             postService.incrementViews(slug, language);
+
+            return "blog/view";
 
         } catch (RuntimeException ex) {
             model.addAttribute("lang", lang.toLowerCase());
@@ -62,22 +113,6 @@ public class BlogController {
             model.addAttribute("activeCategory", null);
             return "error/404";
         }
-
-        model.addAttribute("lang", lang.toLowerCase());
-        model.addAttribute("categories", CategoryType.values());
-        model.addAttribute("activeCategory", post.getCategory());
-
-        model.addAttribute("post", post);
-        model.addAttribute(
-                "comments",
-                commentService.getCommentsForPost(slug, language)
-        );
-        model.addAttribute(
-                "recentPosts",
-                postRepository.findRecentPostsForSidebar(post.getLanguage())
-        );
-
-        return "blog/view";
     }
 
     /* =====================================================

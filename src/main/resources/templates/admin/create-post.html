@@ -191,6 +191,45 @@
                           rows="3"
                           placeholder="Tip explanation"></textarea>
 
+                <div class="mt-4">
+                    <label class="fw-bold mb-2">🔗 Related Blogs</label>
+
+                    <div id="relatedBlogsContainer">
+
+                        <!-- Existing values (EDIT MODE only) -->
+                        <div th:if="${post != null and post.relatedPostSlugs != null}"
+                             th:each="slug : ${post.relatedPostSlugs}"
+                             class="input-group mb-2">
+
+                            <input
+                                    type="text"
+                                    name="relatedSlugs"
+                                    class="form-control"
+                                    th:value="${slug}"
+                                    placeholder="Paste blog URL or slug"/>
+
+                            <button
+                                    type="button"
+                                    class="btn btn-outline-danger"
+                                    onclick="removeRelatedBlog(this)">
+                                ✕
+                            </button>
+                        </div>
+
+                    </div>
+
+                    <button
+                            type="button"
+                            class="btn btn-sm btn-outline-primary mt-2"
+                            onclick="addRelatedBlog()">
+                        ➕ Add Related Blog
+                    </button>
+
+                    <small class="text-muted d-block mt-2">
+                        One blog per input · You can paste full URL or just the slug
+                    </small>
+                </div>
+
                 <!-- PUBLISH -->
                 <input type="hidden" name="publish" value="false">
 
@@ -424,6 +463,34 @@ document.getElementById("postForm")
             JSON.stringify(sections);
     });
 </script>
+<script>
+    function addRelatedBlog() {
+        const container = document.getElementById("relatedBlogsContainer");
 
+        const wrapper = document.createElement("div");
+        wrapper.className = "input-group mb-2";
+
+        wrapper.innerHTML = `
+            <input
+                type="text"
+                name="relatedSlugs"
+                class="form-control"
+                placeholder="Paste blog URL or slug"/>
+
+            <button
+                type="button"
+                class="btn btn-outline-danger"
+                onclick="removeRelatedBlog(this)">
+                ✕
+            </button>
+        `;
+
+        container.appendChild(wrapper);
+    }
+
+    function removeRelatedBlog(btn) {
+        btn.closest(".input-group").remove();
+    }
+</script>
 </body>
 </html>

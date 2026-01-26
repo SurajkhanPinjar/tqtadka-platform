@@ -150,9 +150,24 @@ public class Post {
     )
     private Set<Tag> tags = new HashSet<>();
 
-    public Set<Tag> getTags() {
-        return tags == null
-                ? Collections.emptySet()
-                : tags.stream().filter(Objects::nonNull).collect(Collectors.toSet());
-    }
+//    public Set<Tag> getTags() {
+//        return tags == null
+//                ? Collections.emptySet()
+//                : tags.stream().filter(Objects::nonNull).collect(Collectors.toSet());
+//    }
+public Set<Tag> getTags() {
+    return tags == null
+            ? Collections.emptySet()
+            : tags.stream()
+            .filter(Objects::nonNull)
+            .collect(Collectors.toSet());
+}
+
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(
+            name = "post_related_slugs",
+            joinColumns = @JoinColumn(name = "post_id")
+    )
+    @Column(name = "related_slug", nullable = false)
+    private Set<String> relatedPostSlugs = new HashSet<>();
 }

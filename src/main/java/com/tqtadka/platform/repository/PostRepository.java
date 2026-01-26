@@ -1,6 +1,7 @@
 package com.tqtadka.platform.repository;
 
 import com.tqtadka.platform.dto.DashboardPostView;
+import com.tqtadka.platform.dto.RelatedPostView;
 import com.tqtadka.platform.entity.*;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.*;
@@ -11,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
@@ -189,17 +191,50 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             @Param("language") LanguageType language
     );
 
+//    @Query("""
+//    select distinct p from Post p
+//    left join fetch p.imageSections
+//    left join fetch p.sections
+//    left join fetch p.aiPrompts
+//    where p.slug = :slug
+//      and p.language = :language
+//      and p.published = true
+//""")
+//    Optional<Post> findPostForPublicView(
+//            @Param("slug") String slug,
+//            @Param("language") LanguageType language
+//    );
+
     @Query("""
-    select distinct p from Post p
-    left join fetch p.imageSections
-    left join fetch p.sections
-    left join fetch p.aiPrompts
-    where p.slug = :slug
-      and p.language = :language
-      and p.published = true
+select distinct p from Post p
+left join fetch p.imageSections
+left join fetch p.sections
+left join fetch p.aiPrompts
+where p.slug = :slug
+  and p.language = :language
+  and p.published = true
 """)
     Optional<Post> findPostForPublicView(
             @Param("slug") String slug,
+            @Param("language") LanguageType language
+    );
+
+    @Query("""
+select
+    p.slug as slug,
+    p.title as title,
+    p.imageUrl as imageUrl,
+    p.category as category,
+    p.authorName as authorName,
+    p.views as views,
+    p.applauseCount as applauseCount
+from Post p
+where p.slug in :slugs
+  and p.language = :language
+  and p.published = true
+""")
+    List<RelatedPostView> findRelatedPostViews(
+            @Param("slugs") Set<String> slugs,
             @Param("language") LanguageType language
     );
 
@@ -444,6 +479,74 @@ group by
             @Param("language") LanguageType language
     );
 
+    List<Post> findBySlugInAndLanguageAndPublishedTrue(
+            List<String> slugs,
+            LanguageType language
+    );
+
+    @Query("""
+select distinct p
+from Post p
+left join fetch p.tags
+left join fetch p.sections
+left join fetch p.imageSections
+left join fetch p.aiPrompts
+left join fetch p.relatedPostSlugs
+where p.id = :id
+""")
+    Optional<Post> findPostForEditFull(@Param("id") Long id);
+
+
+//    @Query("""
+//    select
+//        p.slug as slug,
+//        p.title as title,
+//        p.imageUrl as imageUrl,
+//        p.category as category,
+//        p.authorName as authorName,
+//        p.views as views,
+//        p.applauseCount as applauseCount
+//    from Post p
+//    where p.slug in :slugs
+//      and p.language = :language
+//      and p.published = true
+//""")
+//    List<RelatedPostView> findRelatedPostViews(
+//            @Param("slugs") Set<String> slugs,
+//            @Param("language") LanguageType language
+//    );
+
+    @Query("""
+    select distinct p
+    from Post p
+    left join fetch p.tags
+    where p.slug = :slug
+      and p.language = :language
+      and p.published = true
+""")
+    Optional<Post> findPostForPublicViewWithTags(
+            @Param("slug") String slug,
+            @Param("language") LanguageType language
+    );
+
+    @Query("""
+select
+  p.slug as slug,
+  p.title as title,
+  p.imageUrl as imageUrl,
+  p.category as category,
+  p.authorName as authorName,
+  p.views as views,
+  p.applauseCount as applauseCount
+from Post p
+where p.slug in :slugs
+  and p.language = :language
+  and p.published = true
+""")
+    Set<RelatedPostView> findRelatedPostViews(
+            @Param("slug") String slug,
+            @Param("language") LanguageType language
+    );
 
 
 
