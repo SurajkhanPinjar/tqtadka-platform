@@ -48,35 +48,36 @@
         </h2>
 
         <!-- ================= SORT TABS ================= -->
-        <div class="d-flex gap-2 mb-4">
+        <div class="glass-filter-group mb-4"
+             th:attr="data-active=${sort}">
 
             <a th:href="@{/{lang}/category/{category}(
-                lang=${lang},
-                category=${activeCategory},
-                sort='latest'
-            )}"
-               class="btn btn-sm btn-outline-dark"
-               th:classappend="${sort == 'latest' ? 'active' : ''}">
+            lang=${lang},
+            category=${activeCategory},
+            sort='latest'
+        )}"
+               class="glass-filter-btn"
+               th:classappend="${sort == 'latest' ? ' active' : ''}">
                 Latest
             </a>
 
             <a th:href="@{/{lang}/category/{category}(
-                lang=${lang},
-                category=${activeCategory},
-                sort='popular'
-            )}"
-               class="btn btn-sm btn-outline-dark"
-               th:classappend="${sort == 'popular' ? 'active' : ''}">
+            lang=${lang},
+            category=${activeCategory},
+            sort='popular'
+        )}"
+               class="glass-filter-btn"
+               th:classappend="${sort == 'popular' ? ' active' : ''}">
                 Popular
             </a>
 
             <a th:href="@{/{lang}/category/{category}(
-                lang=${lang},
-                category=${activeCategory},
-                sort='oldest'
-            )}"
-               class="btn btn-sm btn-outline-dark"
-               th:classappend="${sort == 'oldest' ? 'active' : ''}">
+            lang=${lang},
+            category=${activeCategory},
+            sort='oldest'
+        )}"
+               class="glass-filter-btn"
+               th:classappend="${sort == 'oldest' ? ' active' : ''}">
                 Oldest
             </a>
 

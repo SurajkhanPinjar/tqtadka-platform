@@ -489,5 +489,26 @@ function copyPrompt(btn) {
     window.addEventListener("scroll", handleScrollArrow);
 </script>
 
+<script>
+    const sidebarBoxes = document.querySelectorAll(".sidebar-box");
+
+    const sidebarObserver = new IntersectionObserver(
+        entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add("visible");
+                    sidebarObserver.unobserve(entry.target); // animate once
+                }
+            });
+        },
+        {
+            threshold: 0.15,
+            rootMargin: "0px 0px -80px 0px"
+        }
+    );
+
+    sidebarBoxes.forEach(box => sidebarObserver.observe(box));
+</script>
+
 </body>
 </html>

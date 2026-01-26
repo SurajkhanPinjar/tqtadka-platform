@@ -920,6 +920,12 @@ img {
     top: 120px;
     border-left: 1px solid #eee;
     padding-left: 32px;
+    opacity: 0;
+    transform: translateY(24px);
+    transition:
+        opacity 480ms cubic-bezier(.2,.8,.2,1),
+        transform 520ms cubic-bezier(.2,.8,.2,1);
+    will-change: opacity, transform;
 }
 
 /* Title */
@@ -1546,3 +1552,162 @@ body {
     color: #fff !important;
     border-color: #000;
 }
+
+/* ===============================
+   SIDEBAR PREMIUM SCROLL ANIMATION
+================================ */
+
+/*.sidebar-box {
+    opacity: 0;
+    transform: translateY(24px);
+    transition:
+        opacity 480ms cubic-bezier(.2,.8,.2,1),
+        transform 520ms cubic-bezier(.2,.8,.2,1);
+    will-change: opacity, transform;
+
+}*/
+
+/* When visible */
+.sidebar-box.visible {
+    opacity: 1;
+    transform: translateY(0);
+    box-shadow: 0 18px 40px rgba(0,0,0,0.03);
+}
+
+/* Slight stagger effect */
+.sidebar-box:nth-child(2) {
+    transition-delay: 80ms;
+}
+
+.sidebar-box:nth-child(3) {
+    transition-delay: 160ms;
+}
+
+.sidebar-box:hover {
+    transform: translateY(-2px);
+    transition: transform 180ms ease;
+}
+
+/* Mobile — reduce motion */
+@media (max-width: 768px) {
+    .sidebar-box {
+        transform: none;
+        opacity: 1;
+        transition: none;
+    }
+}
+
+
+/* ===============================
+   GLASS FILTER GROUP (SLIDER)
+================================ */
+
+.glass-filter-group {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px;
+
+    border-radius: 999px;
+
+    background: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.6),
+        0 12px 30px rgba(0,0,0,0.08);
+}
+
+/* 🔥 SLIDING GLASS PILL */
+.glass-filter-group::before {
+    content: "";
+    position: absolute;
+    top: 6px;
+    left: 6px;
+
+    height: calc(100% - 12px);
+    width: calc(33.333% - 6px);
+
+    border-radius: 999px;
+
+    background: rgba(0,0,0,0.88);
+    backdrop-filter: blur(8px);
+
+    box-shadow:
+        0 10px 24px rgba(0,0,0,0.28),
+        inset 0 1px 0 rgba(255,255,255,0.12);
+
+    transition:
+        transform 420ms cubic-bezier(.2,.8,.2,1);
+}
+
+/* ===============================
+   POSITION LOGIC
+================================ */
+
+.glass-filter-group[data-active="latest"]::before {
+    transform: translateX(0%);
+}
+
+.glass-filter-group[data-active="popular"]::before {
+    transform: translateX(100%);
+}
+
+.glass-filter-group[data-active="oldest"]::before {
+    transform: translateX(200%);
+}
+
+/* ===============================
+   BUTTON RESET (CRITICAL FIX)
+================================ */
+
+.glass-filter-group a {
+    text-decoration: none !important;
+    color: inherit;
+}
+
+/* ===============================
+   FILTER BUTTONS
+================================ */
+
+.glass-filter-btn {
+    position: relative;
+    z-index: 2;
+
+    min-width: 88px;
+    padding: 8px 18px;
+
+    text-align: center;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+
+    color: #222;
+    background: transparent;
+    border: none;
+
+    cursor: pointer;
+
+    transition:
+        color 220ms ease,
+        transform 220ms cubic-bezier(.2,.8,.2,1),
+        opacity 220ms ease;
+}
+
+/* Hover polish */
+.glass-filter-btn:hover {
+    transform: translateY(-1px);
+    opacity: 0.9;
+}
+
+/* Active state */
+.glass-filter-btn.active {
+    color: #fff;
+}
+
+/* Click feedback */
+.glass-filter-btn:active {
+    transform: scale(0.96);
+}}
