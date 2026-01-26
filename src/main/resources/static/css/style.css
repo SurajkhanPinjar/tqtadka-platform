@@ -904,15 +904,19 @@ img {
 
 /* SIDEBAR */
 .blog-sidebar {
-    position: relative;
+    position: sticky;
     width: 320px;
     position: sticky;
     top: 96px;
+
+    /* ❌ REMOVE internal scroll */
+    max-height: none;
+    overflow: visible;
 }
 
 /* Sticky box */
 .sidebar-box {
-    position: sticky;
+    position: relative;
     top: 120px;
     border-left: 1px solid #eee;
     padding-left: 32px;

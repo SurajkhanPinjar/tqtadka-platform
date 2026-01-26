@@ -2,6 +2,8 @@ package com.tqtadka.platform.repository;
 
 import com.tqtadka.platform.dto.DashboardPostView;
 import com.tqtadka.platform.dto.RelatedPostView;
+import com.tqtadka.platform.dto.SidebarPostView;
+import com.tqtadka.platform.dto.TrendingPostView;
 import com.tqtadka.platform.entity.*;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.*;
@@ -546,6 +548,51 @@ where p.slug in :slugs
     Set<RelatedPostView> findRelatedPostViews(
             @Param("slug") String slug,
             @Param("language") LanguageType language
+    );
+
+    @Query("""
+select
+    p.slug as slug,
+    p.title as title,
+    p.imageUrl as imageUrl,
+    p.language as language,
+    p.views as views,
+    p.applauseCount as applauseCount,
+    p.commentCount as commentCount
+from Post p
+where p.published = true
+  and p.language = :language
+order by
+    (p.views * 0.6 +
+     p.applauseCount * 2 +
+     p.commentCount * 1.5) desc
+""")
+    List<TrendingPostView> findTrendingPosts(
+            @Param("language") LanguageType language,
+            Pageable pageable
+    );
+
+    @Query("""
+    select
+        p.id as id,
+        p.slug as slug,
+        p.title as title,
+        p.imageUrl as imageUrl,
+        p.views as views,
+        p.applauseCount as applauseCount,
+        p.language as language
+    from Post p
+    where p.category = :category
+      and p.language = :language
+      and p.published = true
+      and p.slug <> :currentSlug
+    order by p.views asc
+""")
+    List<SidebarPostView> findYouMightLikePosts(
+            @Param("category") CategoryType category,
+            @Param("language") LanguageType language,
+            @Param("currentSlug") String currentSlug,
+            Pageable pageable
     );
 
 

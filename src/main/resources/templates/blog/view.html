@@ -352,7 +352,61 @@
                     </a>
                 </div>
             </div>
+
+            <div class="sidebar-box mt-4">
+                <h5 class="sidebar-title">🔥 Trending</h5>
+
+                <div class="recent-post"
+                     th:each="p : ${trendingPosts}">
+
+                    <a th:href="@{'/' + ${p.language.name().toLowerCase()} + '/blog/' + ${p.slug}}"
+                       class="recent-post-link">
+
+                        <img th:if="${p.imageUrl}"
+                             th:src="${p.imageUrl}"
+                             class="recent-post-img"/>
+
+                        <div class="recent-post-text">
+                            <div class="recent-post-title"
+                                 th:text="${p.title}"></div>
+
+                            <div class="small text-muted d-flex gap-2 mt-1">
+                                <span>👁 <span th:text="${p.views}"></span></span>
+                                <span>👏 <span th:text="${p.applauseCount}"></span></span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <div class="sidebar-box mt-5">
+                <h5 class="sidebar-title">You Might Like</h5>
+
+                <div class="recent-post"
+                     th:each="p : ${youMightLikePosts}">
+
+                    <a th:href="@{'/' + ${p.language.name().toLowerCase()} + '/blog/' + ${p.slug}}"
+                       class="recent-post-link">
+
+                        <img th:if="${p.imageUrl}"
+                             th:src="${p.imageUrl}"
+                             class="recent-post-img"/>
+
+                        <div class="recent-post-text">
+                            <div class="recent-post-title"
+                                 th:text="${p.title}"></div>
+
+                            <div class="recent-post-date">
+                                <span th:text="${p.views}"></span> views
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
         </aside>
+
+
 
     </div>
 </main>

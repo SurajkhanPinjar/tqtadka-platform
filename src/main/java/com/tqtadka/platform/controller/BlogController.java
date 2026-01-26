@@ -1,6 +1,7 @@
 package com.tqtadka.platform.controller;
 
 import com.tqtadka.platform.dto.RelatedPostView;
+import com.tqtadka.platform.dto.SidebarPostView;
 import com.tqtadka.platform.entity.CategoryType;
 import com.tqtadka.platform.entity.LanguageType;
 import com.tqtadka.platform.entity.Post;
@@ -104,6 +105,26 @@ public class BlogController {
             // 🔥 WRITE IN SEPARATE TX
             // =========================
             postService.incrementViews(slug, language);
+
+
+            // Trending Posts
+            model.addAttribute(
+                    "trendingPosts",
+                    postRepository.findTrendingPosts(
+                            language,
+                            PageRequest.of(0, 8)
+                    )
+            );
+
+            List<SidebarPostView> youMightLikePosts =
+                    postRepository.findYouMightLikePosts(
+                            post.getCategory(),
+                            language,
+                            post.getSlug(),
+                            PageRequest.of(0, 8)
+                    );
+
+            model.addAttribute("youMightLikePosts", youMightLikePosts);
 
             return "blog/view";
 
