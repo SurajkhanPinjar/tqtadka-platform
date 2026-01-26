@@ -22,11 +22,7 @@
 <body>
 
 <!-- ================= HEADER ================= -->
-<th:block th:with="
-        lang=${lang ?: 'en'},
-        categories=${categories},
-        activeCategory=${null}
-">
+<th:block th:with="lang=${lang ?: 'en'}">
     <div th:replace="~{fragments/header :: header}"></div>
 </th:block>
 
@@ -35,100 +31,334 @@
     <!-- ================= HERO ================= -->
     <div th:replace="~{fragments/hero :: hero}"></div>
 
-    <!-- ================= MAIN CONTENT ================= -->
+    <!-- ================= MAIN ================= -->
     <div class="container my-5">
 
-        <!-- ================= TITLE ================= -->
-        <h4 class="fw-bold mb-4"
-            th:text="${lang == 'kn' ? 'ಇತ್ತೀಚಿನ ಲೇಖನಗಳು' : 'Latest Posts'}">
-            Latest Posts
+        <!-- ================= LATEST POSTS (GRID) ================= -->
+        <h4 class="fw-bold mb-4">
+            <span th:text="${lang == 'kn' ? 'ಇತ್ತೀಚಿನ ಲೇಖನಗಳು' : 'Latest Posts'}"></span>
         </h4>
-        <!-- ================= EMPTY ================= -->
-        <div th:if="${posts == null or #lists.isEmpty(posts)}"
-             class="alert alert-secondary">
-            <span th:text="${lang == 'kn'
-                ? 'ಯಾವುದೇ ಲೇಖನಗಳು ಲಭ್ಯವಿಲ್ಲ'
-                : 'No posts yet'}">
-            </span>
-        </div>
 
-        <!-- ================= POSTS GRID ================= -->
-        <div class="row g-4"
-             th:if="${posts != null and !#lists.isEmpty(posts)}">
-
-            <div class="col-md-4"
-                 th:each="post : ${posts}">
-
-                <!-- ✅ SAME LOGIC FOR EN + KN -->
-                <a th:href="@{/{lang}/blog/{slug}(
-            lang=${lang},
-            slug=${post.slug})}"
+        <div class="row g-4" th:if="${posts != null and !#lists.isEmpty(posts)}">
+            <div class="col-md-4" th:each="post : ${posts}">
+                <a th:href="@{/{lang}/blog/{slug}(lang=${lang},slug=${post.slug})}"
                    class="card post-card h-100 text-decoration-none text-dark shadow-sm">
 
-                    <!-- IMAGE -->
-                    <img th:src="${post.imageUrl != null ? post.imageUrl : '/images/placeholder.png'}"
+                    <img th:src="${post.imageUrl ?: '/images/placeholder.png'}"
                          class="card-img-top"
                          style="height:180px; object-fit:cover;">
 
                     <div class="card-body d-flex flex-column">
+                        <small class="text-muted text-uppercase"
+                               th:text="${post.category}"></small>
 
-                        <!-- AI PROMPT BADGE -->
-                        <span th:if="${post.category.name() == 'AI'
-                and post.aiPostMode != null
-                and post.aiPostMode.name() == 'PROMPT'}"
-                              class="badge bg-dark text-white mb-2 align-self-start">
-            🤖 AI PROMPT
-        </span>
+                        <h6 class="fw-bold mt-1" th:text="${post.title}"></h6>
 
-                        <!-- CATEGORY -->
-                        <small class="text-muted text-uppercase mb-1"
-                               th:text="${post.category}">
-                        </small>
-
-                        <!-- TITLE -->
-                        <h6 class="fw-bold mb-2"
-                            th:text="${post.title}">
-                        </h6>
-
-                        <!-- AUTHOR -->
-                        <div class="small text-muted mb-2">
-                            By <span th:text="${post.authorName != null ? post.authorName : 'Admin'}"></span>
-                        </div>
-
-                        <!-- STATS -->
-                        <div class="d-flex gap-3 mt-auto small text-muted align-items-center">
-
-                            <!-- Applause -->
-                            <!-- Likes / Applause -->
-                            <span class="d-flex align-items-center gap-1">
-                                <i class="bi bi-hand-thumbs-up"></i>
-                                <span th:text="${post.applauseCount}">0</span>
-                            </span>
-
-                            <!-- Comments -->
-                            <span class="d-flex align-items-center gap-1">
-                                <i class="bi bi-chat-dots"></i>
-                                <span th:text="${post.commentCount}">0</span>
-                            </span>
-
-                            <!-- Views -->
-                            <span class="d-flex align-items-center gap-1">
-                                <i class="bi bi-eye"></i>
-                                <span th:text="${post.views}">0</span>
-                            </span>
-
+                        <div class="mt-auto small text-muted d-flex gap-3">
+                            <span>👁 <span th:text="${post.views}"></span></span>
+                            <span>👏 <span th:text="${post.applauseCount}"></span></span>
                         </div>
                     </div>
                 </a>
             </div>
         </div>
 
+        <!-- ================= TRENDING AI ================= -->
+        <section class="home-carousel-section mt-5"
+                 th:if="${trendingAI != null and !#lists.isEmpty(trendingAI)}">
+
+            <div class="carousel-header">
+                <h3 class="carousel-title">🤖 Trending in AI</h3>
+                <a th:href="@{/{lang}/category/AI(lang=${lang})}"
+                   class="carousel-view-all">View all</a>
+            </div>
+
+            <div class="carousel-wrapper">
+
+                <!-- LEFT -->
+                <button class="carousel-arrow left hidden"
+                        onclick="scrollCarousel(this, -1)">
+                    <i class="bi bi-chevron-left"></i>
+                </button>
+
+                <!-- TRACK -->
+                <div class="carousel-track">
+                    <a th:each="post : ${trendingAI}"
+                       th:href="@{/{lang}/blog/{slug}(lang=${lang},slug=${post.slug})}"
+                       class="carousel-card">
+
+                        <img th:src="${post.imageUrl ?: '/images/placeholder.png'}"/>
+
+                        <div class="carousel-card-body">
+                            <small>AI</small>
+                            <h6 th:text="${post.title}"></h6>
+
+                            <div class="carousel-meta">
+                                <span>👁 <span th:text="${post.views}"></span></span>
+                                <span>👏 <span th:text="${post.applauseCount}"></span></span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- RIGHT -->
+                <button class="carousel-arrow right"
+                        onclick="scrollCarousel(this, 1)">
+                    <i class="bi bi-chevron-right"></i>
+                </button>
+
+            </div>
+        </section>
+
+        <!-- ================= TRENDING TECH ================= -->
+        <section class="home-carousel-section mt-5"
+                 th:if="${trendingAI != null and !#lists.isEmpty(trendingAI)}">
+
+            <div class="carousel-header">
+                <h3 class="carousel-title">💻 Trending in Tech</h3>
+                <a th:href="@{/{lang}/category/TECH(lang=${lang})}"
+                   class="carousel-view-all">View all</a>
+            </div>
+
+            <div class="carousel-wrapper">
+
+                <!-- LEFT -->
+                <button class="carousel-arrow left hidden"
+                        onclick="scrollCarousel(this, -1)">
+                    <i class="bi bi-chevron-left"></i>
+                </button>
+
+                <!-- TRACK -->
+                <div class="carousel-track">
+                    <a th:each="post : ${trendingTech}"
+                       th:href="@{/{lang}/blog/{slug}(lang=${lang},slug=${post.slug})}"
+                       class="carousel-card">
+
+                        <img th:src="${post.imageUrl ?: '/images/placeholder.png'}"/>
+
+                        <div class="carousel-card-body">
+                            <small>AI</small>
+                            <h6 th:text="${post.title}"></h6>
+
+                            <div class="carousel-meta">
+                                <span>👁 <span th:text="${post.views}"></span></span>
+                                <span>👏 <span th:text="${post.applauseCount}"></span></span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- RIGHT -->
+                <button class="carousel-arrow right"
+                        onclick="scrollCarousel(this, 1)">
+                    <i class="bi bi-chevron-right"></i>
+                </button>
+
+            </div>
+        </section>
+
+        <!-- ================= MONEY & BUSINESS ================= -->
+        <section class="home-carousel-section mt-5"
+                 th:if="${trendingMoney != null and !#lists.isEmpty(trendingMoney)}">
+
+            <div class="carousel-header">
+                <h3 class="carousel-title">💰 Money & Business</h3>
+                <a th:href="@{/{lang}/category/MONEY(lang=${lang})}"
+                   class="carousel-view-all">View all</a>
+            </div>
+
+            <!-- ⬅️➡️ REQUIRED WRAPPER -->
+            <div class="carousel-wrapper">
+
+                <!-- LEFT ARROW -->
+                <button class="carousel-arrow left hidden"
+                        onclick="scrollCarousel(this, -1)">
+                    <i class="bi bi-chevron-left"></i>
+                </button>
+
+                <!-- TRACK -->
+                <div class="carousel-track">
+                    <a th:each="post : ${trendingMoney}"
+                       th:href="@{/{lang}/blog/{slug}(lang=${lang},slug=${post.slug})}"
+                       class="carousel-card">
+
+                        <img th:src="${post.imageUrl ?: '/images/placeholder.png'}"/>
+
+                        <div class="carousel-card-body">
+                            <small>Money</small>
+                            <h6 th:text="${post.title}"></h6>
+
+                            <div class="carousel-meta">
+                                <span>👁 <span th:text="${post.views}"></span></span>
+                                <span>👏 <span th:text="${post.applauseCount}"></span></span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- RIGHT ARROW -->
+                <button class="carousel-arrow right"
+                        onclick="scrollCarousel(this, 1)">
+                    <i class="bi bi-chevron-right"></i>
+                </button>
+
+            </div>
+        </section>
+
+        <!-- ================= SKIN & HEALTH ================= -->
+        <section class="home-carousel-section mt-5"
+                 th:if="${trendingSkin != null and !#lists.isEmpty(trendingSkin)}">
+
+            <div class="carousel-header">
+                <h3 class="carousel-title">🌿 Skin & Health</h3>
+                <a th:href="@{/{lang}/category/SKIN_HEALTH(lang=${lang})}"
+                   class="carousel-view-all">View all</a>
+            </div>
+
+            <!-- ⬅️➡️ REQUIRED WRAPPER -->
+            <div class="carousel-wrapper">
+
+                <!-- LEFT ARROW -->
+                <button class="carousel-arrow left hidden"
+                        onclick="scrollCarousel(this, -1)">
+                    <i class="bi bi-chevron-left"></i>
+                </button>
+
+                <!-- TRACK -->
+                <div class="carousel-track">
+                    <a th:each="post : ${trendingSkin}"
+                       th:href="@{/{lang}/blog/{slug}(lang=${lang},slug=${post.slug})}"
+                       class="carousel-card">
+
+                        <img th:src="${post.imageUrl ?: '/images/placeholder.png'}"/>
+
+                        <div class="carousel-card-body">
+                            <small>Health</small>
+                            <h6 th:text="${post.title}"></h6>
+
+                            <div class="carousel-meta">
+                                <span>👁 <span th:text="${post.views}"></span></span>
+                                <span>👏 <span th:text="${post.applauseCount}"></span></span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- RIGHT ARROW -->
+                <button class="carousel-arrow right"
+                        onclick="scrollCarousel(this, 1)">
+                    <i class="bi bi-chevron-right"></i>
+                </button>
+
+            </div>
+        </section>
+
+        <!-- ================= BEAUTY & STYLE ================= -->
+        <section class="home-carousel-section mt-5"
+                 th:if="${trendingBeauty != null and !#lists.isEmpty(trendingBeauty)}">
+
+            <div class="carousel-header">
+                <h3 class="carousel-title">💄 Beauty & Style</h3>
+                <a th:href="@{/{lang}/category/BEAUTY_AND_STYLE(lang=${lang})}"
+                   class="carousel-view-all">View all</a>
+            </div>
+
+            <!-- ⬅️➡️ WRAPPER REQUIRED -->
+            <div class="carousel-wrapper">
+
+                <!-- LEFT ARROW -->
+                <button class="carousel-arrow left hidden"
+                        onclick="scrollCarousel(this, -1)">
+                    <i class="bi bi-chevron-left"></i>
+                </button>
+
+                <!-- TRACK -->
+                <div class="carousel-track">
+                    <a th:each="post : ${trendingBeauty}"
+                       th:href="@{/{lang}/blog/{slug}(lang=${lang},slug=${post.slug})}"
+                       class="carousel-card">
+
+                        <img th:src="${post.imageUrl ?: '/images/placeholder.png'}"/>
+
+                        <div class="carousel-card-body">
+                            <small>Beauty</small>
+                            <h6 th:text="${post.title}"></h6>
+
+                            <div class="carousel-meta">
+                                <span>👁 <span th:text="${post.views}"></span></span>
+                                <span>👏 <span th:text="${post.applauseCount}"></span></span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- RIGHT ARROW -->
+                <button class="carousel-arrow right"
+                        onclick="scrollCarousel(this, 1)">
+                    <i class="bi bi-chevron-right"></i>
+                </button>
+
+            </div>
+        </section>
+
     </div>
 </div>
-
 
 <!-- ================= FOOTER ================= -->
 <div th:replace="~{fragments/footer :: footer}"></div>
 
+<script>
+    function updateCarouselArrows(wrapper) {
+        const track = wrapper.querySelector('.carousel-track');
+        const leftArrow = wrapper.querySelector('.carousel-arrow.left');
+        const rightArrow = wrapper.querySelector('.carousel-arrow.right');
+
+        const scrollLeft = track.scrollLeft;
+        const maxScroll = track.scrollWidth - track.clientWidth;
+
+        // LEFT
+        if (scrollLeft <= 5) {
+            leftArrow.classList.add('hidden');
+        } else {
+            leftArrow.classList.remove('hidden');
+        }
+
+        // RIGHT
+        if (scrollLeft >= maxScroll - 5) {
+            rightArrow.classList.add('hidden');
+        } else {
+            rightArrow.classList.remove('hidden');
+        }
+    }
+
+    function scrollCarousel(btn, direction) {
+        const wrapper = btn.closest('.carousel-wrapper');
+        const track = wrapper.querySelector('.carousel-track');
+
+        const scrollAmount = track.clientWidth * 0.9;
+
+        track.scrollBy({
+            left: direction * scrollAmount,
+            behavior: 'smooth'
+        });
+
+        // update after scroll animation
+        setTimeout(() => updateCarouselArrows(wrapper), 350);
+    }
+
+    // INIT all carousels
+    document.addEventListener("DOMContentLoaded", () => {
+        document.querySelectorAll('.carousel-wrapper').forEach(wrapper => {
+            const track = wrapper.querySelector('.carousel-track');
+
+            updateCarouselArrows(wrapper);
+
+            // update on manual scroll / touch
+            track.addEventListener('scroll', () => {
+                updateCarouselArrows(wrapper);
+            });
+        });
+    });
+</script>
 </body>
 </html>

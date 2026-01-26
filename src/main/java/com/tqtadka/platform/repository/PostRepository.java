@@ -1,10 +1,8 @@
 package com.tqtadka.platform.repository;
 
-import com.tqtadka.platform.dto.DashboardPostView;
-import com.tqtadka.platform.dto.RelatedPostView;
-import com.tqtadka.platform.dto.SidebarPostView;
-import com.tqtadka.platform.dto.TrendingPostView;
+import com.tqtadka.platform.dto.*;
 import com.tqtadka.platform.entity.*;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
@@ -594,6 +592,104 @@ order by
             @Param("currentSlug") String currentSlug,
             Pageable pageable
     );
+
+    @Query("""
+    select
+        p.id as id,
+        p.title as title,
+        p.slug as slug,
+        p.imageUrl as imageUrl,
+        p.category as category,
+        p.language as language,
+        p.authorName as authorName,
+        p.views as views,
+        p.applauseCount as applauseCount,
+        p.publishedAt as publishedAt
+    from Post p
+    where p.category = :category
+      and p.published = true
+    order by p.publishedAt desc
+""")
+    Page<PostCardView> findByCategory(
+            @Param("category") CategoryType category,
+            Pageable pageable
+    );
+
+    @Query("""
+    select 
+        p.slug as slug,
+        p.title as title,
+        p.imageUrl as imageUrl,
+        p.views as views,
+        p.applauseCount as applauseCount,
+        p.authorName as authorName,
+        p.category as category
+    from Post p
+    where p.published = true
+    order by p.publishedAt desc
+""")
+    List<HomePostView> findLatestHomePosts(Pageable pageable);
+
+    // 🔹 Latest Posts
+    @Query("""
+        select 
+            p.slug as slug,
+            p.title as title,
+            p.imageUrl as imageUrl,
+            p.category as category,
+            p.views as views,
+            p.applauseCount as applauseCount
+        from Post p
+        where p.language = :language
+          and p.published = true
+        order by p.publishedAt desc
+    """)
+    List<HomePostView> findLatestHomePosts(
+            @Param("language") LanguageType language,
+            Pageable pageable
+    );
+
+    // 🔹 Trending (views + engagement)
+    @Query("""
+        select 
+            p.slug as slug,
+            p.title as title,
+            p.imageUrl as imageUrl,
+            p.category as category,
+            p.views as views,
+            p.applauseCount as applauseCount
+        from Post p
+        where p.language = :language
+          and p.published = true
+        order by (p.views + p.applauseCount) desc
+    """)
+    List<HomePostView> findTrendingHomePosts(
+            @Param("language") LanguageType language,
+            Pageable pageable
+    );
+
+    // 🔥 Trending by category
+    @Query("""
+        select
+            p.slug as slug,
+            p.title as title,
+            p.imageUrl as imageUrl,
+            p.category as category,
+            p.views as views,
+            p.applauseCount as applauseCount
+        from Post p
+        where p.language = :language
+          and p.published = true
+          and p.category = :category
+        order by (p.views + p.applauseCount) desc
+    """)
+    List<HomePostView> findTrendingByCategory(
+            @Param("language") LanguageType language,
+            @Param("category") CategoryType category,
+            Pageable pageable
+    );
+
+
 
 
 
