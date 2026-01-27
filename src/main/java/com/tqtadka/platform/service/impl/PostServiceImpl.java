@@ -11,7 +11,9 @@ import com.tqtadka.platform.repository.TagRepository;
 import com.tqtadka.platform.service.PostService;
 import com.tqtadka.platform.util.SlugUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -583,6 +585,33 @@ public class PostServiceImpl implements PostService {
                 .forEach(p -> merged.putIfAbsent(p.getId(), p));
 
         return new ArrayList<>(merged.values());
+    }
+
+    public Page<Post> getPostsByCategory(
+            CategoryType category,
+            LanguageType language,
+            String sort,
+            int page
+    ) {
+
+        Sort sortSpec = switch (sort) {
+            case "popular" -> Sort.by(Sort.Direction.DESC, "views");
+            case "oldest" -> Sort.by(Sort.Direction.ASC, "publishedAt");
+            default -> Sort.by(Sort.Direction.DESC, "publishedAt"); // latest
+        };
+
+        Pageable pageable = PageRequest.of(
+                page,
+                9,                // 🔥 9 cards
+                sortSpec
+        );
+
+        return postRepository
+                .findByCategoryAndLanguageAndPublishedTrue(
+                        category,
+                        language,
+                        pageable
+                );
     }
 
 

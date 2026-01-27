@@ -2014,3 +2014,43 @@ body {
         padding-top: 132px; /* mobile header height */
     }
 }
+
+/* ================= PREMIUM PAGINATION ================= */
+
+.premium-pagination .pagination {
+    gap: 6px;
+}
+
+.premium-pagination .page-link {
+    border: none;
+    min-width: 38px;
+    height: 38px;
+    padding: 0 14px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(10px);
+    color: #111;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+    transition: all 250ms ease;
+}
+
+.premium-pagination .page-link:hover {
+    background: #111;
+    color: #fff;
+    transform: translateY(-1px);
+}
+
+.premium-pagination .page-item.active .page-link {
+    background: #111;
+    color: #fff;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+}
+
+.premium-pagination .page-item.disabled .page-link {
+    opacity: 0.4;
+    pointer-events: none;
+}

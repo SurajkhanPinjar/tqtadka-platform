@@ -2,7 +2,9 @@ package com.tqtadka.platform.controller;
 
 import com.tqtadka.platform.entity.CategoryType;
 import com.tqtadka.platform.entity.LanguageType;
+import com.tqtadka.platform.entity.Post;
 import com.tqtadka.platform.service.PostService;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,31 +24,27 @@ public class CategoryController {
     public String viewCategory(
             @PathVariable String lang,
             @PathVariable CategoryType category,
-
-            // 🟢 NEW (SAFE)
             @RequestParam(defaultValue = "latest") String sort,
-
+            @RequestParam(defaultValue = "0") int page,
             Model model
     ) {
-
         LanguageType language =
                 "kn".equalsIgnoreCase(lang)
                         ? LanguageType.KN
                         : LanguageType.EN;
 
-        // 🔴 REQUIRED — header depends on these
+        Page<Post> postPage =
+                postService.getPostsByCategory(category, language, sort, page);
+
         model.addAttribute("lang", lang);
         model.addAttribute("categories", CategoryType.values());
         model.addAttribute("activeCategory", category);
-
-        // 🟢 pass sort to UI (for active button highlight)
         model.addAttribute("sort", sort);
 
-        // 🟢 SORT-AWARE fetch (fallbacks inside service)
-        model.addAttribute(
-                "posts",
-                postService.getPostsByCategory(category, language, sort)
-        );
+        // 🔥 pagination data
+        model.addAttribute("posts", postPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", postPage.getTotalPages());
 
         return "category";
     }

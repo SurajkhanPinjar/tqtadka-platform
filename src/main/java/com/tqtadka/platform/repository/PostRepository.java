@@ -746,7 +746,11 @@ ORDER BY p.publishedAt DESC
             @Param("lang") String lang
     );
 
-
+    Page<Post> findByCategoryAndLanguageAndPublishedTrue(
+            CategoryType category,
+            LanguageType language,
+            Pageable pageable
+    );
 
 
 }

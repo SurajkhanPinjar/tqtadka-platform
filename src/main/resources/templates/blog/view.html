@@ -236,8 +236,14 @@
                                 </div>
 
                                 <div class="card-footer bg-white border-0 d-flex gap-3 small text-muted">
-                                    <span>👁 <span th:text="${rp.views}"></span></span>
-                                    <span>👏 <span th:text="${rp.applauseCount}"></span></span>
+                                    <!-- STATS -->
+                                    <div class="d-flex gap-3 mt-auto small text-muted align-items-center">
+                                        <!-- Views -->
+                                        <span class="d-flex align-items-center gap-1">
+                                            <i class="bi bi-eye"></i>
+                                            <span th:text="${post.views}">0</span>
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                         </a>
@@ -370,9 +376,13 @@
                             <div class="recent-post-title"
                                  th:text="${p.title}"></div>
 
-                            <div class="small text-muted d-flex gap-2 mt-1">
-                                <span>👁 <span th:text="${p.views}"></span></span>
-                                <span>👏 <span th:text="${p.applauseCount}"></span></span>
+                            <!-- STATS -->
+                            <div class="d-flex gap-3 mt-auto small text-muted align-items-center">
+                                <!-- Views -->
+                                <span class="d-flex align-items-center gap-1">
+                                <i class="bi bi-eye"></i>
+                                <span th:text="${post.views}">0</span>
+                            </span>
                             </div>
                         </div>
                     </a>
@@ -396,8 +406,13 @@
                             <div class="recent-post-title"
                                  th:text="${p.title}"></div>
 
-                            <div class="recent-post-date">
-                                <span th:text="${p.views}"></span> views
+                            <!-- STATS -->
+                            <div class="d-flex gap-3 mt-auto small text-muted align-items-center">
+                                <!-- Views -->
+                                <span class="d-flex align-items-center gap-1">
+                                <i class="bi bi-eye"></i>
+                                <span th:text="${post.views}">0</span>
+                            </span>
                             </div>
                         </div>
                     </a>

@@ -1,6 +1,7 @@
 package com.tqtadka.platform.service;
 
 import com.tqtadka.platform.entity.*;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -135,6 +136,12 @@ public interface PostService {
     public List<Post> search(String rawQuery, LanguageType language);
 
 
+    public Page<Post> getPostsByCategory(
+            CategoryType category,
+            LanguageType language,
+            String sort,
+            int page
+    );
 
 
 }
