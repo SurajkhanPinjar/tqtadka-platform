@@ -689,7 +689,62 @@ order by
             Pageable pageable
     );
 
+    @Query("""
+SELECT p FROM Post p
+WHERE p.language = :lang
+AND p.published = true
+AND (
+       LOWER(p.title) LIKE CONCAT('%', LOWER(:q), '%')
+    OR LOWER(FUNCTION('CAST', p.intro, 'text')) LIKE CONCAT('%', LOWER(:q), '%')
+)
+ORDER BY p.publishedAt DESC
+""")
+    List<Post> searchByText(
+            @Param("q") String q,
+            @Param("lang") LanguageType lang,
+            Pageable pageable
+    );
 
+    @Query("""
+SELECT DISTINCT p FROM Post p
+JOIN p.tags t
+WHERE p.language = :lang
+AND p.published = true
+AND LOWER(t.name) LIKE CONCAT('%', LOWER(:q), '%')
+ORDER BY p.publishedAt DESC
+""")
+    List<Post> searchByTags(
+            @Param("q") String q,
+            @Param("lang") LanguageType lang
+    );
+
+    @Query("""
+SELECT p FROM Post p
+WHERE p.language = :lang
+AND p.published = true
+AND LOWER(p.title) LIKE CONCAT('%', LOWER(:q), '%')
+ORDER BY p.publishedAt DESC
+""")
+    List<Post> searchByTitle(
+            @Param("q") String q,
+            @Param("lang") LanguageType lang,
+            Pageable pageable
+    );
+
+    @Query(
+            value = """
+    SELECT * FROM post p
+    WHERE p.language = :lang
+      AND p.published = true
+      AND p.intro ILIKE CONCAT('%', :q, '%')
+    ORDER BY p.published_at DESC
+    """,
+            nativeQuery = true
+    )
+    List<Post> searchByIntroNative(
+            @Param("q") String q,
+            @Param("lang") String lang
+    );
 
 
 

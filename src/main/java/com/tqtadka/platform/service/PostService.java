@@ -132,6 +132,9 @@ public interface PostService {
 
     public Post getPostForPublicView(String slug, LanguageType language);
 
+    public List<Post> search(String rawQuery, LanguageType language);
+
+
 
 
 }

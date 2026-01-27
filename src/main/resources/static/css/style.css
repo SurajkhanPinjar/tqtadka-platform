@@ -544,8 +544,14 @@ img {
 
 /* Search input — lighter, editorial */
 .header-search {
+    width: 100%;
+    max-width: 420px;
+    display: flex;
+    align-items: center;
+}
+.header-search .search-input {
     height: 32px;
-    width: 200px;
+    width: 100%;
     font-size: 13px;
     padding: 0 14px;
     border-radius: 999px;
@@ -592,11 +598,6 @@ img {
     gap: 14px;
     margin-left: auto;      /* push tools to the right */
     align-items: center;
-}
-
-/* Optional: slightly widen search now that space exists */
-.header-search {
-
 }
 
 /* ===============================
@@ -1915,5 +1916,101 @@ body {
 @media (max-width: 768px) {
     .carousel-arrow {
         display: none;
+    }
+}
+/* ================= SEARCH INPUT ================= */
+.search-input {
+    width: 100%;
+    max-width: 420px;
+    min-width: 220px;
+
+    padding: 6px 14px;
+    font-size: 13px;
+
+    background: rgba(255,255,255,0.75);
+    backdrop-filter: blur(10px);
+
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 999px;
+
+    transition: all 250ms ease;
+}
+
+.search-input:focus {
+    background: rgba(255,255,255,0.95);
+    border-color: rgba(0,0,0,0.4);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+    outline: none;
+}
+
+/* ================= SEARCH BUTTON ================= */
+.search-btn {
+    width: 36px;
+    height: 36px;
+
+    border-radius: 50%;
+    border: none;
+
+    background: rgba(255,255,255,0.8);
+    backdrop-filter: blur(10px);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    transition: all 250ms cubic-bezier(.2,.8,.2,1);
+}
+
+.search-btn:hover {
+    background: #111;
+    color: #fff;
+    transform: scale(1.05);
+}
+
+/* ================= HEADER GRID ================= */
+.header-grid {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+}
+
+.nav-center {
+    display: flex;
+    justify-content: center;
+}
+
+/* ================= SEARCH RESULT CARDS ================= */
+.post-card-img {
+    height: 180px;
+    object-fit: cover;
+}
+
+@media (max-width: 576px) {
+    .post-card-img {
+        height: 140px;
+    }
+
+    .search-input {
+        min-width: unset;
+        max-width: 100%;
+    }
+}
+
+/* Clamp intro text */
+.post-intro {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Prevent content from hiding behind sticky header */
+.page-offset {
+    padding-top: 96px; /* desktop header height */
+}
+
+@media (max-width: 768px) {
+    .page-offset {
+        padding-top: 132px; /* mobile header height */
     }
 }

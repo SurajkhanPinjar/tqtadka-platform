@@ -11,6 +11,7 @@ import com.tqtadka.platform.repository.TagRepository;
 import com.tqtadka.platform.service.PostService;
 import com.tqtadka.platform.util.SlugUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -566,6 +567,22 @@ public class PostServiceImpl implements PostService {
                         .replaceAll(".*/blog/", "")
                 )
                 .collect(Collectors.toSet()); // 👈 IMPORTANT
+    }
+
+    @Transactional(readOnly = true)
+    public List<Post> search(String q, LanguageType lang) {
+
+        Map<Long, Post> merged = new LinkedHashMap<>();
+
+        postRepository
+                .searchByTitle(q, lang, PageRequest.of(0, 20))
+                .forEach(p -> merged.put(p.getId(), p));
+
+        postRepository
+                .searchByTags(q, lang)
+                .forEach(p -> merged.putIfAbsent(p.getId(), p));
+
+        return new ArrayList<>(merged.values());
     }
 
 
