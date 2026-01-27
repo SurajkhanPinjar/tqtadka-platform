@@ -83,6 +83,40 @@
 
         </div>
 
+        <!-- ================= AI PROMPT TOGGLE ================= -->
+        <div class="ai-toggle-wrapper"
+             th:if="${activeCategory.name() == 'AI'}">
+
+            <div class="ai-toggle">
+
+                <!-- Slider -->
+                <div class="ai-toggle-slider"
+                     th:classappend="${prompt == true} ? ' right' : ' left'"></div>
+
+                <!-- ALL POSTS -->
+                <a th:href="@{/{lang}/category/AI(
+                lang=${lang},
+                sort=${sort}
+            )}"
+                   class="ai-toggle-option"
+                   th:classappend="${prompt == null} ? ' active'">
+                    All Posts
+                </a>
+
+                <!-- PROMPT POSTS -->
+                <a th:href="@{/{lang}/category/AI(
+                lang=${lang},
+                sort=${sort},
+                prompt=true
+            )}"
+                   class="ai-toggle-option"
+                   th:classappend="${prompt == true} ? ' active'">
+                    Prompts
+                </a>
+
+            </div>
+        </div>
+
         <!-- EMPTY STATE -->
         <div th:if="${posts == null or #lists.isEmpty(posts)}"
              class="alert alert-secondary text-center">

@@ -614,6 +614,32 @@ public class PostServiceImpl implements PostService {
                 );
     }
 
+    public Page<Post> getPostsByCategory(
+            CategoryType category,
+            LanguageType language,
+            String sort,
+            int page,
+            Boolean promptOnly
+    ) {
+        Sort sortSpec = switch (sort) {
+            case "popular" -> Sort.by(Sort.Direction.DESC, "views");
+            case "oldest"  -> Sort.by(Sort.Direction.ASC, "publishedAt");
+            default        -> Sort.by(Sort.Direction.DESC, "publishedAt");
+        };
+
+        Pageable pageable = PageRequest.of(page, 9, sortSpec);
+
+        if (category == CategoryType.AI && Boolean.TRUE.equals(promptOnly)) {
+            return postRepository.findAiPromptPosts(
+                    language, pageable
+            );
+        }
+
+        return postRepository.findByCategoryAndLanguageAndPublishedTrue(
+                category, language, pageable
+        );
+    }
+
 
 
 

@@ -143,5 +143,13 @@ public interface PostService {
             int page
     );
 
+    public Page<Post> getPostsByCategory(
+            CategoryType category,
+            LanguageType language,
+            String sort,
+            int page,
+            Boolean promptOnly
+    );
+
 
 }

@@ -26,6 +26,7 @@ public class CategoryController {
             @PathVariable CategoryType category,
             @RequestParam(defaultValue = "latest") String sort,
             @RequestParam(defaultValue = "0") int page,
+            @RequestParam(required = false) Boolean prompt,
             Model model
     ) {
         LanguageType language =
@@ -34,17 +35,20 @@ public class CategoryController {
                         : LanguageType.EN;
 
         Page<Post> postPage =
-                postService.getPostsByCategory(category, language, sort, page);
+                postService.getPostsByCategory(
+                        category, language, sort, page, prompt
+                );
+
+        model.addAttribute("posts", postPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", postPage.getTotalPages());
+
+        model.addAttribute("sort", sort);
+        model.addAttribute("prompt", prompt);
 
         model.addAttribute("lang", lang);
         model.addAttribute("categories", CategoryType.values());
         model.addAttribute("activeCategory", category);
-        model.addAttribute("sort", sort);
-
-        // 🔥 pagination data
-        model.addAttribute("posts", postPage.getContent());
-        model.addAttribute("currentPage", page);
-        model.addAttribute("totalPages", postPage.getTotalPages());
 
         return "category";
     }

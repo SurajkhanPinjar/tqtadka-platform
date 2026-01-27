@@ -752,5 +752,17 @@ ORDER BY p.publishedAt DESC
             Pageable pageable
     );
 
+    @Query("""
+    SELECT p FROM Post p
+    WHERE p.category = 'AI'
+      AND p.language = :language
+      AND p.published = true
+      AND p.aiPostMode = 'PROMPT'
+""")
+    Page<Post> findAiPromptPosts(
+            @Param("language") LanguageType language,
+            Pageable pageable
+    );
+
 
 }

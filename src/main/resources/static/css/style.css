@@ -2054,3 +2054,85 @@ body {
     opacity: 0.4;
     pointer-events: none;
 }
+
+/* ================= AI PROMPT TOGGLE (REFINED) ================= */
+
+.ai-toggle-wrapper {
+    margin-bottom: 22px;
+}
+
+.ai-toggle {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+
+    background: rgba(255,255,255,0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+
+    border-radius: 999px;
+    padding: 3px;
+
+    box-shadow:
+        0 6px 20px rgba(0,0,0,0.06),
+        inset 0 1px 0 rgba(255,255,255,0.6);
+}
+
+/* Sliding pill */
+.ai-toggle-slider {
+    position: absolute;
+    top: 3px;
+    bottom: 3px;
+    width: 50%;
+    border-radius: 999px;
+    background: #111;
+
+    transition: transform 420ms cubic-bezier(.16,1,.3,1);
+    z-index: 0;
+}
+
+.ai-toggle-slider.left {
+    transform: translateX(0);
+}
+
+.ai-toggle-slider.right {
+    transform: translateX(100%);
+}
+
+/* Toggle options */
+.ai-toggle-option {
+    position: relative;
+    z-index: 1;
+
+    padding: 6px 18px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #666;
+    text-decoration: none;
+    white-space: nowrap;
+
+    transition:
+        color 220ms ease,
+        transform 120ms ease;
+}
+
+.ai-toggle-option.active {
+    color: #fff;
+}
+
+.ai-toggle-option:not(.active):hover {
+    color: #111;
+}
+
+/* Subtle press feedback */
+.ai-toggle-option:active {
+    transform: scale(0.96);
+}
+
+.ai-toggle-option:active {
+    transform: scale(0.97);
+}
+
+.ai-toggle-slider {
+    will-change: transform;
+}
