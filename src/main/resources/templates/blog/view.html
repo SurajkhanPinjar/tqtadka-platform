@@ -119,11 +119,20 @@
                  style="display:none;">
                 To give applause, please login.
             </div>
-
-            <!-- IMAGE -->
+<!--
+            &lt;!&ndash; IMAGE &ndash;&gt;
             <img th:if="${post.imageUrl}"
                  th:src="${post.imageUrl}"
-                 class="img-fluid rounded my-5">
+                 class="img-fluid rounded my-5">-->
+
+            <!-- BLOG HERO IMAGE -->
+            <div th:if="${post.imageUrl != null}" class="mb-4">
+                <img
+                        th:src="${post.imageUrl}"
+                        th:alt="${post.title}"
+                        class="img-fluid rounded shadow-sm"
+                        loading="lazy">
+            </div>
 
             <!-- IMAGE SECTIONS -->
             <section th:if="${post.imageSections != null and !post.imageSections.isEmpty()}"
@@ -146,6 +155,22 @@
                     </div>
                 </div>
             </section>
+
+            <!-- IMAGE SECTIONS -->
+            <div th:if="${post.imageSections != null}">
+                <div th:each="section : ${post.imageSections}" class="my-5">
+
+                    <img th:if="${section.imageUrl != null}"
+                         th:src="${section.imageUrl}"
+                         class="img-fluid rounded mb-3"
+                         loading="lazy"/>
+
+                    <h4 th:text="${section.heading}"></h4>
+
+                    <p th:text="${section.description}"></p>
+
+                </div>
+            </div>
 
             <!-- CONTENT -->
             <div class="blog-content"

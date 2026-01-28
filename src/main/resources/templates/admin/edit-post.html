@@ -86,11 +86,41 @@
                     </div>
                 </div>
 
-                <!-- IMAGE -->
-                <input class="form-control mb-3"
+                <!-- ======================
+                     MAIN IMAGE (EDIT)
+                ====================== -->
+                <label class="form-label fw-semibold">Main Image</label>
+
+                <input type="file"
+                       class="form-control mb-2"
+                       id="imageFile"
+                       accept="image/*">
+
+                <img id="imagePreview"
+                     th:if="${post.imageUrl != null}"
+                     th:src="${post.imageUrl}"
+                     class="mb-2 d-block"
+                     style="max-height:200px; border-radius:8px;"/>
+
+                <input type="hidden"
                        name="imageUrl"
-                       th:value="${post.imageUrl}"
-                       placeholder="Main image URL">
+                       id="imageUrl"
+                       th:value="${post.imageUrl}"/>
+
+                <input type="hidden"
+                       name="existingImageUrl"
+                       th:value="${post.imageUrl}"/>
+
+                <div class="form-check mb-3">
+                    <input class="form-check-input"
+                           type="checkbox"
+                           name="removeImage"
+                           value="true"
+                           id="removeImageCheck">
+                    <label class="form-check-label" for="removeImageCheck">
+                        Remove main image
+                    </label>
+                </div>
 
                 <!-- INTRO -->
                 <textarea class="form-control mb-4"
@@ -483,6 +513,62 @@ document.getElementById("editForm")
     function removeRelatedBlog(button) {
         button.closest(".input-group").remove();
     }
+</script>
+
+<script>
+    let uploadInProgress = false;
+    const submitBtn = document.querySelector("button[type='submit']");
+
+    document.getElementById("imageFile")
+        .addEventListener("change", async function () {
+
+            const file = this.files[0];
+            if (!file) return;
+
+            uploadInProgress = true;
+            submitBtn.disabled = true;
+
+            const preview = document.getElementById("imagePreview");
+            preview.src = URL.createObjectURL(file);
+            preview.style.display = "block";
+
+            const csrfToken =
+                document.querySelector('input[name="_csrf"]').value;
+
+            const formData = new FormData();
+            formData.append("file", file);
+
+            try {
+                const res = await fetch("/admin/images/upload", {
+                    method: "POST",
+                    headers: { "X-CSRF-TOKEN": csrfToken },
+                    body: formData
+                });
+
+                if (!res.ok) throw new Error("Upload failed");
+
+                const data = await res.json();
+                document.getElementById("imageUrl").value = data.url;
+
+                // uploading new image cancels removal
+                document.getElementById("removeImageCheck").checked = false;
+
+            } catch (e) {
+                alert("Image upload failed");
+            } finally {
+                uploadInProgress = false;
+                submitBtn.disabled = false;
+            }
+        });
+
+    document.getElementById("removeImageCheck")
+        .addEventListener("change", function () {
+
+            if (this.checked) {
+                document.getElementById("imageUrl").value = "";
+                document.getElementById("imagePreview").style.display = "none";
+            }
+        });
 </script>
 
 </body>

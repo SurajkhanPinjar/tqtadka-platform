@@ -33,3 +33,9 @@ server:
 logging:
   level:
     org.springframework.security: DEBUG
+
+cdn:
+  base-url: http://localhost:8001/mock-cdn
+
+app:
+  upload-dir: /Users/surajkhanpinjar/tqtadka/uploads

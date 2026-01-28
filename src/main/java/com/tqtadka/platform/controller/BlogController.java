@@ -146,4 +146,5 @@ public class BlogController {
     public String redirectBlogRoot(@PathVariable String lang) {
         return "redirect:/" + lang.toLowerCase();
     }
+
 }

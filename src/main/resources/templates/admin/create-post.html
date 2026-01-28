@@ -18,6 +18,9 @@
     <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
 
     <link rel="stylesheet" th:href="@{/css/style.css}">
+
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
 </head>
 
 <body class="bg-light">
@@ -96,10 +99,30 @@
                     </div>
                 </div>
 
-                <!-- IMAGE -->
-                <input class="form-control mb-4"
+                <!-- IMAGE UPLOAD -->
+                <label class="form-label fw-semibold">Main Image</label>
+
+                <input type="file"
+                       class="form-control mb-2"
+                       id="imageFile"
+                       accept="image/*">
+
+                <!-- Preview -->
+                <img id="imagePreview"
+                     style="display:none; max-height:200px; border-radius:8px;"
+                     class="mb-3"/>
+
+                <button type="button"
+                        id="removeImageBtn"
+                        class="btn btn-sm btn-outline-danger mb-3"
+                        style="display:none;">
+                    Remove image
+                </button>
+
+                <!-- Hidden field (IMPORTANT) -->
+                <input type="hidden"
                        name="imageUrl"
-                       placeholder="Main image URL (optional)">
+                       id="imageUrl">
 
                 <!-- INTRO -->
                 <textarea class="form-control mb-4"
@@ -249,7 +272,9 @@
                     </label>
                 </div>
 
-                <button type="submit" class="btn btn-dark px-4">
+                <button type="submit"
+                        id="publishBtn"
+                        class="btn btn-dark px-4">
                     Publish
                 </button>
 
@@ -261,6 +286,10 @@
 
 <!-- QUILL -->
 <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
+
+<script>
+    let uploadInProgress = false;
+</script>
 
 <script>
     const quill = new Quill('#editor', {
@@ -277,16 +306,48 @@
         }
     });
 
-    document.getElementById('postForm').addEventListener('submit', function (e) {
-        const html = quill.root.innerHTML.trim();
+document.getElementById('postForm').addEventListener('submit', function (e) {
 
-        if (!html || html === '<p><br></p>') {
-            alert('Post content cannot be empty');
-            e.preventDefault();
-            return;
-        }
-        document.getElementById('sectionContent').value = html;
-    });
+    // 🔒 Block submit during image upload
+    if (uploadInProgress) {
+        alert("Please wait for image upload to finish");
+        e.preventDefault();
+        return;
+    }
+
+    // ✍️ Validate editor content
+    const html = quill.root.innerHTML.trim();
+    if (!html || html === '<p><br></p>') {
+        alert('Post content cannot be empty');
+        e.preventDefault();
+        return;
+    }
+    document.getElementById('sectionContent').value = html;
+
+    // 🖼 Serialize image sections
+    const sections = [];
+
+    document
+        .querySelectorAll("#imageSectionContainer .card")
+        .forEach((card, i) => {
+
+            const imageUrl = card.querySelector('[data-field="imageUrl"]').value.trim();
+            const heading = card.querySelector('[data-field="heading"]').value.trim();
+            const description = card.querySelector('[data-field="description"]').value.trim();
+
+            if (imageUrl || heading || description) {
+                sections.push({
+                    order: i + 1,
+                    imageUrl,
+                    heading,
+                    description
+                });
+            }
+        });
+
+    document.getElementById("imageSectionsJson").value =
+        JSON.stringify(sections);
+});
 
     /* =========================
        🔥 AI PROMPT LOGIC (SAFE)
@@ -433,35 +494,6 @@ function addImageSection() {
     imageSectionIndex++;
 }
 
-/* ===============================
-   SERIALIZE IMAGE SECTIONS
-================================ */
-document.getElementById("postForm")
-    .addEventListener("submit", function () {
-
-        const sections = [];
-
-        document
-            .querySelectorAll("#imageSectionContainer .card")
-            .forEach((card, i) => {
-
-                const imageUrl = card.querySelector('[data-field="imageUrl"]').value.trim();
-                const heading = card.querySelector('[data-field="heading"]').value.trim();
-                const description = card.querySelector('[data-field="description"]').value.trim();
-
-                if (imageUrl || heading || description) {
-                    sections.push({
-                        order: i + 1,
-                        imageUrl,
-                        heading,
-                        description
-                    });
-                }
-            });
-
-        document.getElementById("imageSectionsJson").value =
-            JSON.stringify(sections);
-    });
 </script>
 <script>
     function addRelatedBlog() {
@@ -492,5 +524,75 @@ document.getElementById("postForm")
         btn.closest(".input-group").remove();
     }
 </script>
+
+<script>
+    const publishBtn = document.getElementById("publishBtn");
+
+    document.getElementById("imageFile")
+        .addEventListener("change", async function () {
+
+            const file = this.files[0];
+            if (!file) return;
+
+            // 🔒 lock submit
+            uploadInProgress = true;
+            publishBtn.disabled = true;
+
+            const preview = document.getElementById("imagePreview");
+            preview.src = URL.createObjectURL(file);
+            preview.style.display = "block";
+
+            const csrfToken =
+                document.querySelector('meta[name="_csrf"]').content;
+            const csrfHeader =
+                document.querySelector('meta[name="_csrf_header"]').content;
+
+            const formData = new FormData();
+            formData.append("file", file);
+
+            try {
+                const res = await fetch("/admin/images/upload", {
+                    method: "POST",
+                    headers: { [csrfHeader]: csrfToken },
+                    body: formData
+                });
+
+                if (!res.ok) throw new Error("Upload failed");
+
+                const data = await res.json();
+                document.getElementById("imageUrl").value = data.url;
+
+            } catch (e) {
+                alert("Image upload failed");
+            } finally {
+                // 🔓 unlock submit
+                uploadInProgress = false;
+                publishBtn.disabled = false;
+            }
+        });
+</script>
+
+<script>
+    const removeBtn = document.getElementById("removeImageBtn");
+    const previewImg = document.getElementById("imagePreview");
+    const imageInput = document.getElementById("imageFile");
+    const imageUrlInput = document.getElementById("imageUrl");
+
+    // show remove button when image is uploaded
+    document.getElementById("imageFile")
+        .addEventListener("change", () => {
+            removeBtn.style.display = "inline-block";
+        });
+
+    removeBtn.addEventListener("click", () => {
+        // clear everything
+        imageInput.value = "";
+        imageUrlInput.value = "";
+        previewImg.src = "";
+        previewImg.style.display = "none";
+        removeBtn.style.display = "none";
+    });
+</script>
+
 </body>
 </html>

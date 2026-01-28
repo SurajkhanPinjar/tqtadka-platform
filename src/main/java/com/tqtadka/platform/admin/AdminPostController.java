@@ -91,6 +91,7 @@ public class AdminPostController {
             @RequestParam CategoryType category,
             @RequestParam LanguageType language,
             @RequestParam(required = false) String imageUrl,
+            @RequestParam(required = false) String existingImageUrl,
 
             // SECTION CONTENT
             @RequestParam String sectionContent,
@@ -124,7 +125,7 @@ public class AdminPostController {
                 tipTitle,
                 tipContent
         );
-
+        log.info("IMAGE URL RECEIVED: {}", imageUrl);
     /* =========================
        SAFE PROMPT TEXT EXTRACTION
     ========================= */
@@ -171,8 +172,8 @@ public class AdminPostController {
         return "redirect:/admin/posts";
     }
     /* ============================
-       EDIT PAGE (SECURE)
-    ============================ */
+   EDIT PAGE (SECURE)
+============================ */
     @GetMapping("/edit/{postId}")
     public String editPost(
             @PathVariable Long postId,
@@ -184,7 +185,7 @@ public class AdminPostController {
         User currentUser = userDetails.getUser();
         Post post = postService.getPostForEdit(postId, currentUser);
 
-        // 🔥 FLATTEN IMAGE SECTIONS (VERY IMPORTANT)
+        // 🔥 FLATTEN IMAGE SECTIONS
         List<Map<String, String>> imageSectionDtos =
                 post.getImageSections()
                         .stream()
@@ -196,7 +197,7 @@ public class AdminPostController {
                         ))
                         .toList();
 
-        // 🔥 ADD THIS (ONLY THIS)
+        // 🔥 TAG STRING
         String tagString =
                 post.getTags() == null
                         ? ""
@@ -208,7 +209,6 @@ public class AdminPostController {
         model.addAttribute("post", post);
         model.addAttribute("imageSectionDtos", imageSectionDtos);
         model.addAttribute("tagString", tagString);
-
         model.addAttribute("relatedSlugs", post.getRelatedPostSlugs());
 
         return "admin/edit-post";
@@ -223,7 +223,10 @@ public class AdminPostController {
             @RequestParam(required = false) String intro,
             @RequestParam CategoryType category,
             @RequestParam LanguageType language,
+
+            // 🔥 MAIN IMAGE (FIXED)
             @RequestParam(required = false) String imageUrl,
+            @RequestParam(required = false) String existingImageUrl,
 
             // SECTION CONTENT
             @RequestParam String sectionContent,
@@ -238,12 +241,13 @@ public class AdminPostController {
 
             // 🔥 IMAGE SECTIONS JSON
             @RequestParam(required = false) String imageSectionsJson,
+            @RequestParam(required = false) Boolean removeImage,
 
             @RequestParam(required = false) String tags,
-
             HttpServletRequest request,
             @RequestParam(required = false) Boolean publish,
             @RequestParam(required = false) List<String> relatedSlugs
+
     ) {
         requireAuth(userDetails);
         User currentUser = userDetails.getUser();
@@ -273,8 +277,8 @@ public class AdminPostController {
                         .toList();
 
     /* =========================
-   🔥 PARSE IMAGE SECTIONS JSON (SAFE)
-========================= */
+       🔥 PARSE IMAGE SECTIONS JSON
+    ========================= */
         List<PostImageSection> imageSections = List.of();
 
         if (imageSectionsJson != null && !imageSectionsJson.isBlank()) {
@@ -292,7 +296,7 @@ public class AdminPostController {
                             s.setImageUrl(dto.getImageUrl());
                             s.setHeading(dto.getHeading());
                             s.setDescription(dto.getDescription());
-                            s.setDisplayOrder(dto.getOrder()); // ✅ CRITICAL FIX
+                            s.setDisplayOrder(dto.getOrder()); // ✅ CRITICAL
                             return s;
                         })
                         .toList();
@@ -303,7 +307,7 @@ public class AdminPostController {
         }
 
     /* =========================
-       SERVICE CALL (NO REGRESSION)
+       🔥 SERVICE CALL (NO REGRESSION)
     ========================= */
         postService.updatePost(
                 postId,
@@ -311,9 +315,13 @@ public class AdminPostController {
                 clean(intro),
                 category,
                 language,
-                clean(imageUrl),
-                List.of(section),
-                imageSections,              // 🔥 FIX
+
+                clean(imageUrl),          // new image (optional)
+                clean(existingImageUrl),  // 🔥 old image (backup)
+                Boolean.TRUE.equals(removeImage),
+
+        List.of(section),
+                imageSections,
                 Boolean.TRUE.equals(publish),
                 currentUser,
                 aiPostMode,

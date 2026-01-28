@@ -48,7 +48,7 @@ public class SecurityConfig {
                         /* ---------- ADMIN + AUTHOR ---------- */
                         .requestMatchers(
                                 "/admin/posts/**",
-                                "/admin/dashboard/**"
+                                "/admin/dashboard/**", "/admin/images/**"
                         ).hasAnyRole("ADMIN", "AUTHOR")
 
                         /* ---------- EVERYTHING ELSE ---------- */

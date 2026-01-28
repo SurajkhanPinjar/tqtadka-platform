@@ -13,14 +13,11 @@ import java.util.Map;
 @Controller
 public class ImageUploadController {
 
-    private final ImageUploadServicea imageUploadServicea;
-    
+    private final ImageUploadService imageUploadService;
 
     public ImageUploadController(ImageUploadService imageUploadService) {
         this.imageUploadService = imageUploadService;
     }
-
-
 
 
     @PostMapping("/admin/images/upload")

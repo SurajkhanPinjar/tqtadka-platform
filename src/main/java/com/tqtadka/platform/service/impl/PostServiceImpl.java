@@ -294,7 +294,7 @@ public class PostServiceImpl implements PostService {
                     PostImageSection section = new PostImageSection();
                     section.setHeading(dto.getHeading());
                     section.setDescription(dto.getDescription());
-                    section.setImageUrl(dto.getImageUrl());
+                    section.setImageUrl(clean(dto.getImageUrl()));
                     section.setDisplayOrder(dto.getOrder());
                     section.setPost(post); // 🔥 IMPORTANT
 
@@ -312,9 +312,6 @@ public class PostServiceImpl implements PostService {
 
         return postRepository.save(post);
     }
-    /* =====================================================
-       UPDATE
-    ===================================================== */
     @Override
     public Post updatePost(
             Long postId,
@@ -323,6 +320,8 @@ public class PostServiceImpl implements PostService {
             CategoryType category,
             LanguageType language,
             String imageUrl,
+            String existingImageUrl,
+            boolean removeImage,
             List<PostSection> sections,
             List<PostImageSection> imageSections,
             boolean publish,
@@ -340,7 +339,19 @@ public class PostServiceImpl implements PostService {
         post.setIntro(clean(intro));
         post.setCategory(category);
         post.setLanguage(language);
-        post.setImageUrl(clean(imageUrl));
+
+        String newImage = clean(imageUrl);
+        String oldImage = clean(existingImageUrl);
+
+        // 🔥 IMAGE LOGIC (FIXED)
+        if (removeImage) {
+            post.setImageUrl(null);
+        } else if (newImage != null && !newImage.isBlank()) {
+            post.setImageUrl(newImage);
+        } else if (oldImage != null && !oldImage.isBlank()) {
+            post.setImageUrl(oldImage);
+        }
+
         post.setPublished(publish);
 
         post.setPublishedAt(
@@ -361,28 +372,28 @@ public class PostServiceImpl implements PostService {
         post.getSections().clear();
         post.getAiPrompts().clear();
         post.getImageSections().clear();
-        post.getTags().clear();                 // ✅ TAGS CLEAR
+        post.getTags().clear();
 
         // 🔥 ATTACH NEW DATA
         attachSingleSection(post, sections);
         attachAiPrompts(post, category, promptNames, promptTexts);
         attachImageSections(post, imageSections);
 
-        // 🔥 TAGS (SAFE, CLEAN)
+        // 🔥 TAGS
         if (tags != null && !tags.isBlank()) {
             Set<Tag> resolvedTags = resolveTags(tags);
             post.getTags().addAll(resolvedTags);
         }
 
-        // ✅ safe mutation
+        // 🔥 RELATED POSTS
         post.getRelatedPostSlugs().clear();
-
         if (relatedSlugs != null) {
             post.getRelatedPostSlugs().addAll(relatedSlugs);
         }
 
         return postRepository.save(post);
     }
+
     /* =====================================================
        🔥 SINGLE SECTION FIX (CORE FIX)
     ===================================================== */

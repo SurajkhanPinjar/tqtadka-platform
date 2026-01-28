@@ -97,6 +97,8 @@ public interface PostService {
             CategoryType category,
             LanguageType language,
             String imageUrl,
+            String existingImageUrl,
+            boolean removeImage,
             List<PostSection> sections,
             List<PostImageSection> imageSections, // ✅ ADD
             boolean publish,
