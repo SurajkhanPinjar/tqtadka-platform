@@ -88,6 +88,7 @@
         </nav>
 
         <!-- ================= CATEGORY BAR ================= -->
+        <nav id="categoryNav" class="category-nav">
         <div class="border-bottom px-4 py-2"
              th:if="${categories != null and !#lists.isEmpty(categories)}">
 
@@ -101,6 +102,7 @@
             </div>
 
         </div>
+        </nav>
     </header>
 
     <script>
@@ -111,6 +113,25 @@
                 header.classList.add("scrolled");
             } else {
                 header.classList.remove("scrolled");
+            }
+        });
+    </script>
+
+    <script>
+        const categoryNav = document.getElementById("categoryNav");
+
+        window.addEventListener("scroll", () => {
+            if (!categoryNav) return;
+
+            // mobile only
+            if (window.innerWidth <= 768) {
+                if (window.scrollY > 80) {
+                    // once scrolled, ALWAYS hide
+                    categoryNav.classList.add("hide");
+                } else {
+                    // only show when at top
+                    categoryNav.classList.remove("hide");
+                }
             }
         });
     </script>

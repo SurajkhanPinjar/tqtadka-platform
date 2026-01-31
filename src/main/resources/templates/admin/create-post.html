@@ -457,42 +457,6 @@ function addPromptRow() {
             .forEach(t => updateCharCount(t));
     });
 
-let imageSectionIndex = 0;
-
-function addImageSection() {
-    const container = document.getElementById("imageSectionContainer");
-
-    const wrapper = document.createElement("div");
-    wrapper.className = "card p-3";
-    wrapper.dataset.index = imageSectionIndex;
-
-    wrapper.innerHTML = `
-        <div class="d-flex justify-content-between align-items-center mb-2">
-            <strong>Section ${imageSectionIndex + 1}</strong>
-            <button type="button"
-                    class="btn btn-sm btn-danger"
-                    onclick="this.closest('.card').remove()">
-                ✕
-            </button>
-        </div>
-
-        <input class="form-control mb-2"
-               placeholder="Image URL"
-               data-field="imageUrl">
-
-        <input class="form-control mb-2"
-               placeholder="Section heading"
-               data-field="heading">
-
-        <textarea class="form-control"
-                  rows="3"
-                  placeholder="Section description"
-                  data-field="description"></textarea>
-    `;
-
-    container.appendChild(wrapper);
-    imageSectionIndex++;
-}
 
 </script>
 <script>
@@ -593,6 +557,123 @@ function addImageSection() {
         removeBtn.style.display = "none";
     });
 </script>
+
+<script>
+
+    function addImageSection(imageUrl = '', heading = '', description = '') {
+
+        const container = document.getElementById("imageSectionContainer");
+        const index =
+    document.querySelectorAll("#imageSectionContainer .card").length;
+
+        const wrapper = document.createElement("div");
+        wrapper.className = "card p-3";
+
+        wrapper.innerHTML = `
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <strong>Section ${index + 1}</strong>
+                <button type="button"
+                        class="btn btn-sm btn-danger"
+                        onclick="this.closest('.card').remove()">✕</button>
+            </div>
+
+            <input type="file"
+                   class="form-control mb-2 section-image-file"
+                   accept="image/*">
+
+            <img class="section-image-preview mb-2"
+                 style="display:${imageUrl ? 'block' : 'none'}; max-height:150px; border-radius:6px;"
+                 src="${imageUrl}"/>
+
+            <input type="hidden"
+                   class="section-image-url"
+                   data-field="imageUrl"
+                   value="${imageUrl}">
+
+            <button type="button"
+                    class="btn btn-sm btn-outline-danger mb-2 remove-section-image"
+                    style="display:${imageUrl ? 'inline-block' : 'none'};">
+                Remove image
+            </button>
+
+            <input class="form-control mb-2"
+                   placeholder="Section heading"
+                   data-field="heading"
+                   value="${heading}">
+
+            <textarea class="form-control"
+                      rows="3"
+                      placeholder="Section description"
+                      data-field="description">${description}</textarea>
+        `;
+
+        container.appendChild(wrapper);
+
+        wireSectionImageUpload(wrapper);
+    }
+</script>
+
+<script>
+    function wireSectionImageUpload(card) {
+
+        const fileInput = card.querySelector(".section-image-file");
+        const preview = card.querySelector(".section-image-preview");
+        const imageUrlInput = card.querySelector(".section-image-url");
+        const removeBtn = card.querySelector(".remove-section-image");
+
+        fileInput.addEventListener("change", async function () {
+
+    const file = this.files[0];
+    if (!file) return;
+
+    // 🔒 lock publish
+    uploadInProgress = true;
+    publishBtn.disabled = true;
+
+    const csrfToken =
+        document.querySelector('meta[name="_csrf"]').content;
+    const csrfHeader =
+        document.querySelector('meta[name="_csrf_header"]').content;
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+        const res = await fetch("/admin/images/upload", {
+            method: "POST",
+            headers: { [csrfHeader]: csrfToken },
+            body: formData
+        });
+
+        if (!res.ok) throw new Error("Upload failed");
+
+        const data = await res.json();
+
+        imageUrlInput.value = data.url;
+        preview.src = data.url;
+        preview.style.display = "block";
+        removeBtn.style.display = "inline-block";
+
+    } catch (e) {
+        alert("Section image upload failed");
+    } finally {
+        // 🔓 unlock publish
+        uploadInProgress = false;
+        publishBtn.disabled = false;
+    }
+});
+
+        removeBtn.addEventListener("click", () => {
+            fileInput.value = "";
+            imageUrlInput.value = "";
+            preview.src = "";
+            preview.style.display = "none";
+            removeBtn.style.display = "none";
+        });
+    }
+</script>
+
+
 
 </body>
 </html>

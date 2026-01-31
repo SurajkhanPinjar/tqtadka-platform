@@ -554,9 +554,7 @@ select
     p.title as title,
     p.imageUrl as imageUrl,
     p.language as language,
-    p.views as views,
-    p.applauseCount as applauseCount,
-    p.commentCount as commentCount
+    p.publishedAt as publishedAt
 from Post p
 where p.published = true
   and p.language = :language
@@ -571,20 +569,19 @@ order by
     );
 
     @Query("""
-    select
-        p.id as id,
-        p.slug as slug,
-        p.title as title,
-        p.imageUrl as imageUrl,
-        p.views as views,
-        p.applauseCount as applauseCount,
-        p.language as language
-    from Post p
-    where p.category = :category
-      and p.language = :language
-      and p.published = true
-      and p.slug <> :currentSlug
-    order by p.views asc
+select
+    p.id as id,
+    p.slug as slug,
+    p.title as title,
+    p.imageUrl as imageUrl,
+    p.language as language,
+    p.publishedAt as publishedAt
+from Post p
+where p.category = :category
+  and p.language = :language
+  and p.published = true
+  and p.slug <> :currentSlug
+order by p.publishedAt desc
 """)
     List<SidebarPostView> findYouMightLikePosts(
             @Param("category") CategoryType category,

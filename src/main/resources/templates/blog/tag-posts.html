@@ -35,7 +35,8 @@
     <div th:replace="~{fragments/header :: header}"></div>
 </th:block>
 
-<div class="page-content">
+<!-- ================= PAGE WRAPPER (IMPORTANT) ================= -->
+<div class="page-content page-with-tag">
 
     <!-- ================= MAIN CONTENT ================= -->
     <main class="container my-5" style="max-width:900px;">
@@ -74,7 +75,8 @@
                     <img th:if="${post.imageUrl}"
                          th:src="${post.imageUrl}"
                          class="card-img-top"
-                         style="height:180px; object-fit:cover;">
+                         style="height:180px; object-fit:cover;"
+                         alt="Post image">
 
                     <div class="card-body">
 
@@ -85,10 +87,6 @@
                         <!-- TITLE -->
                         <h5 class="card-title mt-2"
                             th:text="${post.title}"></h5>
-
-                    <!--    &lt;!&ndash; INTRO &ndash;&gt;
-                        <p class="card-text text-muted"
-                           th:text="${post.intro}"></p>-->
 
                         <!-- STATS -->
                         <div class="d-flex gap-3 small text-muted mt-3">

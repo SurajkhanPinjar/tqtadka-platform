@@ -15,10 +15,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -344,7 +342,7 @@ public class PostServiceImpl implements PostService {
         String oldImage = clean(existingImageUrl);
 
         // 🔥 IMAGE LOGIC (FIXED)
-        if (removeImage) {
+        if (removeImage && (newImage == null || newImage.isBlank())) {
             post.setImageUrl(null);
         } else if (newImage != null && !newImage.isBlank()) {
             post.setImageUrl(newImage);

@@ -2,6 +2,8 @@ package com.tqtadka.platform.dto;
 
 import com.tqtadka.platform.entity.LanguageType;
 
+import java.time.LocalDateTime;
+
 public interface SidebarPostView {
 
     Long getId();
@@ -11,4 +13,5 @@ public interface SidebarPostView {
     long getViews();
     long getApplauseCount();
     LanguageType getLanguage();
+    LocalDateTime getPublishedAt();
 }
