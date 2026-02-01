@@ -6,14 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-          rel="stylesheet">
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+            rel="stylesheet">
 
     <!-- Custom CSS -->
     <link rel="stylesheet" th:href="@{/css/admin.css}">
 </head>
 
-<body>
+<body class="admin-page">
 
 <!-- HEADER -->
 <header th:replace="~{fragments/header :: header}"></header>
@@ -26,93 +27,111 @@
     <!-- MAIN CONTENT -->
     <main class="flex-grow-1 p-4">
 
-        <!-- CENTER WRAPPER -->
-        <div class="admin-form-wrapper">
+        <!-- 🔥 ADMIN MAIN INNER (TOP SPACING CONTROL) -->
+        <div class="admin-main-inner">
 
-            <!-- SINGLE CARD -->
-            <div class="card admin-form-card shadow-sm">
-                <div class="card-body">
+            <!-- CENTER WRAPPER -->
+            <div class="admin-form-wrapper">
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+                <!-- SINGLE CARD -->
+                <div class="card admin-form-card shadow-sm">
+                    <div class="card-body">
 
-                    <h2 class="fw-bold mb-4">Create User</h2>
+                        <h2 class="fw-bold mb-4">Create User</h2>
 
-                    <!-- FORM -->
-                    <form th:action="@{/admin/users/create}" method="post">
+                        <!-- FORM -->
+                        <form th:action="@{/admin/users/create}" method="post">
 
-                        <!-- NAME -->
-                        <div class="mb-3">
-                            <label class="form-label">Name</label>
-                            <input class="form-control"
-                                   name="name"
-                                   required>
-                        </div>
+                            <!-- NAME -->
+                            <div class="mb-3">
+                                <label class="form-label">Name</label>
+                                <input
+                                        class="form-control"
+                                        name="name"
+                                        required>
+                            </div>
 
-                        <!-- EMAIL -->
-                        <div class="mb-3">
-                            <label class="form-label">Email</label>
-                            <input class="form-control"
-                                   type="email"
-                                   name="email"
-                                   required>
-                        </div>
+                            <!-- EMAIL -->
+                            <div class="mb-3">
+                                <label class="form-label">Email</label>
+                                <input
+                                        class="form-control"
+                                        type="email"
+                                        name="email"
+                                        required>
+                            </div>
 
-                        <!-- PASSWORD -->
-                        <div class="mb-3">
-                            <label class="form-label">Password</label>
-                            <input class="form-control"
-                                   type="password"
-                                   name="password"
-                                   required>
-                        </div>
+                            <!-- PASSWORD -->
+                            <div class="mb-3">
+                                <label class="form-label">Password</label>
+                                <input
+                                        class="form-control"
+                                        type="password"
+                                        name="password"
+                                        required>
+                            </div>
 
-                        <!-- ROLE -->
-                        <div class="mb-4">
-                            <label class="form-label">Role</label>
-                            <select class="form-select"
-                                    name="role">
-                                <option th:each="r : ${roles}"
-                                        th:value="${r}"
-                                        th:text="${r}">
-                                </option>
-                            </select>
-                        </div>
+                            <!-- ROLE -->
+                            <div class="mb-4">
+                                <label class="form-label">Role</label>
+                                <select
+                                        class="form-select"
+                                        name="role">
+                                    <option
+                                            th:each="r : ${roles}"
+                                            th:value="${r}"
+                                            th:text="${r}">
+                                    </option>
+                                </select>
+                            </div>
 
-                        <!-- ✅ FIXED CATEGORIES -->
-                        <div class="mb-4">
-                            <label class="form-label mb-2">
-                                Allowed Categories
-                            </label>
+                            <!-- ALLOWED CATEGORIES -->
+                            <div class="mb-4">
+                                <label class="form-label mb-2">
+                                    Allowed Categories
+                                </label>
 
-                            <div class="category-checkbox-grid">
-                                <div class="form-check"
-                                     th:each="c : ${categories}">
-                                    <input class="form-check-input"
-                                           type="checkbox"
-                                           name="allowedCategories"
-                                           th:value="${c}">
-                                    <label class="form-check-label"
-                                           th:text="${c}">
-                                    </label>
+                                <div class="category-checkbox-grid">
+                                    <div
+                                            class="form-check"
+                                            th:each="c : ${categories}">
+                                        <input
+                                                class="form-check-input"
+                                                type="checkbox"
+                                                name="allowedCategories"
+                                                th:value="${c}">
+                                        <label
+                                                class="form-check-label"
+                                                th:text="${c}">
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- ACTIONS -->
-                        <div class="d-flex gap-2">
-                            <button class="btn btn-dark px-4">
-                                Create User
-                            </button>
+                            <!-- ACTIONS -->
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-dark px-4">
+                                    Create User
+                                </button>
 
-                            <a th:href="@{/admin/users}"
-                               class="btn btn-outline-secondary px-4">
-                                Cancel
-                            </a>
-                        </div>
+                                <a
+                                        th:href="@{/admin/users}"
+                                        class="btn btn-outline-secondary px-4">
+                                    Cancel
+                                </a>
+                            </div>
 
-                    </form>
+                        </form>
 
+                    </div>
                 </div>
-            </div>
 
+            </div>
         </div>
 
     </main>
