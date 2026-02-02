@@ -171,9 +171,7 @@ public class AdminPostController {
 
         return "redirect:/admin/posts";
     }
-    /* ============================
-   EDIT PAGE (SECURE)
-============================ */
+
     @GetMapping("/edit/{postId}")
     public String editPost(
             @PathVariable Long postId,
@@ -183,9 +181,13 @@ public class AdminPostController {
         requireAuth(userDetails);
 
         User currentUser = userDetails.getUser();
+
+        // 🔐 Security: ownership + role check happens here
         Post post = postService.getPostForEdit(postId, currentUser);
 
-        // 🔥 FLATTEN IMAGE SECTIONS
+    /* ===============================
+       IMAGE SECTIONS (FLATTEN)
+    ============================== */
         List<Map<String, String>> imageSectionDtos =
                 post.getImageSections()
                         .stream()
@@ -197,7 +199,9 @@ public class AdminPostController {
                         ))
                         .toList();
 
-        // 🔥 TAG STRING
+    /* ===============================
+       TAG STRING
+    ============================== */
         String tagString =
                 post.getTags() == null
                         ? ""
@@ -206,10 +210,25 @@ public class AdminPostController {
                         .map(Tag::getName)
                         .collect(Collectors.joining(", "));
 
+    /* ===============================
+       CATEGORY ACCESS CONTROL (✅ FIXED)
+    ============================== */
+        List<CategoryType> allowedCategories =
+                new ArrayList<>(currentUser.getEffectiveCategories());
+
+        // 🔥 SAFETY: ensure post category is visible even if permissions changed
+        if (!allowedCategories.contains(post.getCategory())) {
+            allowedCategories.add(0, post.getCategory());
+        }
+
+    /* ===============================
+       MODEL
+    ============================== */
         model.addAttribute("post", post);
         model.addAttribute("imageSectionDtos", imageSectionDtos);
         model.addAttribute("tagString", tagString);
         model.addAttribute("relatedSlugs", post.getRelatedPostSlugs());
+        model.addAttribute("categories", allowedCategories);
 
         return "admin/edit-post";
     }
@@ -413,5 +432,11 @@ public class AdminPostController {
     ) {
         postService.addImageSection(postId, heading, description, imageUrl, order);
         return "redirect:/admin/posts/edit/" + postId;
+    }
+
+    @GetMapping("/guidelines")
+    public String creatorGuidelines(Model model, HttpServletRequest request) {
+        model.addAttribute("currentPath", request.getRequestURI());
+        return "admin/guidelines";
     }
 }

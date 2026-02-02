@@ -32,6 +32,13 @@
             ✍️ Create Post
         </a>
 
+        <!-- ✅ NEW: Guidelines for Creators -->
+        <a th:href="@{/admin/posts/guidelines}"
+           class="nav-link mb-2"
+           th:classappend="${currentPath.startsWith('/admin/guidelines')} ? 'active fw-bold' : ''">
+            📘 Creator Guidelines
+        </a>
+
         <a sec:authorize="hasRole('ADMIN')"
            th:href="@{/admin/users}"
            class="nav-link mb-2"
