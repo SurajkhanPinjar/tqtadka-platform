@@ -34,8 +34,16 @@ logging:
   level:
     org.springframework.security: DEBUG
 
-cdn:
-  base-url: http://localhost:8001/mock-cdn
-
+# =========================
+# LOCAL CDN (DEV / FALLBACK)
 app:
   upload-dir: /Users/surajkhanpinjar/tqtadka/uploads
+
+# =========================
+# Cloudflare R2 (PROD CDN)
+# =========================
+cloudflare:
+  r2:
+    bucket: tqtadka-images
+    endpoint: https://36c9a2d1aec1384629ed8efc2d712f61.r2.cloudflarestorage.com
+    public-url: https://img.tqtadka.in

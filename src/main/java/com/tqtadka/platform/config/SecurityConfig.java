@@ -25,6 +25,11 @@ public class SecurityConfig {
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
+                /* ================= CSRF ================= */
+                .csrf(csrf -> csrf
+                        .ignoringRequestMatchers("/admin/images/upload")
+                )
+
                 /* ================= AUTHZ ================= */
                 .authorizeHttpRequests(auth -> auth
 
@@ -40,18 +45,19 @@ public class SecurityConfig {
                                 "/webjars/**"
                         ).permitAll()
 
+                        /* ---------- UPLOAD (PUBLIC API) ---------- */
+                        .requestMatchers("/admin/images/upload").permitAll()
+
                         /* ---------- ADMIN ONLY ---------- */
-                        .requestMatchers(
-                                "/admin/users/**"
-                        ).hasRole("ADMIN")
+                        .requestMatchers("/admin/users/**").hasRole("ADMIN")
 
                         /* ---------- ADMIN + AUTHOR ---------- */
                         .requestMatchers(
                                 "/admin/posts/**",
-                                "/admin/dashboard/**", "/admin/images/**"
+                                "/admin/dashboard/**",
+                                "/admin/images/**"
                         ).hasAnyRole("ADMIN", "AUTHOR")
 
-                        /* ---------- EVERYTHING ELSE ---------- */
                         .anyRequest().permitAll()
                 )
 

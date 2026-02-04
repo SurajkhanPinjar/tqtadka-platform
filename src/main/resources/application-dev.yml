@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: tqtadka-platform
+
+server:
+  port: 8001
+
+cdn:
+  mode: local
+
+local:
+  upload-dir: /Users/surajkhanpinjar/tqtadka/uploads

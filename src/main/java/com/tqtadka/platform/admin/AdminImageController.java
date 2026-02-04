@@ -1,3 +1,5 @@
+package com.tqtadka.platform.admin;
+
 import com.tqtadka.platform.service.ImageStorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,9 +19,7 @@ public class AdminImageController {
 
     @PostMapping("/upload")
     public Map<String, String> upload(@RequestParam("file") MultipartFile file) {
-
         String url = imageStorageService.upload(file);
-
         return Map.of("url", url);
     }
 }

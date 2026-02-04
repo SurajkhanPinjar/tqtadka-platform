@@ -573,7 +573,7 @@ const csrfHeader =
         try {
             const res = await fetch("/admin/images/upload", {
                 method: "POST",
-                headers: { "X-CSRF-TOKEN": csrfToken },
+                headers: { [csrfHeader]: csrfToken },
                 body: formData
             });
 

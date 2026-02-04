@@ -94,6 +94,13 @@
 			<scope>test</scope>
 		</dependency>
 
+		<!-- AWS SDK v2 - S3 (Used for Cloudflare R2) -->
+		<dependency>
+			<groupId>software.amazon.awssdk</groupId>
+			<artifactId>s3</artifactId>
+			<version>2.25.32</version>
+		</dependency>
+
 	</dependencies>
 
 	<!-- ================= BUILD ================= -->
