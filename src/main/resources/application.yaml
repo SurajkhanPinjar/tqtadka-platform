@@ -28,7 +28,7 @@ spring:
           time_zone: UTC
 
 server:
-  port: 8001
+  port: 8002
 
 logging:
   level:

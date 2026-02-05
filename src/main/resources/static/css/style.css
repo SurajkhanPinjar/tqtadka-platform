@@ -2215,9 +2215,20 @@ td.text-end, th.text-end {
 /* Mobile – category hides, so only header */
 @media (max-width: 768px) {
     .page-with-category {
-        padding-top: 250px;
+        padding-top: 240px;
     }
 }
+
+.view-blog-content {
+    padding-top: 110px; /* header (64px) + category (~46px) */
+}
+
+@media (max-width: 768px) {
+    .view-blog-content {
+        padding-top: 145px;
+    }
+}
+
 
 
 /* =========================

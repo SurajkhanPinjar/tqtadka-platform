@@ -7,23 +7,25 @@ public enum CategoryType {
     TECH("Tech"),
 
     // 🟢 Tier 2 – Strong Wellness + Beauty Brands
+    SOCIAL_MEDIA("Social Media"),
+    JOBS("Jobs"),
+    LIFE("Life"),
+    MONEY_AND_BUSINESS("Money & Business"),
+
     SKIN_HEALTH("Skin & Health"),
     BEAUTY_AND_STYLE("Beauty & Style"),
     FITNESS("Fitness"),
-    MONEY_AND_BUSINESS("Fitness"),
 
     // 🟡 Tier 3 – Good Volume, Moderate RPM
     TRAVEL("Travel"),
     FOOD("Food"),
 
     // 🔵 Tier 4 – Engagement Driven
-    ENTERTAINMENT("Entertainment"),
-    SPORTS("Sports"),
+//    ENTERTAINMENT("Entertainment"),
+//    SPORTS("Sports"),
 
     // ⚪ Tier 5 – Platform / Utility Content
     EDUCATION("Education"),
-    JOBS("Jobs"),
-    LIFE("Life"),
     BLOG("Blog");
 
     private final String displayName;
