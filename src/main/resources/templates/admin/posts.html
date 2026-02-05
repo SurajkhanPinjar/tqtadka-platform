@@ -44,6 +44,85 @@
             </a>
         </div>
 
+        <!-- ================= FILTER BAR ================= -->
+        <form method="get"
+              th:action="@{/admin/posts}"
+              class="bg-white p-3 mb-4 rounded shadow-sm">
+
+            <div class="row g-2 align-items-end">
+
+                <!-- 🔍 Search -->
+                <div class="col-md-3">
+                    <label class="form-label small">Search</label>
+                    <input type="text"
+                           name="q"
+                           class="form-control"
+                           placeholder="Title / slug"
+                           th:value="${q}">
+                </div>
+
+                <!-- 🌐 Language -->
+                <div class="col-md-2">
+                    <label class="form-label small">Language</label>
+                    <select name="lang" class="form-select">
+                        <option value="">All</option>
+                        <option value="EN" th:selected="${lang == 'EN'}">EN</option>
+                        <option value="KN" th:selected="${lang == 'KN'}">KN</option>
+                    </select>
+                </div>
+
+                <!-- 🗂 Category -->
+                <div class="col-md-2">
+                    <label class="form-label small">Category</label>
+                    <select name="category" class="form-select">
+                        <option value="">All</option>
+                        <option th:each="c : ${categories}"
+                                th:value="${c}"
+                                th:text="${c}"
+                                th:selected="${category == c}">
+                        </option>
+                    </select>
+                </div>
+
+                <!-- 👤 Author (ADMIN only) -->
+                <div class="col-md-2" sec:authorize="hasRole('ADMIN')">
+                    <label class="form-label small">Author</label>
+                    <select name="authorId" class="form-select">
+                        <option value="">All</option>
+                        <option th:each="u : ${authors}"
+                                th:value="${u.id}"
+                                th:text="${u.name}"
+                                th:selected="${authorId == u.id}">
+                        </option>
+                    </select>
+                </div>
+
+                <!-- 🚦 Status -->
+                <div class="col-md-2">
+                    <label class="form-label small">Status</label>
+                    <select name="published" class="form-select">
+                        <option value="">All</option>
+                        <option value="true" th:selected="${published == true}">
+                            Published
+                        </option>
+                        <option value="false" th:selected="${published == false}">
+                            Unpublished
+                        </option>
+                    </select>
+                </div>
+
+                <!-- 🔘 Buttons -->
+                <div class="col-md-1 d-flex gap-2">
+                    <button class="btn btn-dark w-100">Filter</button>
+                    <a th:href="@{/admin/posts}"
+                       class="btn btn-outline-secondary w-100">
+                        Reset
+                    </a>
+                </div>
+
+            </div>
+        </form>
+
         <!-- EMPTY STATE -->
         <div th:if="${posts == null or #lists.isEmpty(posts)}"
              class="alert alert-secondary">

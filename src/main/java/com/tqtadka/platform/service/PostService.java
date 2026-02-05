@@ -153,5 +153,16 @@ public interface PostService {
             Boolean promptOnly
     );
 
+    public List<Post> findAdminPosts(
+            String q,
+            LanguageType lang,
+            CategoryType category,
+            Long authorId,
+            Boolean published,
+            User currentUser
+    );
+
+
+
 
 }

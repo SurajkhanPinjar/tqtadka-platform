@@ -6,6 +6,7 @@ import com.tqtadka.platform.dto.ImageSectionDto;
 import com.tqtadka.platform.entity.*;
 import com.tqtadka.platform.security.CustomUserDetails;
 import com.tqtadka.platform.service.PostService;
+import com.tqtadka.platform.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
@@ -24,28 +25,64 @@ public class AdminPostController {
 
     private final PostService postService;
 
-    public AdminPostController(PostService postService) {
+    private final UserService userService;
+
+
+
+    public AdminPostController(PostService postService, UserService userService) {
         this.postService = postService;
+        this.userService = userService;
+
     }
 
     /* ============================
        LIST POSTS (ADMIN / AUTHOR)
     ============================ */
+//    @GetMapping
+//    public String listPosts(
+//            @AuthenticationPrincipal CustomUserDetails userDetails,
+//            HttpServletRequest request,
+//            Model model
+//    ) {
+//        requireAuth(userDetails);
+//
+//        User currentUser = userDetails.getUser();
+//
+//        model.addAttribute(
+//                "posts",
+//                postService.getPostsForDashboard(currentUser)
+//        );
+//        model.addAttribute("currentPath", request.getRequestURI());
+//
+//        return "admin/posts";
+//    }
     @GetMapping
     public String listPosts(
             @AuthenticationPrincipal CustomUserDetails userDetails,
-            HttpServletRequest request,
+            @RequestParam(required = false) String q,
+            @RequestParam(required = false) LanguageType lang,
+            @RequestParam(required = false) CategoryType category,
+            @RequestParam(required = false) Long authorId,
+            @RequestParam(required = false) Boolean published,
             Model model
     ) {
         requireAuth(userDetails);
 
-        User currentUser = userDetails.getUser();
-
-        model.addAttribute(
-                "posts",
-                postService.getPostsForDashboard(currentUser)
+        List<Post> posts = postService.findAdminPosts(
+                q, lang, category, authorId, published, userDetails.getUser()
         );
-        model.addAttribute("currentPath", request.getRequestURI());
+
+        model.addAttribute("posts", posts);
+
+        // keep filter state
+        model.addAttribute("q", q);
+        model.addAttribute("lang", lang);
+        model.addAttribute("category", category);
+        model.addAttribute("authorId", authorId);
+        model.addAttribute("published", published);
+
+        model.addAttribute("categories", CategoryType.values());
+        model.addAttribute("authors", userService.findAllAuthors());
 
         return "admin/posts";
     }

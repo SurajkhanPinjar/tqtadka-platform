@@ -667,6 +667,25 @@ public class PostServiceImpl implements PostService {
         );
     }
 
+    @Override
+    public List<Post> findAdminPosts(
+            String q,
+            LanguageType lang,
+            CategoryType category,
+            Long authorId,
+            Boolean published,
+            User currentUser
+    ) {
+        return postRepository.searchAdminPosts(
+                q == null ? null : "%" + q.toLowerCase() + "%",
+                lang,
+                category,
+                authorId,
+                published,
+                currentUser.isAdmin() ? null : currentUser.getId()
+        );
+    }
+
 
 
 

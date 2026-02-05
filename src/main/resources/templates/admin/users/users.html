@@ -16,15 +16,10 @@
 <body class="bg-light">
 
 <!-- ================= HEADER ================= -->
-<th:block th:with="lang='en', categories=${null}, activeCategory=${null}">
-    <header th:replace="~{fragments/header :: header}"></header>
-</th:block>
-<br>
-<br>
-<br>
-<br>
+<header th:replace="~{fragments/header :: header}"></header>
 
-<div class="container-fluid">
+
+<div class="page-content container-fluid">
     <div class="row">
 
         <!-- ================= SIDEBAR ================= -->
@@ -34,11 +29,6 @@
 
         <!-- ================= MAIN CONTENT ================= -->
         <main class="col-md-10 p-4">
-
-            <br>
-            <br>
-            <br>
-            <br>
 
             <!-- PAGE HEADER -->
             <div class="d-flex justify-content-between align-items-center mb-4">

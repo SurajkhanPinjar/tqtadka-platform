@@ -6,6 +6,8 @@ import com.tqtadka.platform.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UserService {
 
@@ -56,5 +58,15 @@ public class UserService {
 
     public Iterable<User> getAllUsers() {
         return userRepository.findAll();
+    }
+
+    public List<User> findAllAuthors() {
+        return userRepository.findAll()
+                .stream()
+                .filter(u ->
+                        u.getRole() == Role.AUTHOR ||
+                                u.getRole() == Role.ADMIN
+                )
+                .toList();
     }
 }

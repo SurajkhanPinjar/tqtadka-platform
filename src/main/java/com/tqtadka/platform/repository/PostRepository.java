@@ -761,5 +761,24 @@ ORDER BY p.publishedAt DESC
             Pageable pageable
     );
 
+    @Query("""
+    SELECT p FROM Post p
+    WHERE (:q IS NULL OR LOWER(p.title) LIKE :q OR LOWER(p.slug) LIKE :q)
+      AND (:lang IS NULL OR p.language = :lang)
+      AND (:category IS NULL OR p.category = :category)
+      AND (:published IS NULL OR p.published = :published)
+      AND (:authorId IS NULL OR p.createdBy.id = :authorId)
+      AND (:currentUserId IS NULL OR p.createdBy.id = :currentUserId)
+    ORDER BY p.createdAt DESC
+""")
+    List<Post> searchAdminPosts(
+            String q,
+            LanguageType lang,
+            CategoryType category,
+            Long authorId,
+            Boolean published,
+            Long currentUserId
+    );
+
 
 }
