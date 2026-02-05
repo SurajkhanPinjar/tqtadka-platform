@@ -153,8 +153,26 @@ public class PostServiceImpl implements PostService {
        DELETE (ROLE SAFE)
     ===================================================== */
     @Override
+    @Transactional
     public void deletePost(Long postId, User currentUser) {
+
         Post post = getPostForEdit(postId, currentUser);
+
+        // 🔥 IMPORTANT: clear ManyToMany join table
+        if (post.getTags() != null) {
+            post.getTags().clear();
+        }
+
+        // 🔥 IMPORTANT: clear element collection (safe)
+        if (post.getRelatedPostSlugs() != null) {
+            post.getRelatedPostSlugs().clear();
+        }
+
+        // 🔥 IMPORTANT: clear view events if cascade not added
+        if (post.getViewEvents() != null) {
+            post.getViewEvents().clear();
+        }
+
         postRepository.delete(post);
     }
 

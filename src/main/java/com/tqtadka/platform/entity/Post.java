@@ -136,8 +136,13 @@ public class Post {
     )
     private Set<PostImageSection> imageSections = new HashSet<>();
 
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
-    private List<PostViewEvent> viewEvents;
+    @OneToMany(
+            mappedBy = "post",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY
+    )
+    private List<PostViewEvent> viewEvents = new ArrayList<>();
 
     /* =========================
    TAGS
