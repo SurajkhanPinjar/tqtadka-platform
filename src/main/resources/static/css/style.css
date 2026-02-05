@@ -2312,3 +2312,20 @@ td.text-end, th.text-end {
     }
 }
 }
+
+
+/* Thumbnail*/
+.thumbnail-16x9 {
+    aspect-ratio: 16 / 9;
+    width: 100%;
+    overflow: hidden;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+}
+
+.thumbnail-16x9 img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* keeps composition clean */
+    display: block;
+}

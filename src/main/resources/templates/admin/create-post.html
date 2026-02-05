@@ -27,7 +27,7 @@
 
 <header th:replace="~{fragments/header :: header}"></header>
 
-<div class="d-flex">
+<div class="page-content d-flex">
 
     <aside class="flex-shrink-0"
            sec:authorize="hasAnyRole('ADMIN','AUTHOR')">
@@ -694,6 +694,9 @@ function addPromptRow() {
         });
     }
 </script>
+
+<!-- ================= FOOTER ================= -->
+<footer th:replace="~{fragments/footer :: footer}"></footer>
 
 
 

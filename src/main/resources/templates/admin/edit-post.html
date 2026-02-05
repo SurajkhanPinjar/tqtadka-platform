@@ -22,7 +22,7 @@
 
 <header th:replace="~{fragments/header :: header}"></header>
 
-<div class="d-flex">
+<div class="page-content d-flex">
 
     <aside sec:authorize="hasAnyRole('ADMIN','AUTHOR')">
         <div th:replace="~{fragments/admin-sidebar :: adminSidebar}"></div>
@@ -670,6 +670,9 @@ const csrfHeader =
     });
 }
 </script>
+
+<!-- ================= FOOTER ================= -->
+<footer th:replace="~{fragments/footer :: footer}"></footer>
 
 </body>
 </html>

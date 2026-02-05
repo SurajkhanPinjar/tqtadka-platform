@@ -44,9 +44,11 @@
                 <a th:href="@{/{lang}/blog/{slug}(lang=${lang},slug=${post.slug})}"
                    class="card post-card h-100 text-decoration-none text-dark shadow-sm">
 
-                    <img th:src="${post.imageUrl ?: '/images/placeholder.png'}"
-                         class="card-img-top"
-                         style="height:180px; object-fit:cover;">
+                    <!-- ✅ 16:9 THUMBNAIL WRAPPER -->
+                    <div class="thumbnail-16x9">
+                        <img th:src="${post.imageUrl ?: '/images/placeholder.png'}"
+                             alt="Post image">
+                    </div>
 
                     <div class="card-body d-flex flex-column">
                         <small class="text-muted text-uppercase"
@@ -56,11 +58,10 @@
 
                         <!-- STATS -->
                         <div class="d-flex gap-3 mt-auto small text-muted align-items-center">
-                            <!-- Views -->
-                            <span class="d-flex align-items-center gap-1">
-                                <i class="bi bi-eye"></i>
-                                <span th:text="${post.views}">0</span>
-                            </span>
+                    <span class="d-flex align-items-center gap-1">
+                        <i class="bi bi-eye"></i>
+                        <span th:text="${post.views}">0</span>
+                    </span>
                         </div>
                     </div>
                 </a>

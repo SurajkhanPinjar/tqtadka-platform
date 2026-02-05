@@ -19,7 +19,7 @@
 <header th:replace="~{fragments/header :: header}"></header>
 
 <!-- ================= ADMIN LAYOUT ================= -->
-<div class="d-flex">
+<div class="page-content d-flex">
 
     <!-- SIDEBAR -->
     <aside sec:authorize="hasAnyRole('ADMIN','AUTHOR')">
@@ -28,11 +28,7 @@
 
     <!-- MAIN CONTENT -->
     <main class="flex-grow-1 p-4 bg-light">
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
+
 
         <!-- PAGE HEADER -->
         <div class="d-flex justify-content-between align-items-center mb-4">
