@@ -70,11 +70,10 @@
                    class="card h-100 text-decoration-none text-dark shadow-sm">
 
                     <!-- IMAGE -->
-                    <img th:if="${post.imageUrl}"
-                         th:src="${post.imageUrl}"
-                         class="card-img-top"
-                         style="height:180px; object-fit:cover;"
-                         alt="Post image">
+                    <div class="thumbnail-16x9">
+                        <img th:src="${post.imageUrl != null ? post.imageUrl : '/images/placeholder.png'}"
+                             alt="Post image">
+                    </div>
 
                     <div class="card-body">
 
