@@ -28,45 +28,72 @@
 </th:block>
 
 <!-- ================= SEARCH RESULTS ================= -->
-<div class="page-content container page-offset my-4 my-md-5">
+<div class="page-content page-with-search">
 
-    <h4 class="mb-4 fw-semibold">
-        Results for "<span th:text="${query}"></span>"
-    </h4>
+    <main class="container my-5" style="max-width:900px;">
 
-    <!-- EMPTY STATE -->
-    <div th:if="${#lists.isEmpty(results)}"
-         class="alert alert-secondary">
-        No results found 😔
-    </div>
+        <!-- SEARCH HEADER (MATCH TAG STYLE) -->
+        <div class="mb-4">
+            <h2 class="fw-bold">
+                <i class="bi bi-search"></i>
+                Results for "<span th:text="${query}"></span>"
+            </h2>
 
-    <!-- RESULTS GRID -->
-    <div class="row g-4" th:if="${!#lists.isEmpty(results)}">
-
-        <div class="col-12 col-sm-6 col-lg-4"
-             th:each="post : ${results}">
-
-            <a th:href="@{/{lang}/blog/{slug}(lang=${lang},slug=${post.slug})}"
-               class="card post-card h-100 text-decoration-none text-dark">
-
-                <img th:src="${post.imageUrl ?: '/images/placeholder.png'}"
-                     class="card-img-top post-card-img"
-                     alt="Post image">
-
-                <div class="card-body">
-                    <small class="text-uppercase text-muted"
-                           th:text="${post.category}"></small>
-
-                    <h6 class="mt-1 fw-semibold"
-                        th:text="${post.title}"></h6>
-
-                    <p class="small text-muted post-intro"
-                       th:text="${post.intro}"></p>
-                </div>
-
-            </a>
+            <p class="text-muted">
+                Showing posts matching
+                <strong th:text="${query}"></strong>
+            </p>
         </div>
-    </div>
+
+        <!-- EMPTY STATE -->
+        <div th:if="${#lists.isEmpty(results)}"
+             class="alert alert-secondary">
+            No results found 😔
+        </div>
+
+        <!-- RESULTS GRID (MATCH TAG GRID) -->
+        <div class="row g-4"
+             th:if="${!#lists.isEmpty(results)}">
+
+            <div class="col-md-6"
+                 th:each="post : ${results}">
+
+                <a th:href="@{/{lang}/blog/{slug}(lang=${lang},slug=${post.slug})}"
+                   class="card h-100 text-decoration-none text-dark shadow-sm">
+
+                    <!-- IMAGE -->
+                    <img th:if="${post.imageUrl}"
+                         th:src="${post.imageUrl}"
+                         class="card-img-top"
+                         style="height:180px; object-fit:cover;"
+                         alt="Post image">
+
+                    <div class="card-body">
+
+                        <small class="text-uppercase text-muted"
+                               th:text="${post.category}"></small>
+
+                        <h5 class="card-title mt-2"
+                            th:text="${post.title}"></h5>
+
+                        <p class="small text-muted"
+                           th:text="${post.intro}"></p>
+
+                        <!-- OPTIONAL STATS (CONSISTENT) -->
+                        <div class="d-flex gap-3 small text-muted mt-3">
+                            <span>
+                                <i class="bi bi-eye"></i>
+                                <span th:text="${post.views}">0</span>
+                            </span>
+                        </div>
+
+                    </div>
+                </a>
+
+            </div>
+        </div>
+
+    </main>
 </div>
 
 <!-- ================= FOOTER ================= -->

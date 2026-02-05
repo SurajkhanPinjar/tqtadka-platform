@@ -295,11 +295,27 @@ body {
 }
 
 /* ===============================
-   HERO SECTION SAFE
+   HEADER OFFSET (GLOBAL)
+================================ */
+.page-content {
+    padding-top: var(--header-height, 120px);
+    position: relative;
+}
+
+/* ===============================
+   HERO SECTION
 ================================ */
 .hero-section {
+    padding-top: 2rem;
+    padding-bottom: 3rem;
     position: relative;
-    z-index: 1;
+}
+
+/* Short landscape devices */
+@media (min-width: 600px) and (max-height: 500px) {
+    .hero-section {
+        min-height: 280px;
+    }
 }
 
 /* ===============================
@@ -1488,14 +1504,14 @@ td.text-end, th.text-end {
     }
 }
 
-.page-content {
-    padding-top: 150px; /* header + category height */
+/*.page-content {
+    padding-top: 150px; *//* header + category height *//*
 }
 
-/* Mobile fine-tuning */
+*//* Mobile fine-tuning */
 @media (max-width: 768px) {
     .page-content {
-        padding-top: 220px;
+        padding-top: 250px;
     }
 }
 
@@ -2199,7 +2215,7 @@ td.text-end, th.text-end {
 /* Mobile – category hides, so only header */
 @media (max-width: 768px) {
     .page-with-category {
-        padding-top: 220px;
+        padding-top: 250px;
     }
 }
 

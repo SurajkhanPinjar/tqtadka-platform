@@ -35,40 +35,38 @@
     <div th:replace="~{fragments/header :: header}"></div>
 </th:block>
 
-<!-- ================= PAGE WRAPPER (IMPORTANT) ================= -->
-<div class="page-content page-with-tag">
+<!-- ================= SEARCH RESULTS ================= -->
+<div class="page-content page-with-search">
 
-    <!-- ================= MAIN CONTENT ================= -->
     <main class="container my-5" style="max-width:900px;">
 
-        <!-- TAG HEADER -->
+        <!-- SEARCH HEADER (MATCH TAG STYLE) -->
         <div class="mb-4">
             <h2 class="fw-bold">
-                <i class="bi bi-hash"></i>
-                <span th:text="${tag.name}"></span>
+                <i class="bi bi-search"></i>
+                Results for "<span th:text="${query}"></span>"
             </h2>
 
             <p class="text-muted">
-                Posts tagged with <strong th:text="${tag.name}"></strong>
+                Showing posts matching
+                <strong th:text="${query}"></strong>
             </p>
         </div>
 
         <!-- EMPTY STATE -->
-        <div th:if="${posts == null or #lists.isEmpty(posts)}"
+        <div th:if="${#lists.isEmpty(results)}"
              class="alert alert-secondary">
-            No posts found for this tag.
+            No results found 😔
         </div>
 
-        <!-- POSTS GRID -->
+        <!-- RESULTS GRID (MATCH TAG GRID) -->
         <div class="row g-4"
-             th:if="${posts != null and !#lists.isEmpty(posts)}">
+             th:if="${!#lists.isEmpty(results)}">
 
             <div class="col-md-6"
-                 th:each="post : ${posts}">
+                 th:each="post : ${results}">
 
-                <a th:href="@{/{lang}/blog/{slug}(
-                        lang=${lang},
-                        slug=${post.slug})}"
+                <a th:href="@{/{lang}/blog/{slug}(lang=${lang},slug=${post.slug})}"
                    class="card h-100 text-decoration-none text-dark shadow-sm">
 
                     <!-- IMAGE -->
@@ -80,33 +78,23 @@
 
                     <div class="card-body">
 
-                        <!-- CATEGORY -->
                         <small class="text-uppercase text-muted"
                                th:text="${post.category}"></small>
 
-                        <!-- TITLE -->
                         <h5 class="card-title mt-2"
                             th:text="${post.title}"></h5>
 
-                        <!-- STATS -->
+                        <p class="small text-muted"
+                           th:text="${post.intro}"></p>
+
+                        <!-- OPTIONAL STATS (CONSISTENT) -->
                         <div class="d-flex gap-3 small text-muted mt-3">
-
-                            <span>
-                                <i class="bi bi-hand-thumbs-up"></i>
-                                <span th:text="${post.applauseCount}">0</span>
-                            </span>
-
-                            <span>
-                                <i class="bi bi-chat-dots"></i>
-                                <span th:text="${post.commentCount}">0</span>
-                            </span>
-
                             <span>
                                 <i class="bi bi-eye"></i>
                                 <span th:text="${post.views}">0</span>
                             </span>
-
                         </div>
+
                     </div>
                 </a>
 
@@ -115,7 +103,6 @@
 
     </main>
 </div>
-
 <!-- ================= FOOTER ================= -->
 <div th:replace="~{fragments/footer :: footer}"></div>
 
