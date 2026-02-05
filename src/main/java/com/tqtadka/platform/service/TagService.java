@@ -9,4 +9,5 @@ import java.util.List;
 public interface TagService {
     List<Post> getPublishedPostsByTag(String tagSlug, LanguageType language);
     Tag getBySlug(String slug);
+    Tag findOrCreate(String name);
 }

@@ -70,53 +70,70 @@ public class DashboardService {
     ) {
         LocalDateTime now = LocalDateTime.now();
 
-        LocalDateTime monthStart = now
-                .withDayOfMonth(1)
-                .toLocalDate()
-                .atStartOfDay();
+        // 🔹 REQUIRED FOR JPQL
+        LocalDateTime todayStart =
+                now.toLocalDate().atStartOfDay();
 
-        LocalDateTime lastMonthStart = monthStart.minusMonths(1);
+        LocalDateTime monthStart =
+                now.withDayOfMonth(1)
+                        .toLocalDate()
+                        .atStartOfDay();
+
+        LocalDateTime lastMonthStart =
+                monthStart.minusMonths(1);
 
         User authorFilter = null;
 
-        // ---------- AUTHOR FILTER ----------
+    /* =========================
+       AUTHOR FILTER
+    ========================= */
         if (user.getRole() == Role.ADMIN) {
             if (authorId != null) {
-                authorFilter = userRepository.findById(authorId).orElse(null);
+                authorFilter =
+                        userRepository.findById(authorId).orElse(null);
             }
         } else {
-            authorFilter = user; // author sees only own posts
+            authorFilter = user; // AUTHOR sees only own posts
         }
 
-        // ---------- DB SORT (ONLY REAL COLUMNS) ----------
+    /* =========================
+       DB SORT (REAL COLUMNS ONLY)
+    ========================= */
         Sort dbSort = Sort.by(Sort.Direction.DESC, "publishedAt");
 
         if ("publishedAt".equals(sort)) {
             Sort.Direction direction =
-                    "asc".equalsIgnoreCase(dir) ? Sort.Direction.ASC : Sort.Direction.DESC;
+                    "asc".equalsIgnoreCase(dir)
+                            ? Sort.Direction.ASC
+                            : Sort.Direction.DESC;
+
             dbSort = Sort.by(direction, "publishedAt");
         }
 
-        // ---------- FETCH ----------
+    /* =========================
+       FETCH FROM DB
+    ========================= */
         List<DashboardPostView> posts =
                 postRepository.findDashboardPosts(
                         category,
                         authorFilter,
+                        todayStart,      // ✅ FIX
                         monthStart,
                         lastMonthStart,
                         dbSort
                 );
 
-        // ---------- JAVA SORT (COMPUTED FIELDS) ----------
-        Comparator<DashboardPostView> comparator = null;
-
+    /* =========================
+       JAVA SORT (COMPUTED FIELDS)
+    ========================= */
         boolean asc = "asc".equalsIgnoreCase(dir);
 
-        switch (sort) {
-            case "viewsMonth" ->
-                    comparator = Comparator.comparing(DashboardPostView::getViewsThisMonth);
-            case "totalViews" ->
-                    comparator = Comparator.comparing(DashboardPostView::getTotalViews);
+        Comparator<DashboardPostView> comparator = null;
+
+        if ("viewsMonth".equals(sort)) {
+            comparator = Comparator.comparing(DashboardPostView::getViewsThisMonth);
+        } else if ("totalViews".equals(sort)) {
+            comparator = Comparator.comparing(DashboardPostView::getTotalViews);
         }
 
         if (comparator != null) {

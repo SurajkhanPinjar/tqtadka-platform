@@ -147,6 +147,7 @@ public class Post {
     /* =========================
    TAGS
 ========================= */
+    @Builder.Default
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "post_tags",
@@ -155,17 +156,9 @@ public class Post {
     )
     private Set<Tag> tags = new HashSet<>();
 
-//    public Set<Tag> getTags() {
-//        return tags == null
-//                ? Collections.emptySet()
-//                : tags.stream().filter(Objects::nonNull).collect(Collectors.toSet());
-//    }
+
 public Set<Tag> getTags() {
-    return tags == null
-            ? Collections.emptySet()
-            : tags.stream()
-            .filter(Objects::nonNull)
-            .collect(Collectors.toSet());
+    return tags;
 }
 
     @ElementCollection(fetch = FetchType.LAZY)

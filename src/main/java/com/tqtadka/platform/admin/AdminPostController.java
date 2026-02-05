@@ -270,125 +270,127 @@ public class AdminPostController {
         return "admin/edit-post";
     }
 
-    @PostMapping("/update/{postId}")
-    public String updatePost(
-            @PathVariable Long postId,
-            @AuthenticationPrincipal CustomUserDetails userDetails,
+        @PostMapping("/update/{postId}")
+        public String updatePost(
+                @PathVariable Long postId,
+                @AuthenticationPrincipal CustomUserDetails userDetails,
 
-            @RequestParam String title,
-            @RequestParam(required = false) String intro,
-            @RequestParam CategoryType category,
-            @RequestParam LanguageType language,
+                @RequestParam String title,
+                @RequestParam(required = false) String intro,
+                @RequestParam CategoryType category,
+                @RequestParam LanguageType language,
 
-            // 🔥 MAIN IMAGE (FIXED)
-            @RequestParam(required = false) String imageUrl,
-            @RequestParam(required = false) String existingImageUrl,
+                // 🔥 MAIN IMAGE (FIXED)
+                @RequestParam(required = false) String imageUrl,
+                @RequestParam(required = false) String existingImageUrl,
 
-            // SECTION CONTENT
-            @RequestParam String sectionContent,
-            @RequestParam(required = false) String bulletTitle,
-            @RequestParam(required = false) String bullets,
-            @RequestParam(required = false) String tipTitle,
-            @RequestParam(required = false) String tipContent,
+                // SECTION CONTENT
+                @RequestParam String sectionContent,
+                @RequestParam(required = false) String bulletTitle,
+                @RequestParam(required = false) String bullets,
+                @RequestParam(required = false) String tipTitle,
+                @RequestParam(required = false) String tipContent,
 
-            // AI
-            @RequestParam(required = false) AiPostMode aiPostMode,
-            @RequestParam(required = false, name = "promptNames") String[] promptNames,
+                // AI
+                @RequestParam(required = false) AiPostMode aiPostMode,
+                @RequestParam(required = false, name = "promptNames") String[] promptNames,
 
-            // 🔥 IMAGE SECTIONS JSON
-            @RequestParam(required = false) String imageSectionsJson,
-            @RequestParam(required = false) Boolean removeImage,
+                // 🔥 IMAGE SECTIONS JSON
+                @RequestParam(required = false) String imageSectionsJson,
+                @RequestParam(required = false) Boolean removeImage,
 
-            @RequestParam(required = false) String tags,
-            HttpServletRequest request,
-            @RequestParam(required = false) Boolean publish,
-            @RequestParam(required = false) List<String> relatedSlugs
+                @RequestParam(required = false) String tags,
+                HttpServletRequest request,
+                @RequestParam(required = false) Boolean publish,
+                @RequestParam(required = false) List<String> relatedSlugs
 
-    ) {
-        requireAuth(userDetails);
-        User currentUser = userDetails.getUser();
+        ) {
+            requireAuth(userDetails);
+            User currentUser = userDetails.getUser();
 
-    /* =========================
-       BUILD MAIN SECTION
-    ========================= */
-        PostSection section = buildSection(
-                sectionContent,
-                bulletTitle,
-                bullets,
-                tipTitle,
-                tipContent
-        );
+        /* =========================
+           BUILD MAIN SECTION
+        ========================= */
+            PostSection section = buildSection(
+                    sectionContent,
+                    bulletTitle,
+                    bullets,
+                    tipTitle,
+                    tipContent
+            );
 
-    /* =========================
-       AI PROMPTS (UNCHANGED)
-    ========================= */
-        String[] rawPromptTexts = request.getParameterValues("promptTexts");
 
-        List<String> promptTextList =
-                rawPromptTexts == null
-                        ? List.of()
-                        : Arrays.stream(rawPromptTexts)
-                        .map(String::trim)
-                        .filter(s -> !s.isEmpty())
-                        .toList();
 
-    /* =========================
-       🔥 PARSE IMAGE SECTIONS JSON
-    ========================= */
-        List<PostImageSection> imageSections = List.of();
+        /* =========================
+           AI PROMPTS (UNCHANGED)
+        ========================= */
+            String[] rawPromptTexts = request.getParameterValues("promptTexts");
 
-        if (imageSectionsJson != null && !imageSectionsJson.isBlank()) {
-            try {
-                ObjectMapper mapper = new ObjectMapper();
+            List<String> promptTextList =
+                    rawPromptTexts == null
+                            ? List.of()
+                            : Arrays.stream(rawPromptTexts)
+                            .map(String::trim)
+                            .filter(s -> !s.isEmpty())
+                            .toList();
 
-                List<ImageSectionDto> dtos = mapper.readValue(
-                        imageSectionsJson,
-                        new TypeReference<List<ImageSectionDto>>() {}
-                );
+        /* =========================
+           🔥 PARSE IMAGE SECTIONS JSON
+        ========================= */
+            List<PostImageSection> imageSections = List.of();
 
-                imageSections = dtos.stream()
-                        .map(dto -> {
-                            PostImageSection s = new PostImageSection();
-                            s.setImageUrl(dto.getImageUrl());
-                            s.setHeading(dto.getHeading());
-                            s.setDescription(dto.getDescription());
-                            s.setDisplayOrder(dto.getOrder()); // ✅ CRITICAL
-                            return s;
-                        })
-                        .toList();
+            if (imageSectionsJson != null && !imageSectionsJson.isBlank()) {
+                try {
+                    ObjectMapper mapper = new ObjectMapper();
 
-            } catch (Exception e) {
-                log.error("Failed to parse imageSectionsJson", e);
+                    List<ImageSectionDto> dtos = mapper.readValue(
+                            imageSectionsJson,
+                            new TypeReference<List<ImageSectionDto>>() {}
+                    );
+
+                    imageSections = dtos.stream()
+                            .map(dto -> {
+                                PostImageSection s = new PostImageSection();
+                                s.setImageUrl(dto.getImageUrl());
+                                s.setHeading(dto.getHeading());
+                                s.setDescription(dto.getDescription());
+                                s.setDisplayOrder(dto.getOrder()); // ✅ CRITICAL
+                                return s;
+                            })
+                            .toList();
+
+                } catch (Exception e) {
+                    log.error("Failed to parse imageSectionsJson", e);
+                }
             }
+
+        /* =========================
+           🔥 SERVICE CALL (NO REGRESSION)
+        ========================= */
+            postService.updatePost(
+                    postId,
+                    title.trim(),
+                    clean(intro),
+                    category,
+                    language,
+
+                    clean(imageUrl),          // new image (optional)
+                    clean(existingImageUrl),  // 🔥 old image (backup)
+                    Boolean.TRUE.equals(removeImage),
+
+            List.of(section),
+                    imageSections,
+                    Boolean.TRUE.equals(publish),
+                    currentUser,
+                    aiPostMode,
+                    promptNames,
+                    promptTextList.toArray(new String[0]),
+                    tags,
+                    relatedSlugs
+            );
+
+            return "redirect:/admin/posts";
         }
-
-    /* =========================
-       🔥 SERVICE CALL (NO REGRESSION)
-    ========================= */
-        postService.updatePost(
-                postId,
-                title.trim(),
-                clean(intro),
-                category,
-                language,
-
-                clean(imageUrl),          // new image (optional)
-                clean(existingImageUrl),  // 🔥 old image (backup)
-                Boolean.TRUE.equals(removeImage),
-
-        List.of(section),
-                imageSections,
-                Boolean.TRUE.equals(publish),
-                currentUser,
-                aiPostMode,
-                promptNames,
-                promptTextList.toArray(new String[0]),
-                tags,
-                relatedSlugs
-        );
-
-        return "redirect:/admin/posts";
-    }
 
     /* ============================
        DELETE POST

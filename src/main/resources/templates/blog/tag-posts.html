@@ -54,17 +54,17 @@
         </div>
 
         <!-- EMPTY STATE -->
-        <div th:if="${#lists.isEmpty(results)}"
+        <div th:if="${#lists.isEmpty(posts)}"
              class="alert alert-secondary">
             No results found 😔
         </div>
 
         <!-- RESULTS GRID (MATCH TAG GRID) -->
         <div class="row g-4"
-             th:if="${!#lists.isEmpty(results)}">
+             th:if="${!#lists.isEmpty(posts)}">
 
             <div class="col-md-6"
-                 th:each="post : ${results}">
+                 th:each="post : ${posts}">
 
                 <a th:href="@{/{lang}/blog/{slug}(lang=${lang},slug=${post.slug})}"
                    class="card h-100 text-decoration-none text-dark shadow-sm">

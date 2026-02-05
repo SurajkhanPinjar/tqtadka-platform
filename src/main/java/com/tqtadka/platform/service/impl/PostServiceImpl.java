@@ -9,6 +9,7 @@ import com.tqtadka.platform.repository.PostRepository;
 import com.tqtadka.platform.repository.PostViewEventRepository;
 import com.tqtadka.platform.repository.TagRepository;
 import com.tqtadka.platform.service.PostService;
+import com.tqtadka.platform.service.TagService;
 import com.tqtadka.platform.util.SlugUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -30,17 +31,23 @@ public class PostServiceImpl implements PostService {
 
     private final PostImageSectionRepository imageSectionRepository;
 
+    private final TagService tagService;
+
 
     private final PostViewEventRepository postViewEventRepository;
+
+
 
     @Autowired
     private TagRepository tagRepository;
 
 
-    public PostServiceImpl(PostRepository postRepository, PostImageSectionRepository imageSectionRepository, PostViewEventRepository postViewEventRepository) {
+    public PostServiceImpl(PostRepository postRepository, PostImageSectionRepository imageSectionRepository,
+                           PostViewEventRepository postViewEventRepository, TagService tagService) {
         this.postRepository = postRepository;
         this.imageSectionRepository = imageSectionRepository;
         this.postViewEventRepository = postViewEventRepository;
+        this.tagService = tagService;
 
     }
 
@@ -358,6 +365,30 @@ public class PostServiceImpl implements PostService {
 
         String newImage = clean(imageUrl);
         String oldImage = clean(existingImageUrl);
+
+
+        /* =========================
+   🔥 TAGS – MINIMAL FIX
+========================= */
+//        if (tags != null) {
+//
+//            // remove old tag relations
+//            post.getTags().clear();
+//
+//            if (!tags.isBlank()) {
+//                Set<Tag> newTags = Arrays.stream(tags.split(","))
+//                        .map(String::trim)
+//                        .filter(s -> !s.isEmpty())
+//                        .map(tagService::findOrCreate) // existing method you already use
+//                        .collect(Collectors.toSet());
+//
+//                post.getTags().removeIf(t -> true); // or clear()
+//
+//                for (Tag tag : newTags) {
+//                    post.getTags().add(tag);
+//                }
+//            }
+//        }
 
         // 🔥 IMAGE LOGIC (FIXED)
         if (removeImage && (newImage == null || newImage.isBlank())) {

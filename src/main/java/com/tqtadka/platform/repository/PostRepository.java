@@ -355,24 +355,27 @@ where p.slug in :slugs
 
     @Query("""
 select
-    p.slug as slug,
+    p.id as id,
     p.title as title,
-    p.category as category,
+    p.slug as slug,
+    p.language as language,
     coalesce(p.authorName, u.name) as authorName,
+    p.category as category,
 
-    /* Month analytics from events (safe even if empty) */
+    coalesce(sum(
+        case when v.createdAt >= :todayStart then 1 else 0 end
+    ), 0) as viewsToday,
+
     coalesce(sum(
         case when v.createdAt >= :monthStart then 1 else 0 end
     ), 0) as viewsThisMonth,
 
     coalesce(sum(
         case when v.createdAt >= :lastMonthStart
-              and v.createdAt < :monthStart then 1 else 0 end
+             and v.createdAt < :monthStart then 1 else 0 end
     ), 0) as viewsLastMonth,
 
-    /* 🔥 TOTAL VIEWS FROM POST TABLE (CRITICAL FIX) */
     p.views as totalViews,
-
     p.publishedAt as publishedAt
 
 from Post p
@@ -385,17 +388,19 @@ where (:category is null or p.category = :category)
 
 group by
     p.id,
-    p.views,
-    u.name,
-    p.authorName,
-    p.category,
     p.title,
     p.slug,
+    p.language,
+    p.category,
+    u.name,
+    p.authorName,
+    p.views,
     p.publishedAt
 """)
     List<DashboardPostView> findDashboardPosts(
             @Param("category") CategoryType category,
             @Param("author") User author,
+            @Param("todayStart") LocalDateTime todayStart,
             @Param("monthStart") LocalDateTime monthStart,
             @Param("lastMonthStart") LocalDateTime lastMonthStart,
             Sort sort
@@ -779,6 +784,8 @@ ORDER BY p.publishedAt DESC
             Boolean published,
             Long currentUserId
     );
+
+
 
 
 }
