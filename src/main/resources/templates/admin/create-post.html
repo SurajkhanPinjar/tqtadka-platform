@@ -343,7 +343,13 @@ document.getElementById('postForm').addEventListener('submit', function (e) {
             const heading = card.querySelector('[data-field="heading"]').value.trim();
             const description = card.querySelector('[data-field="description"]').value.trim();
 
-            if (imageUrl || heading || description) {
+            if (heading || description) {
+                if (!imageUrl) {
+                    alert("Section image missing");
+                    e.preventDefault();
+                    return;
+                }
+
                 sections.push({
                     order: i + 1,
                     imageUrl,
@@ -638,52 +644,57 @@ function addPromptRow() {
 
         fileInput.addEventListener("change", async function () {
 
-    const file = this.files[0];
-    if (!file) return;
+            const file = this.files[0];
+            if (!file) return;
 
-    // ❌ Size validation
-    if (file.size > MAX_IMAGE_SIZE) {
-        alert("Section image must be under 400 KB");
-        this.value = "";
-        return;
-    }
+            // ❌ Size validation
+            if (file.size > MAX_IMAGE_SIZE) {
+                alert("Section image must be under 400 KB");
+                this.value = "";
+                return;
+            }
 
-    // 🔒 lock publish
-    uploadInProgress = true;
-    publishBtn.disabled = true;
+            // 🔒 Lock publish button
+            uploadInProgress = true;
+            publishBtn.disabled = true;
 
-    const csrfToken =
-        document.querySelector('meta[name="_csrf"]').content;
-    const csrfHeader =
-        document.querySelector('meta[name="_csrf_header"]').content;
+            const csrfToken =
+                document.querySelector('meta[name="_csrf"]').content;
+            const csrfHeader =
+                document.querySelector('meta[name="_csrf_header"]').content;
 
-    const formData = new FormData();
-    formData.append("file", file);
+            const formData = new FormData();
+            formData.append("file", file);
 
-    try {
-        const res = await fetch("/admin/images/upload", {
-            method: "POST",
-            headers: { [csrfHeader]: csrfToken },
-            body: formData
+            try {
+                const res = await fetch("/admin/images/upload", {
+                    method: "POST",
+                    headers: { [csrfHeader]: csrfToken },
+                    body: formData
+                });
+
+                if (!res.ok) {
+                    throw new Error("Upload failed");
+                }
+
+                const data = await res.json();
+
+                // ✅ Always use backend URL directly
+                imageUrlInput.value = data.url;
+                preview.src = data.url;
+
+                preview.style.display = "block";
+                removeBtn.style.display = "inline-block";
+
+            } catch (e) {
+                alert("Section image upload failed");
+                fileInput.value = "";
+            } finally {
+                // 🔓 Unlock publish button
+                uploadInProgress = false;
+                publishBtn.disabled = false;
+            }
         });
-
-        if (!res.ok) throw new Error("Upload failed");
-
-        const data = await res.json();
-
-        imageUrlInput.value = data.url;
-        preview.src = data.url;
-        preview.style.display = "block";
-        removeBtn.style.display = "inline-block";
-
-    } catch (e) {
-        alert("Section image upload failed");
-    } finally {
-        // 🔓 unlock publish
-        uploadInProgress = false;
-        publishBtn.disabled = false;
-    }
-});
 
         removeBtn.addEventListener("click", () => {
             fileInput.value = "";

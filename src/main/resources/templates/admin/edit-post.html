@@ -179,7 +179,10 @@
 
                 <!-- 🔥 EXISTING IMAGE SECTIONS (SAFE) -->
                 <script th:inline="javascript">
-                    const existingImageSections = [[${imageSectionDtos}]];
+                    /*<![CDATA[*/
+                        const existingImageSections =
+                            /*[[${imageSectionDtos}]]*/ [];
+                    /*]]>*/
                 </script>
 
                 <!-- CONTENT -->
@@ -466,15 +469,17 @@ function addImageSection(imageUrl = '', heading = '', description = '') {
 /* ===============================
    🔥 HYDRATE ON PAGE LOAD
 ================================ */
-if (Array.isArray(existingImageSections)) {
-    existingImageSections.forEach(s => {
-        addImageSection(
-            s.imageUrl || '',
-            s.heading || '',
-            s.description || ''
-        );
-    });
-}
+document.addEventListener("DOMContentLoaded", function () {
+    if (Array.isArray(existingImageSections)) {
+        existingImageSections.forEach(s => {
+            addImageSection(
+                s.imageUrl || '',
+                s.heading || '',
+                s.description || ''
+            );
+        });
+    }
+});
 
 /* ===============================
    SERIALIZE ON SUBMIT (UNCHANGED)

@@ -499,8 +499,20 @@ left join fetch p.aiPrompts
 left join fetch p.relatedPostSlugs
 where p.id = :id
 """)
-    Optional<Post> findPostForEditFull(@Param("id") Long id);
+    Optional<Post> findPostForEditFull1(@Param("id") Long id);
 
+
+    @Query("""
+select distinct p
+from Post p
+left join fetch p.tags
+left join fetch p.sections
+left join fetch p.imageSections
+left join fetch p.aiPrompts
+left join fetch p.relatedPostSlugs
+where p.id = :id
+""")
+    Optional<Post> findPostForEditFull(@Param("id") Long id);
 
 //    @Query("""
 //    select

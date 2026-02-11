@@ -825,18 +825,22 @@ img {
     border-color: rgba(0,0,0,0.28);
 }
 
-/* ===============================
-   IMAGE SECTIONS (VERTICAL FLOW)
-================================ */
+/* =========================
+   SECTION IMAGE (16:9)
+========================= */
 
-.image-sections {
-    margin: 4rem 0;
-}
+/* =========================
+   SECTION IMAGE (NO CROP)
+========================= */
 
-.image-section {
-    display: block;              /* 🔥 remove grid */
-    width: 100%;
-    margin-bottom: 64px;
+.image-section-img {
+    width: 85%;
+    max-width: 800px;
+    height: auto;
+    border-radius: 20px;
+    display: block;
+    margin: 35px auto;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.08);
 }
 
 /* Heading */
@@ -844,16 +848,6 @@ img {
     font-size: 1.7rem;
     font-weight: 600;
     margin-bottom: 16px;
-}
-
-/* Image always below heading */
-.image-section-img {
-    display: block;              /* 🔥 key fix */
-    width: 100%;
-    max-height: 420px;
-    object-fit: cover;
-    border-radius: 14px;
-    margin-bottom: 18px;
 }
 
 /* Description */

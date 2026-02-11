@@ -318,6 +318,9 @@ public class PostServiceImpl implements PostService {
                     section.setHeading(dto.getHeading());
                     section.setDescription(dto.getDescription());
                     section.setImageUrl(clean(dto.getImageUrl()));
+                    if (dto.getImageUrl() != null && !dto.getImageUrl().isBlank()) {
+                        section.setImageUrl(dto.getImageUrl().trim());
+                    }
                     section.setDisplayOrder(dto.getOrder());
                     section.setPost(post); // 🔥 IMPORTANT
 
