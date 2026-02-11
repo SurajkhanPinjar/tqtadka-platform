@@ -797,6 +797,24 @@ ORDER BY p.publishedAt DESC
             Long currentUserId
     );
 
+    @Query("""
+    select distinct p
+    from Post p
+    left join fetch p.sections
+    where p.id = :id
+""")
+    Optional<Post> findByIdWithSections(@Param("id") Long id);
+
+    @Query("""
+    select distinct p
+    from Post p
+    left join fetch p.sections
+    left join fetch p.tags
+    left join fetch p.aiPrompts
+    where p.id = :id
+""")
+    Optional<Post> findFullPostForCopy(@Param("id") Long id);
+
 
 
 

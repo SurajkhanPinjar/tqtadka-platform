@@ -720,6 +720,18 @@ public class PostServiceImpl implements PostService {
         );
     }
 
+    @Override
+    public Post findByIdWithSections(Long id) {
+        return postRepository.findByIdWithSections(id)
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+    }
+
+    @Override
+    public Post findFullPostForCopy(Long id) {
+        return postRepository.findFullPostForCopy(id)
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+    }
+
 
 
 

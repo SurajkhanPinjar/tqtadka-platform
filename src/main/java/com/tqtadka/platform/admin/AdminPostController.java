@@ -152,6 +152,10 @@ public class AdminPostController {
         requireAuth(userDetails);
         User currentUser = userDetails.getUser();
 
+        if (imageUrl == null || imageUrl.isBlank()) {
+            throw new IllegalArgumentException("Hero image is mandatory");
+        }
+
     /* =========================
        BUILD MAIN SECTION
     ========================= */
@@ -307,6 +311,10 @@ public class AdminPostController {
         ) {
             requireAuth(userDetails);
             User currentUser = userDetails.getUser();
+
+            if (imageUrl == null || imageUrl.isBlank()) {
+                throw new IllegalArgumentException("Hero image is mandatory");
+            }
 
         /* =========================
            BUILD MAIN SECTION
@@ -477,5 +485,90 @@ public class AdminPostController {
     public String creatorGuidelines(Model model, HttpServletRequest request) {
         model.addAttribute("currentPath", request.getRequestURI());
         return "admin/guidelines";
+    }
+
+//    @GetMapping("/content/{id}")
+//    @ResponseBody
+//    public Map<String, String> getPostContent(
+//            @PathVariable Long id,
+//            @AuthenticationPrincipal CustomUserDetails userDetails
+//    ) {
+//        requireAuth(userDetails);
+//
+//        Post post = postService.findByIdWithSections(id);
+//
+//        String content = post.getSections()
+//                .stream()
+//                .findFirst()
+//                .map(PostSection::getContent)
+//                .orElse("");
+//
+//        return Map.of("content", content);
+//    }
+
+    @GetMapping("/content/{id}")
+    @ResponseBody
+    public Map<String, String> getFullBlogContent(
+            @PathVariable Long id,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        requireAuth(userDetails);
+
+        Post post = postService.findFullPostForCopy(id);
+
+        StringBuilder sb = new StringBuilder();
+
+        // Title
+        sb.append(post.getTitle()).append("\n\n");
+
+        // Intro
+        if (post.getIntro() != null) {
+            sb.append(post.getIntro()).append("\n\n");
+        }
+
+        // Tags
+        if (post.getTags() != null && !post.getTags().isEmpty()) {
+            sb.append("Tags: ");
+            sb.append(
+                    post.getTags().stream()
+                            .map(Tag::getName)
+                            .collect(Collectors.joining(", "))
+            );
+            sb.append("\n\n");
+        }
+
+        // Sections
+        for (PostSection section : post.getSections()) {
+
+            if (section.getContent() != null) {
+                sb.append(stripHtml(section.getContent()))
+                        .append("\n\n");
+            }
+
+            if (section.getBulletTitle() != null) {
+                sb.append(section.getBulletTitle()).append("\n");
+            }
+
+            if (section.getBullets() != null) {
+                for (String b : section.getBullets().split("\n")) {
+                    sb.append("• ").append(b).append("\n");
+                }
+                sb.append("\n");
+            }
+
+            if (section.getTipTitle() != null) {
+                sb.append(section.getTipTitle()).append("\n");
+            }
+
+            if (section.getTipContent() != null) {
+                sb.append(section.getTipContent()).append("\n\n");
+            }
+        }
+
+        return Map.of("content", sb.toString());
+    }
+
+    private String stripHtml(String html) {
+        return html.replaceAll("<[^>]*>", "");
     }
 }

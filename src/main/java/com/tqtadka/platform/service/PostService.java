@@ -162,6 +162,10 @@ public interface PostService {
             User currentUser
     );
 
+    Post findByIdWithSections(Long id);
+
+    public Post findFullPostForCopy(Long id);
+
 
 
 

@@ -98,7 +98,10 @@
                 <!-- ======================
                      MAIN IMAGE (EDIT)
                 ====================== -->
-                <label class="form-label fw-semibold">Main Image</label>
+                <label class="form-label fw-semibold">
+                    Main Image <span class="text-danger">*</span>
+                </label>
+
 
                 <input type="file"
                        class="form-control mb-2"
@@ -353,6 +356,69 @@
 </div>
 
 <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
+
+<script>
+    document.getElementById("editForm")
+    .addEventListener("submit", function (e) {
+
+    // 🔒 Block submit during upload
+    if (uploadInProgress) {
+        alert("Please wait for image upload to finish");
+        e.preventDefault();
+        return;
+    }
+
+    // 🔥 HERO IMAGE MANDATORY
+    const heroImageUrl =
+        document.getElementById("imageUrl").value.trim();
+
+    if (!heroImageUrl) {
+        alert("Hero image is mandatory");
+        e.preventDefault();
+        return;
+    }
+
+    // ✍️ Validate Quill content
+    const html = quill.root.innerHTML.trim();
+
+    if (!html || html === "<p><br></p>") {
+        alert("Post content cannot be empty");
+        e.preventDefault();
+        return;
+    }
+
+    document.getElementById("sectionContent").value = html;
+
+    // 🖼 Serialize image sections
+    const sections = [];
+
+    document
+        .querySelectorAll("#imageSectionContainer .card")
+        .forEach((card, i) => {
+
+            const imageUrl =
+                card.querySelector('[data-field="imageUrl"]').value.trim();
+
+            const heading =
+                card.querySelector('[data-field="heading"]').value.trim();
+
+            const description =
+                card.querySelector('[data-field="description"]').value.trim();
+
+            if (imageUrl || heading || description) {
+                sections.push({
+                    order: i + 1,
+                    imageUrl,
+                    heading,
+                    description
+                });
+            }
+        });
+
+    document.getElementById("imageSectionsJson").value =
+        JSON.stringify(sections);
+});
+</script>
 
 <script>
     const quill = new Quill('#editor', {

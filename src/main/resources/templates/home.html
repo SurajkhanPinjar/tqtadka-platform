@@ -170,6 +170,57 @@
             </div>
         </section>
 
+        <!-- ================= TRENDING Social media ================= -->
+        <section class="home-carousel-section mt-5"
+                 th:if="${socialMedia != null and !#lists.isEmpty(socialMedia)}">
+
+            <div class="carousel-header">
+                <h3 class="carousel-title">📲 Trending in Social Media</h3>
+                <a th:href="@{/{lang}/category/SOCIAL_MEDIA(lang=${lang})}"
+                   class="carousel-view-all">View all</a>
+            </div>
+
+            <div class="carousel-wrapper">
+
+                <!-- LEFT -->
+                <button class="carousel-arrow left hidden"
+                        onclick="scrollCarousel(this, -1)">
+                    <i class="bi bi-chevron-left"></i>
+                </button>
+
+                <!-- TRACK -->
+                <div class="carousel-track">
+                    <a th:each="post : ${socialMedia}"
+                       th:href="@{/{lang}/blog/{slug}(lang=${lang},slug=${post.slug})}"
+                       class="carousel-card">
+
+                        <img th:src="${post.imageUrl ?: '/images/placeholder.png'}"/>
+
+                        <div class="carousel-card-body">
+                            <small>AI</small>
+                            <h6 th:text="${post.title}"></h6>
+
+                            <!-- STATS -->
+                            <div class="d-flex gap-3 mt-auto small text-muted align-items-center">
+                                <!-- Views -->
+                                <span class="d-flex align-items-center gap-1">
+                                <i class="bi bi-eye"></i>
+                                <span th:text="${post.views}">0</span>
+                            </span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- RIGHT -->
+                <button class="carousel-arrow right"
+                        onclick="scrollCarousel(this, 1)">
+                    <i class="bi bi-chevron-right"></i>
+                </button>
+
+            </div>
+        </section>
+
         <!-- ================= MONEY & BUSINESS ================= -->
         <section class="home-carousel-section mt-5"
                  th:if="${trendingMoney != null and !#lists.isEmpty(trendingMoney)}">

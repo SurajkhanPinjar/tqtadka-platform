@@ -10,7 +10,15 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
           rel="stylesheet">
 
+    <!-- Bootstrap Icons (ADD THIS) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+          rel="stylesheet">
+
     <link rel="stylesheet" th:href="@{/css/style.css}">
+
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+
 </head>
 
 <body>
@@ -138,6 +146,7 @@
                 <th>Status</th>
                 <th>Views</th>
                 <th>Actions</th>
+                <th style="width:60px;"></th>
             </tr>
             </thead>
 
@@ -214,6 +223,60 @@
                     </form>
                 </td>
 
+                <td class="text-center">
+
+                    <div class="dropdown">
+
+                        <button class="btn btn-sm btn-light border-0"
+                                type="button"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false">
+
+                            <i class="bi bi-three-dots-vertical"></i>
+                        </button>
+
+                        <ul class="dropdown-menu dropdown-menu-end">
+
+                            <li>
+                                <button class="dropdown-item"
+                                        type="button"
+                                        th:disabled="${!post.published}"
+                                        th:classappend="${!post.published} ? ' disabled text-muted' : ''"
+                                        th:attr="onclick=${post.published} ?
+                                            |copyToClipboard(window.location.origin + '/${post.language.name().toLowerCase()}/blog/${post.slug}')|
+                                            : null">
+                                    Copy URL
+                                </button>
+                            </li>
+                            <li th:if="${!post.published}">
+                                <span class="dropdown-item text-muted small">
+                                    Publish post to enable URL
+                                </span>
+                            </li>
+
+
+                            <li>
+                                <button class="dropdown-item"
+                                        type="button"
+                                        th:attr="onclick=|copyToClipboard('${post.slug}')|">
+                                    Copy Slug
+                                </button>
+                            </li>
+
+                            <li>
+                                <button class="dropdown-item"
+                                        type="button"
+                                        th:attr="onclick=|copyBlogContent(${post.id})|">
+                                    Copy Content
+                                </button>
+                            </li>
+
+                        </ul>
+
+                    </div>
+
+                </td>
+
             </tr>
             </tbody>
 
@@ -224,6 +287,68 @@
 
 <!-- ================= FOOTER ================= -->
 <footer th:replace="~{fragments/footer :: footer}"></footer>
+
+<script>
+    function copyToClipboard(text) {
+
+        if (!text) {
+            alert("Nothing to copy");
+            return;
+        }
+
+        navigator.clipboard.writeText(text)
+            .then(() => {
+                console.log("Copied:", text);
+            })
+            .catch(() => {
+                alert("Copy failed");
+            });
+    }
+</script>
+
+<script>
+    async function copyBlogContent(postId) {
+
+        try {
+            const csrfToken =
+                document.querySelector('meta[name="_csrf"]')?.getAttribute("content");
+
+            const res = await fetch(`/admin/posts/content/${postId}`, {
+                headers: {
+                    "X-CSRF-TOKEN": csrfToken
+                }
+            });
+
+            if (!res.ok) {
+                alert("Failed to fetch content");
+                return;
+            }
+
+            const data = await res.json();
+            const content = data.content;
+
+            if (!content) {
+                alert("No content found");
+                return;
+            }
+
+            // remove HTML tags if needed
+            const tempDiv = document.createElement("div");
+            tempDiv.innerHTML = content;
+            const plainText = tempDiv.innerText;
+
+            await navigator.clipboard.writeText(plainText);
+
+            console.log("Content copied");
+            alert("Blog content copied ✓");
+
+        } catch (e) {
+            alert("Error copying content");
+        }
+    }
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>

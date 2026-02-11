@@ -104,7 +104,9 @@
                 </div>
 
                 <!-- IMAGE UPLOAD -->
-                <label class="form-label fw-semibold">Main Image</label>
+                <label class="form-label fw-semibold">
+                    Main Image <span class="text-danger">*</span>
+                </label>
 
                 <input type="file"
                        class="form-control mb-2"
@@ -297,6 +299,35 @@
 
 <script>
     let uploadInProgress = false;
+
+    document.getElementById('postForm').addEventListener('submit', function (e) {
+
+    // 🔒 Block submit during image upload
+    if (uploadInProgress) {
+        alert("Please wait for image upload to finish");
+        e.preventDefault();
+        return;
+    }
+
+    // 🔥 HERO IMAGE MANDATORY CHECK
+    const heroImageUrl = document.getElementById("imageUrl").value.trim();
+
+    if (!heroImageUrl) {
+        alert("Hero image is mandatory");
+        e.preventDefault();
+        return;
+    }
+
+    // ✍️ Validate editor content
+    const html = quill.root.innerHTML.trim();
+    if (!html || html === '<p><br></p>') {
+        alert('Post content cannot be empty');
+        e.preventDefault();
+        return;
+    }
+
+    document.getElementById('sectionContent').value = html;
+});
 </script>
 
 <script>

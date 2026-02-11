@@ -52,6 +52,10 @@ public class HomeController {
                 postRepository.findTrendingByCategory(
                         language, CategoryType.TECH, PageRequest.of(0, 10)));
 
+        model.addAttribute("socialMedia",
+                postRepository.findTrendingByCategory(
+                        language, CategoryType.SOCIAL_MEDIA, PageRequest.of(0, 10)));
+
         model.addAttribute("trendingMoney",
                 postRepository.findTrendingByCategory(
                         language, CategoryType.MONEY_AND_BUSINESS, PageRequest.of(0, 10)));
