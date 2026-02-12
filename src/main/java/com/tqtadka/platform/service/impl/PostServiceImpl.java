@@ -298,6 +298,10 @@ public class PostServiceImpl implements PostService {
         Set<Tag> tags = resolveTags(tagsInput);
         post.setTags(tags);
 
+        post.setReadingTimeMinutes(
+                calculateReadingTime(post.getSections())
+        );
+
         // ===============================
         // 🔥 IMAGE SECTIONS (SAFE ADD)
         // ===============================
@@ -440,6 +444,10 @@ public class PostServiceImpl implements PostService {
         if (relatedSlugs != null) {
             post.getRelatedPostSlugs().addAll(relatedSlugs);
         }
+
+        post.setReadingTimeMinutes(
+                calculateReadingTime(post.getSections())
+        );
 
         return postRepository.save(post);
     }
@@ -730,6 +738,24 @@ public class PostServiceImpl implements PostService {
     public Post findFullPostForCopy(Long id) {
         return postRepository.findFullPostForCopy(id)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
+    }
+
+    private int calculateReadingTime(Set<PostSection> sections) {
+
+        if (sections == null || sections.isEmpty()) return 1;
+
+        String combined = sections.stream()
+                .map(PostSection::getContent)
+                .filter(Objects::nonNull)
+                .collect(Collectors.joining(" "));
+
+        if (combined.isBlank()) return 1;
+
+        String plain = combined.replaceAll("<[^>]*>", " ");
+
+        int words = plain.trim().split("\\s+").length;
+
+        return Math.max((int)Math.ceil(words / 200.0), 1);
     }
 
 

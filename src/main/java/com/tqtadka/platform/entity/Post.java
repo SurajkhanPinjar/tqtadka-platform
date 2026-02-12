@@ -168,4 +168,9 @@ public Set<Tag> getTags() {
     )
     @Column(name = "related_slug", nullable = false)
     private Set<String> relatedPostSlugs = new HashSet<>();
+
+    @Column(name = "reading_time_minutes")
+    private Integer readingTimeMinutes;
+
+
 }

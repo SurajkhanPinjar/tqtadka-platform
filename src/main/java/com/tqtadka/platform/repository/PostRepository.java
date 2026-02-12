@@ -646,18 +646,19 @@ order by p.publishedAt desc
 
     // 🔹 Latest Posts
     @Query("""
-        select 
-            p.slug as slug,
-            p.title as title,
-            p.imageUrl as imageUrl,
-            p.category as category,
-            p.views as views,
-            p.applauseCount as applauseCount
-        from Post p
-        where p.language = :language
-          and p.published = true
-        order by p.publishedAt desc
-    """)
+    select 
+        p.slug as slug,
+        p.title as title,
+        p.imageUrl as imageUrl,
+        p.category as category,
+        p.views as views,
+        p.applauseCount as applauseCount,
+        p.readingTimeMinutes as readingTimeMinutes
+    from Post p
+    where p.language = :language
+      and p.published = true
+    order by p.publishedAt desc
+""")
     List<HomePostView> findLatestHomePosts(
             @Param("language") LanguageType language,
             Pageable pageable

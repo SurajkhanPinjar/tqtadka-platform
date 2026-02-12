@@ -11,4 +11,5 @@ public interface HomePostView {
 
     // 🔥 THIS IS THE KEY
     String getCategory();
+    Integer getReadingTimeMinutes();
 }
