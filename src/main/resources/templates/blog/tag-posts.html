@@ -91,6 +91,15 @@
                             <span>
                                 <i class="bi bi-eye"></i>
                                 <span th:text="${post.views}">0</span>
+                                <!-- Separator -->
+                                <span class="mx-2">•</span>
+
+                                <span th:text="${post.readingTimeMinutes} + ' min read'"></span>
+
+                                <span class="mx-2">•</span>
+
+                                <!-- Time Ago -->
+                                <span th:text="${post.timeAgo}"></span>
                             </span>
                         </div>
 

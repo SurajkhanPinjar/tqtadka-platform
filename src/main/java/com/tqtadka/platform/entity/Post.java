@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -172,5 +174,37 @@ public Set<Tag> getTags() {
     @Column(name = "reading_time_minutes")
     private Integer readingTimeMinutes;
 
+    public String getTimeAgo() {
+
+        if (this.publishedAt == null) {
+            return "";
+        }
+
+        LocalDateTime now = LocalDateTime.now();
+
+        long minutes = ChronoUnit.MINUTES.between(publishedAt, now);
+        long hours = ChronoUnit.HOURS.between(publishedAt, now);
+        long days = ChronoUnit.DAYS.between(publishedAt, now);
+
+        if (minutes < 1) {
+            return "Just now";
+        }
+
+        if (minutes < 60) {
+            return minutes + " min ago";
+        }
+
+        if (hours < 24) {
+            return hours + " hr ago";
+        }
+
+        if (days < 7) {
+            return days + " day" + (days > 1 ? "s" : "") + " ago";
+        }
+
+        return publishedAt.format(
+                DateTimeFormatter.ofPattern("dd MMM yyyy")
+        );
+    }
 
 }

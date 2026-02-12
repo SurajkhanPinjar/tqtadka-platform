@@ -63,10 +63,15 @@
                             <span th:text="${post.views}">0</span>
 
                             <!-- Separator -->
-                            <span class="mx-2">·</span>
+                            <span class="mx-2">•</span>
 
                             <span th:text="${post.readingTimeMinutes} + ' min read'"></span>
-                    </span>
+
+                            <span class="mx-2">•</span>
+
+                            <!-- Time Ago -->
+                            <span th:text="${post.timeAgo}"></span>
+                            </span>
                         </div>
                     </div>
                 </a>
@@ -104,17 +109,22 @@
                             <h6 th:text="${post.title}"></h6>
 
                             <!-- STATS -->
-                            <div class="d-flex gap-3 mt-auto small text-muted align-items-center">
-                                <!-- Views -->
-                                <span class="d-flex align-items-center gap-1">
-                                <i class="bi bi-eye"></i>
-                                <span th:text="${post.views}">0</span>
+                            <div class="carousel-meta">
+                                <span>
+                                    <i class="bi bi-eye"></i>
+                                    <span th:text="${post.views}">0</span>
+                                </span>
 
-                                <!-- Separator -->
-                                <span class="mx-2">·</span>
+                                <span class="dot">•</span>
 
-                                <span th:text="${post.readingTimeMinutes} + ' min read'"></span>
-                            </span>
+                                <span>
+                                    <span th:text="${post.readingTimeMinutes ?: 1}">1</span> min read
+                                </span>
+
+                                <span class="dot">•</span>
+
+                                <span th:text="${post.timeAgo}">2 hr ago</span>
+
                             </div>
                         </div>
                     </a>
@@ -160,17 +170,23 @@
                             <h6 th:text="${post.title}"></h6>
 
                             <!-- STATS -->
-                            <div class="d-flex gap-3 mt-auto small text-muted align-items-center">
-                                <!-- Views -->
-                                <span class="d-flex align-items-center gap-1">
-                                <i class="bi bi-eye"></i>
-                                <span th:text="${post.views}">0</span>
+                            <div class="carousel-meta">
+                                <span>
+                                    <i class="bi bi-eye"></i>
+                                    <span th:text="${post.views}">0</span>
+                                </span>
 
-                                    <!-- Separator -->
-                                <span class="mx-2">·</span>
+                                <span class="dot">•</span>
 
-                                <span th:text="${post.readingTimeMinutes} + ' min read'"></span>
-                            </span>
+                                <span>
+                                    <span th:text="${post.readingTimeMinutes ?: 1}">1</span> min read
+                                </span>
+
+                                <span class="dot">•</span>
+
+                                <span th:text="${post.timeAgo}">2 hr ago</span>
+
+                            </div>
                         </div>
                     </a>
                 </div>
@@ -215,17 +231,22 @@
                             <h6 th:text="${post.title}"></h6>
 
                             <!-- STATS -->
-                            <div class="d-flex gap-3 mt-auto small text-muted align-items-center">
-                                <!-- Views -->
-                                <span class="d-flex align-items-center gap-1">
-                                <i class="bi bi-eye"></i>
-                                <span th:text="${post.views}">0</span>
+                            <div class="carousel-meta">
+                                <span>
+                                    <i class="bi bi-eye"></i>
+                                    <span th:text="${post.views}">0</span>
+                                </span>
 
-                                <!-- Separator -->
-                                <span class="mx-2">·</span>
+                                <span class="dot">•</span>
 
-                                <span th:text="${post.readingTimeMinutes} + ' min read'"></span>
-                            </span>
+                                <span>
+                                    <span th:text="${post.readingTimeMinutes ?: 1}">1</span> min read
+                                </span>
+
+                                <span class="dot">•</span>
+
+                                <span th:text="${post.timeAgo}">2 hr ago</span>
+
                             </div>
                         </div>
                     </a>
@@ -272,17 +293,22 @@
                             <h6 th:text="${post.title}"></h6>
 
                             <!-- STATS -->
-                            <div class="d-flex gap-3 mt-auto small text-muted align-items-center">
-                                <!-- Views -->
-                                <span class="d-flex align-items-center gap-1">
-                                <i class="bi bi-eye"></i>
-                                <span th:text="${post.views}">0</span>
+                            <div class="carousel-meta">
+                                <span>
+                                    <i class="bi bi-eye"></i>
+                                    <span th:text="${post.views}">0</span>
+                                </span>
 
-                                <!-- Separator -->
-                                <span class="mx-2">·</span>
+                                <span class="dot">•</span>
 
-                                <span th:text="${post.readingTimeMinutes} + ' min read'"></span>
-                            </span>
+                                <span>
+                                    <span th:text="${post.readingTimeMinutes ?: 1}">1</span> min read
+                                </span>
+
+                                <span class="dot">•</span>
+
+                                <span th:text="${post.timeAgo}">2 hr ago</span>
+
                             </div>
                         </div>
                     </a>
@@ -329,17 +355,22 @@
                             <h6 th:text="${post.title}"></h6>
 
                             <!-- STATS -->
-                            <div class="d-flex gap-3 mt-auto small text-muted align-items-center">
-                                <!-- Views -->
-                                <span class="d-flex align-items-center gap-1">
-                                <i class="bi bi-eye"></i>
-                                <span th:text="${post.views}">0</span>
+                            <div class="carousel-meta">
+                                <span>
+                                    <i class="bi bi-eye"></i>
+                                    <span th:text="${post.views}">0</span>
+                                </span>
 
-                                <!-- Separator -->
-                                <span class="mx-2">·</span>
+                                <span class="dot">•</span>
 
-                                <span th:text="${post.readingTimeMinutes} + ' min read'"></span>
-                            </span>
+                                <span>
+                                    <span th:text="${post.readingTimeMinutes ?: 1}">1</span> min read
+                                </span>
+
+                                <span class="dot">•</span>
+
+                                <span th:text="${post.timeAgo}">2 hr ago</span>
+
                             </div>
                         </div>
                     </a>
@@ -386,17 +417,22 @@
                             <h6 th:text="${post.title}"></h6>
 
                             <!-- STATS -->
-                            <div class="d-flex gap-3 mt-auto small text-muted align-items-center">
-                                <!-- Views -->
-                                <span class="d-flex align-items-center gap-1">
-                                <i class="bi bi-eye"></i>
-                                <span th:text="${post.views}">0</span>
+                            <div class="carousel-meta">
+                                <span>
+                                    <i class="bi bi-eye"></i>
+                                    <span th:text="${post.views}">0</span>
+                                </span>
 
-                                <!-- Separator -->
-                                <span class="mx-2">·</span>
+                                <span class="dot">•</span>
 
-                                <span th:text="${post.readingTimeMinutes} + ' min read'"></span>
-                            </span>
+                                <span>
+                                    <span th:text="${post.readingTimeMinutes ?: 1}">1</span> min read
+                                </span>
+
+                                <span class="dot">•</span>
+
+                                <span th:text="${post.timeAgo}">2 hr ago</span>
+
                             </div>
                         </div>
                     </a>

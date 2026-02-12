@@ -2323,3 +2323,29 @@ td.text-end, th.text-end {
     object-fit: cover; /* keeps composition clean */
     display: block;
 }
+
+.carousel-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.78rem;
+    color: #6c757d;
+    margin-top: 8px;
+    flex-wrap: nowrap;
+}
+
+.carousel-meta span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+}
+
+.carousel-meta i {
+    font-size: 0.8rem;
+}
+
+.carousel-meta .dot {
+    font-size: 0.6rem;
+    opacity: 0.6;
+}

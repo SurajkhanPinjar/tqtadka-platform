@@ -227,7 +227,9 @@ select
     p.category as category,
     p.authorName as authorName,
     p.views as views,
-    p.applauseCount as applauseCount
+    p.applauseCount as applauseCount,
+    p.readingTimeMinutes as readingTimeMinutes,
+    p.publishedAt as publishedAt
 from Post p
 where p.slug in :slugs
   and p.language = :language
@@ -653,7 +655,8 @@ order by p.publishedAt desc
         p.category as category,
         p.views as views,
         p.applauseCount as applauseCount,
-        p.readingTimeMinutes as readingTimeMinutes
+        p.readingTimeMinutes as readingTimeMinutes,
+        p.publishedAt as publishedAt
     from Post p
     where p.language = :language
       and p.published = true
@@ -672,7 +675,9 @@ order by p.publishedAt desc
             p.imageUrl as imageUrl,
             p.category as category,
             p.views as views,
-            p.applauseCount as applauseCount
+            p.applauseCount as applauseCount,
+            p.readingTimeMinutes as readingTimeMinutes,
+            p.publishedAt as publishedAt
         from Post p
         where p.language = :language
           and p.published = true
@@ -691,7 +696,9 @@ order by p.publishedAt desc
             p.imageUrl as imageUrl,
             p.category as category,
             p.views as views,
-            p.applauseCount as applauseCount
+            p.applauseCount as applauseCount,
+            p.readingTimeMinutes as readingTimeMinutes,
+            p.publishedAt as publishedAt
         from Post p
         where p.language = :language
           and p.published = true
