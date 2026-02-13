@@ -323,7 +323,7 @@
             </div>
         </section>
 
-        <!-- ================= SKIN & HEALTH ================= -->
+        <!--&lt;!&ndash; ================= SKIN & HEALTH ================= &ndash;&gt;
         <section class="home-carousel-section mt-5"
                  th:if="${trendingSkin != null and !#lists.isEmpty(trendingSkin)}">
 
@@ -333,16 +333,16 @@
                    class="carousel-view-all">View all</a>
             </div>
 
-            <!-- ⬅️➡️ REQUIRED WRAPPER -->
+            &lt;!&ndash; ⬅️➡️ REQUIRED WRAPPER &ndash;&gt;
             <div class="carousel-wrapper">
 
-                <!-- LEFT ARROW -->
+                &lt;!&ndash; LEFT ARROW &ndash;&gt;
                 <button class="carousel-arrow left hidden"
                         onclick="scrollCarousel(this, -1)">
                     <i class="bi bi-chevron-left"></i>
                 </button>
 
-                <!-- TRACK -->
+                &lt;!&ndash; TRACK &ndash;&gt;
                 <div class="carousel-track">
                     <a th:each="post : ${trendingSkin}"
                        th:href="@{/{lang}/blog/{slug}(lang=${lang},slug=${post.slug})}"
@@ -354,7 +354,7 @@
                             <small>Health</small>
                             <h6 th:text="${post.title}"></h6>
 
-                            <!-- STATS -->
+                            &lt;!&ndash; STATS &ndash;&gt;
                             <div class="carousel-meta">
                                 <span>
                                     <i class="bi bi-eye"></i>
@@ -376,16 +376,16 @@
                     </a>
                 </div>
 
-                <!-- RIGHT ARROW -->
+                &lt;!&ndash; RIGHT ARROW &ndash;&gt;
                 <button class="carousel-arrow right"
                         onclick="scrollCarousel(this, 1)">
                     <i class="bi bi-chevron-right"></i>
                 </button>
 
             </div>
-        </section>
+        </section>-->
 
-        <!-- ================= BEAUTY & STYLE ================= -->
+        <!--&lt;!&ndash; ================= BEAUTY & STYLE ================= &ndash;&gt;
         <section class="home-carousel-section mt-5"
                  th:if="${trendingBeauty != null and !#lists.isEmpty(trendingBeauty)}">
 
@@ -395,16 +395,16 @@
                    class="carousel-view-all">View all</a>
             </div>
 
-            <!-- ⬅️➡️ WRAPPER REQUIRED -->
+            &lt;!&ndash; ⬅️➡️ WRAPPER REQUIRED &ndash;&gt;
             <div class="carousel-wrapper">
 
-                <!-- LEFT ARROW -->
+                &lt;!&ndash; LEFT ARROW &ndash;&gt;
                 <button class="carousel-arrow left hidden"
                         onclick="scrollCarousel(this, -1)">
                     <i class="bi bi-chevron-left"></i>
                 </button>
 
-                <!-- TRACK -->
+                &lt;!&ndash; TRACK &ndash;&gt;
                 <div class="carousel-track">
                     <a th:each="post : ${trendingBeauty}"
                        th:href="@{/{lang}/blog/{slug}(lang=${lang},slug=${post.slug})}"
@@ -416,7 +416,7 @@
                             <small>Beauty</small>
                             <h6 th:text="${post.title}"></h6>
 
-                            <!-- STATS -->
+                            &lt;!&ndash; STATS &ndash;&gt;
                             <div class="carousel-meta">
                                 <span>
                                     <i class="bi bi-eye"></i>
@@ -438,14 +438,14 @@
                     </a>
                 </div>
 
-                <!-- RIGHT ARROW -->
+                &lt;!&ndash; RIGHT ARROW &ndash;&gt;
                 <button class="carousel-arrow right"
                         onclick="scrollCarousel(this, 1)">
                     <i class="bi bi-chevron-right"></i>
                 </button>
 
             </div>
-        </section>
+        </section>-->
 
     </div>
 </div>

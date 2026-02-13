@@ -60,13 +60,13 @@ public class HomeController {
                 postRepository.findTrendingByCategory(
                         language, CategoryType.MONEY_AND_BUSINESS, PageRequest.of(0, 10)));
 
-        model.addAttribute("trendingSkin",
-                postRepository.findTrendingByCategory(
-                        language, CategoryType.SKIN_HEALTH, PageRequest.of(0, 10)));
+//        model.addAttribute("trendingSkin",
+//                postRepository.findTrendingByCategory(
+//                        language, CategoryType.SKIN_HEALTH, PageRequest.of(0, 10)));
 
-        model.addAttribute("trendingBeauty",
-                postRepository.findTrendingByCategory(
-                        language, CategoryType.BEAUTY_AND_STYLE, PageRequest.of(0, 10)));
+//        model.addAttribute("trendingBeauty",
+//                postRepository.findTrendingByCategory(
+//                        language, CategoryType.BEAUTY_AND_STYLE, PageRequest.of(0, 10)));
 
         return "home";
     }

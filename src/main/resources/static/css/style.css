@@ -2349,3 +2349,30 @@ td.text-end, th.text-end {
     font-size: 0.6rem;
     opacity: 0.6;
 }
+
+.finance-disclaimer {
+    font-size: 0.75rem;
+    line-height: 1.5;
+    color: #888;
+    background: #faf6e8;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border-left: 3px solid #c9b36d;
+    font-family: system-ui, -apple-system, sans-serif;
+    opacity: 0.9;
+    margin-top: 12px;
+    font-style: italic;
+}
+
+.finance-disclaimer .disclaimer-star {
+    font-weight: 600;
+    margin-right: 4px;
+}
+.finance-disclaimer-mini {
+    font-size: 0.72rem;
+    color: #9a9a9a;
+    margin-top: 12px;
+    margin-bottom: 20px;
+    line-height: 1.5;
+    font-style: italic;
+}

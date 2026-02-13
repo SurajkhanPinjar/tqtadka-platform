@@ -60,11 +60,18 @@
                         loading="lazy">
             </div>
 
+            <!-- Minimal Finance Disclaimer (Below Hero Image) -->
+            <p th:if="${post.category.name() == 'MONEY_AND_BUSINESS'}"
+               class="finance-disclaimer-mini">
+                *Disclaimer: I am not a certified financial advisor.
+                This article is for educational purposes only.
+            </p>
+
 
             <!-- INTRO -->
             <p class="hero-subtitle"
                th:if="${post.intro != null}"
-               th:text="${post.intro}"></p>
+               th:utext="${post.intro}"></p>
 
 
             <!-- TAGS -->
@@ -223,6 +230,15 @@
                     </div>
                 </div>
             </section>
+
+            <!-- FINANCE DISCLAIMER (AFTER HERO IMAGE) -->
+            <div th:if="${post.category.name() == 'MONEY_AND_BUSINESS'}"
+                 class="alert alert-warning small mt-3 rounded-3">
+
+                <strong>* Disclaimer:</strong>
+                This content is for educational purposes only and should not be considered financial advice.
+                Always do your own research before making financial decisions.
+            </div>
 
             <div th:if="${!#lists.isEmpty(relatedPosts)}" class="mt-5">
                 <h4 class="fw-bold mb-4">🔗 Related Blogs</h4>

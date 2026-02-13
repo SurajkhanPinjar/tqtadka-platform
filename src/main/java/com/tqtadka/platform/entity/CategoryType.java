@@ -21,8 +21,8 @@ public enum CategoryType {
     FOOD("Food"),
 
     // 🔵 Tier 4 – Engagement Driven
-//    ENTERTAINMENT("Entertainment"),
-//    SPORTS("Sports"),
+    ENTERTAINMENT("Entertainment"),
+    SPORTS("Sports"),
 
     // ⚪ Tier 5 – Platform / Utility Content
     EDUCATION("Education"),
