@@ -1505,7 +1505,7 @@ td.text-end, th.text-end {
 *//* Mobile fine-tuning */
 @media (max-width: 768px) {
     .page-content {
-        padding-top: 250px;
+        padding-top: 110px;
     }
 }
 
@@ -2209,7 +2209,7 @@ td.text-end, th.text-end {
 /* Mobile – category hides, so only header */
 @media (max-width: 768px) {
     .page-with-category {
-        padding-top: 240px;
+        padding-top: 110px;
     }
 }
 
@@ -2219,7 +2219,7 @@ td.text-end, th.text-end {
 
 @media (max-width: 768px) {
     .view-blog-content {
-        padding-top: 145px;
+        padding-top: 50px;
     }
 }
 

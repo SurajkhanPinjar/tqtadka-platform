@@ -61,7 +61,7 @@
             </div>
 
             <!-- Minimal Finance Disclaimer (Below Hero Image) -->
-            <p th:if="${post.category.name() == 'MONEY_AND_BUSINESS'}"
+            <p th:if="${post.category.name() == 'FINANCE'}"
                class="finance-disclaimer-mini">
                 *Disclaimer: I am not a certified financial advisor.
                 This article is for educational purposes only.
@@ -232,7 +232,7 @@
             </section>
 
             <!-- FINANCE DISCLAIMER (AFTER HERO IMAGE) -->
-            <div th:if="${post.category.name() == 'MONEY_AND_BUSINESS'}"
+            <div th:if="${post.category.name() == 'FINANCE'}"
                  class="alert alert-warning small mt-3 rounded-3">
 
                 <strong>* Disclaimer:</strong>

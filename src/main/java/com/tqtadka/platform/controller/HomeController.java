@@ -54,19 +54,11 @@ public class HomeController {
 
         model.addAttribute("socialMedia",
                 postRepository.findTrendingByCategory(
-                        language, CategoryType.SOCIAL_MEDIA, PageRequest.of(0, 10)));
+                        language, CategoryType.CAREER, PageRequest.of(0, 10)));
 
         model.addAttribute("trendingMoney",
                 postRepository.findTrendingByCategory(
-                        language, CategoryType.MONEY_AND_BUSINESS, PageRequest.of(0, 10)));
-
-//        model.addAttribute("trendingSkin",
-//                postRepository.findTrendingByCategory(
-//                        language, CategoryType.SKIN_HEALTH, PageRequest.of(0, 10)));
-
-//        model.addAttribute("trendingBeauty",
-//                postRepository.findTrendingByCategory(
-//                        language, CategoryType.BEAUTY_AND_STYLE, PageRequest.of(0, 10)));
+                        language, CategoryType.FINANCE, PageRequest.of(0, 10)));
 
         return "home";
     }
