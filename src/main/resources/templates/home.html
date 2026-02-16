@@ -58,21 +58,20 @@
 
                         <!-- STATS -->
                         <div class="d-flex gap-3 mt-auto small text-muted align-items-center">
-                            <span class="d-flex align-items-center gap-1">
-                            <i class="bi bi-eye"></i>
-                            <span th:text="${post.views}">0</span>
+                    <span class="d-flex align-items-center gap-1">
+                        <i class="bi bi-eye"></i>
+                        <span th:text="${post.views}">0</span>
 
-                            <!-- Separator -->
-                            <span class="mx-2">•</span>
+                        <span class="mx-2">•</span>
 
-                            <span th:text="${post.readingTimeMinutes} + ' min read'"></span>
+                        <span th:text="${post.readingTimeMinutes} + ' min read'"></span>
 
-                            <span class="mx-2">•</span>
+                        <span class="mx-2">•</span>
 
-                            <!-- Time Ago -->
-                            <span th:text="${post.timeAgo}"></span>
-                            </span>
+                        <span th:text="${post.timeAgo}"></span>
+                    </span>
                         </div>
+
                     </div>
                 </a>
             </div>
@@ -80,11 +79,11 @@
 
         <!-- ================= TRENDING AI ================= -->
         <section class="home-carousel-section mt-5"
-                 th:if="${trendingAI != null and !#lists.isEmpty(trendingAI)}">
+                 th:if="${learnAI != null and !#lists.isEmpty(learnAI)}">
 
             <div class="carousel-header">
-                <h3 class="carousel-title">🤖 Trending in AI</h3>
-                <a th:href="@{/{lang}/category/AI(lang=${lang})}"
+                <h3 class="carousel-title">LEARN AI</h3>
+                <a th:href="@{/{lang}/category/LEARN_AI(lang=${lang})}"
                    class="carousel-view-all">View all</a>
             </div>
 
@@ -98,14 +97,18 @@
 
                 <!-- TRACK -->
                 <div class="carousel-track">
-                    <a th:each="post : ${trendingAI}"
-                       th:href="@{/{lang}/blog/{slug}(lang=${lang},slug=${post.slug})}"
+                    <a th:each="post : ${learnAI}"
+                       th:href="@{/{lang}/{cat}/{slug}(
+    lang=${lang},
+    cat=${post.category.slug},
+    slug=${post.slug}
+)}"
                        class="carousel-card">
 
                         <img th:src="${post.imageUrl ?: '/images/placeholder.png'}"/>
 
                         <div class="carousel-card-body">
-                            <small>AI</small>
+                            <small>Learn AI</small>
                             <h6 th:text="${post.title}"></h6>
 
                             <!-- STATS -->
@@ -141,11 +144,11 @@
 
         <!-- ================= TRENDING TECH ================= -->
         <section class="home-carousel-section mt-5"
-                 th:if="${trendingAI != null and !#lists.isEmpty(trendingAI)}">
+                 th:if="${aiTools != null and !#lists.isEmpty(aiTools)}">
 
             <div class="carousel-header">
-                <h3 class="carousel-title">💻 Trending in Tech</h3>
-                <a th:href="@{/{lang}/category/TECH(lang=${lang})}"
+                <h3 class="carousel-title">AI Tools</h3>
+                <a th:href="@{/{lang}/category/AI_TOOLS(lang=${lang})}"
                    class="carousel-view-all">View all</a>
             </div>
 
@@ -159,14 +162,18 @@
 
                 <!-- TRACK -->
                 <div class="carousel-track">
-                    <a th:each="post : ${trendingTech}"
-                       th:href="@{/{lang}/blog/{slug}(lang=${lang},slug=${post.slug})}"
+                    <a th:each="post : ${aiTools}"
+                       th:href="@{/{lang}/{cat}/{slug}(
+    lang=${lang},
+    cat=${post.category.slug},
+    slug=${post.slug}
+)}"
                        class="carousel-card">
 
                         <img th:src="${post.imageUrl ?: '/images/placeholder.png'}"/>
 
                         <div class="carousel-card-body">
-                            <small>AI</small>
+                            <small>AI Tools</small>
                             <h6 th:text="${post.title}"></h6>
 
                             <!-- STATS -->
@@ -201,13 +208,13 @@
         </section>
 
 
-        <!-- ================= MONEY & BUSINESS ================= -->
+        <!-- ================= AI At Work ================= -->
         <section class="home-carousel-section mt-5"
-                 th:if="${trendingMoney != null and !#lists.isEmpty(trendingMoney)}">
+                 th:if="${aiAtWork != null and !#lists.isEmpty(aiAtWork)}">
 
             <div class="carousel-header">
-                <h3 class="carousel-title">💰 Money & Business</h3>
-                <a th:href="@{/{lang}/category/MONEY(lang=${lang})}"
+                <h3 class="carousel-title">AI AT WORK</h3>
+                <a th:href="@{/{lang}/category/AI_AT_WORK(lang=${lang})}"
                    class="carousel-view-all">View all</a>
             </div>
 
@@ -222,14 +229,18 @@
 
                 <!-- TRACK -->
                 <div class="carousel-track">
-                    <a th:each="post : ${trendingMoney}"
-                       th:href="@{/{lang}/blog/{slug}(lang=${lang},slug=${post.slug})}"
+                    <a th:each="post : ${aiAtWork}"
+                       th:href="@{/{lang}/{cat}/{slug}(
+    lang=${lang},
+    cat=${post.category.slug},
+    slug=${post.slug}
+)}"
                        class="carousel-card">
 
                         <img th:src="${post.imageUrl ?: '/images/placeholder.png'}"/>
 
                         <div class="carousel-card-body">
-                            <small>Money</small>
+                            <small>AI At Work</small>
                             <h6 th:text="${post.title}"></h6>
 
                             <!-- STATS -->

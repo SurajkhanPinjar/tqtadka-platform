@@ -1,14 +1,12 @@
 package com.tqtadka.platform.entity;
 
 public enum CategoryType {
-
-    // 🔥 Core Authority Pillars (High RPM + SaaS Alignment)
-
-    AI("AI"),
-    TECH("Tech"),
-    FINANCE("Finance"),
-    CAREER("Career"),
-    STUDENTS("Students");
+    LEARN_AI("Learn AI"),
+    AI_TOOLS("AI Tools"),
+    AI_AT_WORK("AI at Work"),
+    AI_BY_INDUSTRY("AI by Industry"),
+    AI_FUTURE("AI Future"),
+    AI_NEWS("AI News");
 
     private final String displayName;
 
