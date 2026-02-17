@@ -10,12 +10,9 @@ import com.tqtadka.platform.service.CommentService;
 import com.tqtadka.platform.service.PostService;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
 import java.util.Set;
@@ -39,10 +36,8 @@ public class BlogController {
 
     /* =====================================================
        BLOG VIEW (PUBLIC)
-       /en/blog/{slug}
-       /kn/blog/{slug}
     ===================================================== */
-    @GetMapping("/{lang:en|kn}/blog/{slug}")
+    @GetMapping("/{lang:en|kn}/{categorySlug}/{slug}")
     public String viewPost(
             @PathVariable String lang,
             @PathVariable String slug,

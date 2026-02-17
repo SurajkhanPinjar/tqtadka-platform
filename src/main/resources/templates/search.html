@@ -58,7 +58,10 @@
             <div class="col-md-6"
                  th:each="post : ${results}">
 
-                <a th:href="@{/{lang}/blog/{slug}(lang=${lang},slug=${post.slug})}"
+                <a th:href="@{/{lang}/{cat}/{slug}(
+        lang=${lang},
+        cat=${post.category.slug},
+        slug=${post.slug})}"
                    class="card h-100 text-decoration-none text-dark shadow-sm">
 
                     <!-- IMAGE -->

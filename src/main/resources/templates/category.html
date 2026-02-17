@@ -94,7 +94,7 @@
                      th:classappend="${prompt == true} ? ' right' : ' left'"></div>
 
                 <!-- ALL POSTS -->
-                <a th:href="@{/{lang}/category/AI(
+                <a th:href="@{/{lang}/category/{category}(
                 lang=${lang},
                 sort=${sort}
             )}"
@@ -104,7 +104,7 @@
                 </a>
 
                 <!-- PROMPT POSTS -->
-                <a th:href="@{/{lang}/category/AI(
+                <a th:href="@{/{lang}/category/{category}(
                 lang=${lang},
                 sort=${sort},
                 prompt=true
@@ -138,9 +138,10 @@
                  th:each="post : ${posts}">
 
                 <!-- 🔥 CORRECT BLOG LINK -->
-                <a th:href="@{/{lang}/blog/{slug}(
-            lang=${lang != null ? lang : 'en'},
-            slug=${post.slug})}"
+                <a th:href="@{/{lang}/{cat}/{slug}(
+                    lang=${lang != null ? lang : 'en'},
+                    cat=${post.category.slug},
+                    slug=${post.slug})}"
                    class="card post-card h-100 text-decoration-none text-dark shadow-sm">
 
                     <!-- IMAGE -->

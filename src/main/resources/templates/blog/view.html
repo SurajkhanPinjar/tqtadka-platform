@@ -245,7 +245,7 @@
 
                 <div class="row g-4">
                     <div class="col-md-6 col-lg-4" th:each="rp : ${relatedPosts}">
-                        <a th:href="@{/{lang}/blog/{slug}(lang=${lang},slug=${rp.slug})}"
+                        <a th:href="@{/{lang}/{category}/{slug}(lang=${lang},slug=${rp.slug})}"
                            class="text-decoration-none text-dark">
 
                             <div class="card h-100 shadow-sm border-0">
