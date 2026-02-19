@@ -146,6 +146,9 @@ public class Post {
     )
     private List<PostViewEvent> viewEvents = new ArrayList<>();
 
+    @Column(name = "has_kannada_version", nullable = false)
+    private boolean hasKannadaVersion = false;
+
     /* =========================
    TAGS
 ========================= */

@@ -143,6 +143,9 @@
                 <!-- 🔐 ADMIN ONLY -->
                 <th sec:authorize="hasRole('ADMIN')">Author</th>
 
+                <!-- ✅ ADD THIS -->
+                <th>Created</th>
+
                 <th>Status</th>
                 <th>Views</th>
                 <th>Actions</th>
@@ -169,6 +172,12 @@
                 <td sec:authorize="hasRole('ADMIN')">
         <span class="badge bg-dark"
               th:text="${post.authorName}"></span>
+                </td>
+
+                <td>
+                    <span class="text-muted small"
+                          th:text="${#temporals.format(post.createdAt, 'dd MMM yyyy')}">
+                    </span>
                 </td>
 
                 <!-- ✅ TOGGLE STATUS -->
@@ -243,7 +252,12 @@
                                         th:disabled="${!post.published}"
                                         th:classappend="${!post.published} ? ' disabled text-muted' : ''"
                                         th:attr="onclick=${post.published} ?
-                                            |copyToClipboard(window.location.origin + '/${post.language.name().toLowerCase()}/blog/${post.slug}')|
+                                            |copyToClipboard(
+                                            window.location.origin
+                                            + '/${post.language.name().toLowerCase()}'
+                                            + '/${post.category.name().toLowerCase()}'
+                                            + '/${post.slug}'
+                                            )|
                                             : null">
                                     Copy URL
                                 </button>

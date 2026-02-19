@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Privacy Policy • TQtadka</title>
+    <title>Privacy Policy • Futorch</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Google Font -->
@@ -18,7 +18,6 @@
 
 <body>
 
-
 <!-- ================= HEADER ================= -->
 <th:block th:with="
         lang=${lang ?: 'en'},
@@ -28,99 +27,113 @@
     <div th:replace="~{fragments/header :: header}"></div>
 </th:block>
 
-
-<!-- ================= PAGE WRAPPER ================= -->
+<!-- ================= PAGE ================= -->
 <div class="page-content page-with-privacy">
 
-    <!-- ================= MAIN CONTENT ================= -->
     <main class="container my-5" style="max-width:900px;">
 
         <h1 class="hero-title mb-4">Privacy Policy</h1>
 
         <p class="hero-subtitle mb-5">
-            At TQtadka, your privacy matters to us. This page explains what kind of information we collect
-            and how we use it when you visit our website.
+            Futorch respects your privacy. This policy explains what information we collect,
+            how we use it, and how we protect it when you use our website.
         </p>
 
+        <!-- ================= INTRO ================= -->
         <section class="mb-5">
             <p>
-                By using TQtadka, you agree to the terms mentioned in this policy.
+                Futorch is an AI-focused knowledge platform publishing content about artificial intelligence,
+                tools, workflows, and modern careers.
+            </p>
+            <p>
+                By using Futorch, you agree to the practices described in this Privacy Policy.
             </p>
         </section>
 
+        <!-- ================= DATA COLLECT ================= -->
         <section class="mb-5">
-            <h4 class="fw-bold mb-3">What Information We Collect</h4>
+            <h4 class="fw-bold mb-3">Information We Collect</h4>
 
-            <h6 class="fw-semibold mt-3">1. Personal Information</h6>
+            <h6 class="fw-semibold mt-3">1. Information You Provide</h6>
             <p>
-                We collect personal details like your name or email only when you voluntarily provide them —
-                for example, when you contact us or subscribe to updates.
-            </p>
-
-            <h6 class="fw-semibold mt-3">2. General Website Data</h6>
-            <p>
-                Like most websites, we automatically collect some basic data such as:
+                We collect personal information only when you voluntarily provide it,
+                such as when you contact us or subscribe to updates.
             </p>
 
             <ul class="ps-3">
-                <li>Your browser type</li>
-                <li>Pages you visit</li>
-                <li>Time spent on our site</li>
-                <li>Device and operating system</li>
+                <li>Name (if provided)</li>
+                <li>Email address</li>
+                <li>Message content</li>
             </ul>
 
-            <p class="mt-3">
-                This helps us understand how people use TQtadka and how we can improve it.
-            </p>
-        </section>
-
-        <section class="mb-5">
-            <h4 class="fw-bold mb-3">How We Use Your Information</h4>
-
-            <ul class="ps-3">
-                <li>Improve our content and website experience</li>
-                <li>Respond to messages and feedback</li>
-                <li>Send updates if you’ve opted in</li>
-                <li>Monitor website performance and traffic</li>
-            </ul>
-
-            <p class="mt-3">
-                We never sell or misuse your personal information.
-            </p>
-        </section>
-
-        <section class="mb-5">
-            <h4 class="fw-bold mb-3">Cookies</h4>
-
+            <h6 class="fw-semibold mt-4">2. Usage & Technical Data</h6>
             <p>
-                TQtadka uses cookies to enhance your browsing experience.
+                Like most websites, Futorch automatically collects limited technical data
+                to understand usage and improve performance.
             </p>
 
             <ul class="ps-3">
-                <li>Understand which pages are useful</li>
-                <li>Improve site speed and performance</li>
-                <li>Serve relevant ads in the future</li>
+                <li>Pages visited</li>
+                <li>Time spent on pages</li>
+                <li>Browser and device type</li>
+                <li>Country or region (approximate)</li>
+                <li>Referral sources</li>
+            </ul>
+        </section>
+
+        <!-- ================= USE ================= -->
+        <section class="mb-5">
+            <h4 class="fw-bold mb-3">How We Use Information</h4>
+
+            <ul class="ps-3">
+                <li>Improve Futorch content and user experience</li>
+                <li>Respond to inquiries and feedback</li>
+                <li>Understand audience interests in AI topics</li>
+                <li>Monitor website performance and reliability</li>
+                <li>Send updates only if you opt in</li>
             </ul>
 
             <p class="mt-3">
-                You can always choose to disable cookies from your browser settings.
+                Futorch does not sell personal data to third parties.
             </p>
         </section>
 
+        <!-- ================= COOKIES ================= -->
         <section class="mb-5">
-            <h4 class="fw-bold mb-3">Google Ads & Third-Party Services</h4>
+            <h4 class="fw-bold mb-3">Cookies & Analytics</h4>
 
             <p>
-                We may use Google AdSense and other advertising partners in the future.
+                Futorch uses cookies and similar technologies to:
+            </p>
+
+            <ul class="ps-3">
+                <li>Understand site usage patterns</li>
+                <li>Improve speed and functionality</li>
+                <li>Remember basic preferences</li>
+                <li>Measure content performance</li>
+            </ul>
+
+            <p class="mt-3">
+                You can disable cookies in your browser settings at any time.
+            </p>
+        </section>
+
+        <!-- ================= ADS ================= -->
+        <section class="mb-5">
+            <h4 class="fw-bold mb-3">Advertising & Third-Party Services</h4>
+
+            <p>
+                Futorch may use advertising and analytics partners such as Google AdSense
+                or similar providers.
             </p>
 
             <p>
-                These services may use cookies or similar technologies to show ads based on your interests
-                and browsing behavior.
+                These services may use cookies or identifiers to show relevant ads
+                and measure engagement.
             </p>
 
             <p>
-                You can control ad personalization here:
+                You can learn how Google uses data here:
                 <a href="https://policies.google.com/technologies/ads"
                    target="_blank"
                    rel="noopener noreferrer">
@@ -129,28 +142,61 @@
             </p>
         </section>
 
+        <!-- ================= STORAGE ================= -->
+        <section class="mb-5">
+            <h4 class="fw-bold mb-3">Data Storage & Security</h4>
+
+            <p>
+                Futorch uses secure hosting and infrastructure providers to operate the website.
+            </p>
+
+            <p>
+                Media files may be stored via secure cloud storage services.
+            </p>
+
+            <p>
+                We take reasonable measures to protect information,
+                but no internet transmission is completely secure.
+            </p>
+        </section>
+
+        <!-- ================= LINKS ================= -->
         <section class="mb-5">
             <h4 class="fw-bold mb-3">External Links</h4>
+
             <p>
-                Our website may contain links to other websites.
-                We are not responsible for the privacy practices or content of those external sites.
+                Futorch may link to external AI tools, services, or websites.
+            </p>
+
+            <p>
+                We are not responsible for the privacy practices of third-party sites.
             </p>
         </section>
 
+        <!-- ================= CONSENT ================= -->
         <section class="mb-5">
             <h4 class="fw-bold mb-3">Your Consent</h4>
+
             <p>
-                By continuing to use TQtadka, you agree to this privacy policy.
+                By using Futorch, you consent to this Privacy Policy.
             </p>
+
             <p>
-                If we update this page in the future, changes will be posted here.
+                We may update this policy periodically. Changes will appear on this page.
             </p>
         </section>
 
+        <!-- ================= CONTACT ================= -->
         <section class="mb-5">
-            <h4 class="fw-bold mb-3">Contact Us</h4>
-            <p>If you have any questions about this Privacy Policy, feel free to reach out:</p>
-            <p>📧 <strong>support@tqtadka.com</strong></p>
+            <h4 class="fw-bold mb-3">Contact</h4>
+
+            <p>
+                For privacy-related questions:
+            </p>
+
+            <p>
+                📧 <strong>support@futorch.com</strong>
+            </p>
         </section>
 
     </main>
