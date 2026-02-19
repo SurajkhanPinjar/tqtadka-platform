@@ -16,6 +16,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -215,7 +217,10 @@ public class PostServiceImpl implements PostService {
                 .orElseThrow(() -> new RuntimeException("Post not found"));
 
         // 1️⃣ increment counter (fast aggregate)
-        post.setViews(post.getViews() + 1);
+//        post.setViews(post.getViews() + 1);
+        if (!isUserLoggedIn()) {
+            post.setViews(post.getViews() + 1);
+        }
 
         // 2️⃣ save view event (analytics source)
         PostViewEvent event = PostViewEvent.builder()
@@ -756,6 +761,17 @@ public class PostServiceImpl implements PostService {
         int words = plain.trim().split("\\s+").length;
 
         return Math.max((int)Math.ceil(words / 200.0), 1);
+    }
+
+    private boolean isUserLoggedIn() {
+
+        Authentication auth = SecurityContextHolder
+                .getContext()
+                .getAuthentication();
+
+        return auth != null
+                && auth.isAuthenticated()
+                && !"anonymousUser".equals(auth.getPrincipal());
     }
 
 

@@ -31,6 +31,107 @@
     <!-- ================= HERO ================= -->
     <div th:replace="~{fragments/hero :: hero}"></div>
 
+    <section class="container mt-5">
+        <div class="spotlight-card p-5 rounded-4">
+
+            <small class="text-uppercase text-muted">Featured Guide</small>
+
+            <h3 class="fw-bold mt-2">
+                Complete Guide to AI for Everyone (2026 Edition)
+            </h3>
+
+            <p class="text-muted">
+                Structured foundation + systems + workflows for long-term leverage.
+            </p>
+
+            <a href="https://futorch.com/en/learn_ai/complete-guide-to-ai-for-everyone-2026-edition" class="btn btn-dark mt-3">Read Guide</a>
+
+        </div>
+    </section>
+
+    <!-- ================= START HERE ================= -->
+    <section class="container mt-5">
+        <div class="start-here-box p-4 p-md-5 rounded-4 shadow-sm">
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3 class="fw-bold mb-0">Start Here</h3>
+                <span class="text-muted small">Structured Learning Path</span>
+            </div>
+
+            <div class="row g-4">
+
+                <div class="col-md-3">
+                    <a th:href="@{/{lang}/learn-ai/complete-guide-to-ai-for-everyone-everyday-2026-edition-a-practical-blueprint-for-learning-work-and-leverage(lang=${lang})}"
+                       class="start-card text-decoration-none text-dark">
+                        <h6 class="fw-bold">What Is AI?</h6>
+                        <p class="small text-muted mb-0">
+                            Clear beginner guide. No hype.
+                        </p>
+                    </a>
+                </div>
+
+                <div class="col-md-3">
+                    <a th:href="@{/{lang}/learn_ai/how-ai-actually-works-step-by-step-clear(lang=${lang})}"
+                       class="start-card text-decoration-none text-dark">
+                        <h6 class="fw-bold">How AI Works</h6>
+                        <p class="small text-muted mb-0">
+                            Step-by-step breakdown.
+                        </p>
+                    </a>
+                </div>
+
+                <div class="col-md-3">
+                    <a th:href="@{/{lang}/ai_tools/best-ai-tools-in-2026(lang=${lang})}"
+                       class="start-card text-decoration-none text-dark">
+                        <h6 class="fw-bold">Best AI Tools</h6>
+                        <p class="small text-muted mb-0">
+                            Tested for real workflows.
+                        </p>
+                    </a>
+                </div>
+
+                <div class="col-md-3">
+                    <a th:href="@{/{lang}/ai_at_work/ai-for-professionals-the-complete-daily-leverage-blueprint-2026-edition(lang=${lang})}"
+                       class="start-card text-decoration-none text-dark">
+                        <h6 class="fw-bold">AI at Work</h6>
+                        <p class="small text-muted mb-0">
+                            Practical use cases.
+                        </p>
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= CORE GUIDES ================= -->
+    <section class="container mt-5">
+        <h3 class="fw-bold mb-4">Core AI Guides</h3>
+
+        <div class="row g-4">
+            <div class="col-md-6">
+                <a th:href="@{/{lang}/learn_ai/complete-guide-to-ai-for-everyone-2026-edition(lang=${lang})}"
+                   class="core-guide-card text-decoration-none text-dark shadow-sm">
+                    <h5 class="fw-bold">Complete Guide to AI for Everyone (2026)</h5>
+                    <p class="text-muted mb-0">
+                        Structured foundation + systems + workflows.
+                    </p>
+                </a>
+            </div>
+
+            <div class="col-md-6">
+                <a th:href="@{/{lang}/ai_tools/best-top-10-ai-productivity-tools(lang=${lang})}"
+                   class="core-guide-card text-decoration-none text-dark shadow-sm">
+                    <h5 class="fw-bold">AI Productivity Systems</h5>
+                    <p class="text-muted mb-0">
+                        Practical frameworks for daily leverage.
+                    </p>
+                </a>
+            </div>
+        </div>
+    </section>
+
+
     <!-- ================= MAIN ================= -->
     <div class="container mt-0 pt-5">
 
@@ -86,7 +187,12 @@
                  th:if="${learnAI != null and !#lists.isEmpty(learnAI)}">
 
             <div class="carousel-header">
-                <h3 class="carousel-title">LEARN AI</h3>
+                <div>
+                    <h3 class="carousel-title">AI Foundations</h3>
+                    <p class="text-muted small mb-0">
+                        Core concepts every serious builder should understand.
+                    </p>
+                </div>
                 <a th:href="@{/{lang}/category/LEARN_AI(lang=${lang})}"
                    class="carousel-view-all">View all</a>
             </div>
@@ -285,6 +391,31 @@
 
     </div>
 </div>
+
+<section class="container mt-5 mb-5">
+    <div class="p-4 rounded-4 bg-light text-center">
+        <h5 class="fw-bold mb-2">
+            AI doesn’t replace thinking.
+        </h5>
+        <p class="text-muted mb-0">
+            It removes friction from thinking.
+        </p>
+    </div>
+</section>
+<section class="container mt-5">
+    <div class="author-strip p-4 rounded-4 shadow-sm">
+
+        <h5 class="fw-bold mb-2">
+            Built by a Practicing IT Professional
+        </h5>
+
+        <p class="text-muted mb-0">
+            Real-world experimentation. Daily AI workflow testing.
+            No hype. Just structured leverage.
+        </p>
+
+    </div>
+</section>
 
 <!-- ================= FOOTER ================= -->
 <div th:replace="~{fragments/footer :: footer}"></div>
