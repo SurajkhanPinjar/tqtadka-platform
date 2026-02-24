@@ -56,6 +56,11 @@ public class HomeController {
                 postRepository.findTrendingByCategory(
                         language, CategoryType.AI_AT_WORK, PageRequest.of(0, 10)));
 
+        model.addAttribute("aiByIndustry",
+                postRepository.findTrendingByCategory(
+                        language, CategoryType.AI_BY_INDUSTRY, PageRequest.of(0, 10)));
+
+
         model.addAttribute("aiFuture",
                 postRepository.findTrendingByCategory(
                         language, CategoryType.AI_FUTURE, PageRequest.of(0, 10)));

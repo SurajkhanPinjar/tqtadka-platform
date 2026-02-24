@@ -1,0 +1,69 @@
+Commands:
+
+:-> mvn clean package -DskipTests
+
+:-> scp target/tqtadka-platform-0.0.1-SNAPSHOT.jar \
+root@137.59.53.244:/opt/tqtadka/app/app.jar
+
+Surajkhan@123
+
+:-> ls -lh target/*.jar
+
+
+—————————
+ssh root@137.59.53.244
+
+cd /opt/tqtadka
+
+docker compose down
+
+docker compose build --no-cache
+
+docker ps
+
+docker compose up -d
+
+docker logs tqtadka-app | grep profile
+
+docker logs tqtadka-app --tail=50
+
+
+
+
+Docker Logs:
+docker ps
+
+docker exec -it tqtadka-app env | grep CLOUDFLARE
+
+
+
+curl -F "file=@images.png" http://localhost:8001/admin/images/upload
+
+
+-============ pgadmin
+psql -U postgres
+
+docker exec -it tqtadka-postgres psql -U tqtadka -d tqtadka
+
+
+SET search_path TO tqtadka;
+
+
+
+=====================
+
+jewel.ns.cloudflare.com
+joaquin.ns.cloudflare.com
+
+
+CLOUDFLARE_R2_ACCESS_KEY=9ab134f33734b64d66258862d09302cc
+CLOUDFLARE_R2_SECRET_KEY=0a0daeebbd5cfd49f0874d1000a839ee9d0a13df1163223a44cea85fedc7d46f
+CLOUDFLARE_R2_BUCKET=tqtadka-images
+CLOUDFLARE_R2_PUBLIC_URL=https://img.tqtadka.in
+CLOUDFLARE_R2_ENDPOINT=https://36c9a2d1aec1384629ed8efc2d712f61.r2.cloudflarestorage.com
+
+
+Token :
+euvqF74bYJ77as0KfexQqOhAKLCJjqIHFT04NN1H
+
+
