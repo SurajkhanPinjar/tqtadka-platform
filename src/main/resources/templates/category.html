@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title th:text="${activeCategory != null ? activeCategory : 'Category'}">
+    <title th:text="${activeCategory.displayName != null ? activeCategory : 'Category'}">
         Category
     </title>
 
@@ -31,6 +31,21 @@
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
         gtag('config', 'G-273B0GBB8C');
+    </script>
+
+    <script type="application/ld+json" th:inline="javascript">
+        {
+            "@context": "https://schema.org",
+            "@type": "CollectionPage",
+            "name": /*[[${activeCategory.displayName}]]*/,
+            "url": /*[[${'https://futorch.com/' + lang + '/' + activeCategory.slug}]]*/,
+            "description": /*[['Browse ' + ${activeCategory.displayName} + ' articles on Futorch']]*/,
+            "isPartOf": {
+                "@type": "WebSite",
+                "name": "Futorch",
+                "url": "https://futorch.com"
+            }
+        }
     </script>
 </head>
 
@@ -66,19 +81,19 @@
         <div class="glass-filter-group mb-4"
              th:attr="data-active=${sort}">
 
-            <a th:href="@{/{lang}/{cat.slug}(lang=${lang}, cat=${activeCategory}, sort='latest')}"
+            <a th:href="@{/{lang}/{cat}(lang=${lang}, cat=${activeCategory}, sort='latest')}"
                class="glass-filter-btn"
                th:classappend="${sort == 'latest'} ? ' active'">
                 Latest
             </a>
 
-            <a th:href="@{/{lang}/{cat.slug}(lang=${lang}, cat=${activeCategory}, sort='popular')}"
+            <a th:href="@{/{lang}/{cat}(lang=${lang}, cat=${activeCategory}, sort='popular')}"
                class="glass-filter-btn"
                th:classappend="${sort == 'popular'} ? ' active'">
                 Popular
             </a>
 
-            <a th:href="@{/{lang}/{cat.slug}(lang=${lang}, cat=${activeCategory}, sort='oldest')}"
+            <a th:href="@{/{lang}/{cat}(lang=${lang}, cat=${activeCategory}, sort='oldest')}"
                class="glass-filter-btn"
                th:classappend="${sort == 'oldest'} ? ' active'">
                 Oldest
@@ -97,13 +112,13 @@
                      th:classappend="${prompt == true} ? ' right' : ' left'"></div>
 
                 <!-- ALL POSTS -->
-                <a th:href="@{/{lang}/{cat.slug}(lang=${lang}, cat=${activeCategory}, sort=${sort})}"
+                <a th:href="@{/{lang}/{cat}(lang=${lang}, cat=${activeCategory}, sort=${sort})}"
                    class="ai-toggle-option"
                    th:classappend="${prompt == null} ? ' active'">
                     All Posts
                 </a>
 
-                <a th:href="@{/{lang}/{cat.slug}(lang=${lang}, cat=${activeCategory}, sort=${sort}, prompt=true)}"
+                <a th:href="@{/{lang}/{cat}(lang=${lang}, cat=${activeCategory}, sort=${sort}, prompt=true)}"
                    class="ai-toggle-option"
                    th:classappend="${prompt == true} ? ' active'">
                     Prompts
@@ -209,7 +224,7 @@
                     <li class="page-item"
                         th:classappend="${currentPage == 0} ? ' disabled'">
                         <a class="page-link"
-                           th:href="@{/{lang}/{cat.slug}(
+                           th:href="@{/{lang}/{cat}(
                         lang=${lang},
                         cat=${activeCategory},
                         sort=${sort},

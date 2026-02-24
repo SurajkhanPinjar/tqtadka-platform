@@ -31,6 +31,36 @@
         gtag('js', new Date());
         gtag('config', 'G-273B0GBB8C');
     </script>
+
+    <script type="application/ld+json" th:inline="javascript">
+        {
+            "@context": "https://schema.org",
+            "@type": "BlogPosting",
+            "mainEntityOfPage": {
+                "@type": "WebPage",
+                "@id": /*[[${'https://futorch.com/' + lang + '/' + post.category.slug + '/' + post.slug}]]*/
+            },
+            "headline": /*[[${post.title}]]*/,
+            "description": /*[[${post.intro}]]*/,
+            "image": /*[[${post.imageUrl != null ? post.imageUrl : 'https://futorch.com/images/placeholder.png'}]]*/,
+            "author": {
+                "@type": "Person",
+                "name": /*[[${post.authorName != null ? post.authorName : 'Futorch'}]]*/
+            },
+            "publisher": {
+                "@type": "Organization",
+                "name": "Futorch",
+                "logo": {
+                    "@type": "ImageObject",
+                    "url": "https://futorch.com/images/logo.png"
+                }
+            },
+            "datePublished": /*[[${post.publishedAt}]]*/,
+            "dateModified": /*[[${post.publishedAt}]]*/,
+            "articleSection": /*[[${post.category.displayName}]]*/,
+            "keywords": /*[[${post.tags != null && !post.tags.isEmpty() ? #strings.listJoin(post.tags.![name], ', ') : ''}]]*/
+        }
+    </script>
 </head>
 
 <body>
