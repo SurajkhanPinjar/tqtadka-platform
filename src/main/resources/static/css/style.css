@@ -2434,3 +2434,32 @@ td.text-end, th.text-end {
     border: 1px solid #eee;
     box-shadow: 0 6px 20px rgba(0,0,0,0.03);
 }}
+/* ===== Futorch Editorial Breadcrumb ===== */
+.breadcrumb-futorch {
+    font-size: 14px;
+    color: #8b8b8b;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 10px 0 20px;
+    font-weight: 400;
+}
+
+.breadcrumb-futorch a {
+    color: #8b8b8b;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.breadcrumb-futorch a:hover {
+    color: #111;
+}
+
+.breadcrumb-futorch .current {
+    color: #111;
+    font-weight: 500;
+}
+
+.breadcrumb-sep {
+    color: #d1d5db;
+}}

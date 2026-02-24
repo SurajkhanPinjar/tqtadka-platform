@@ -1,0 +1,29 @@
+<nav class="breadcrumb-futorch" aria-label="Breadcrumb">
+
+    <!-- Home -->
+    <a th:href="@{/{lang}(lang=${lang})}">
+        Home
+    </a>
+
+    <!-- Separator -->
+    <span class="breadcrumb-sep">•</span>
+
+    <!-- Category -->
+    <a th:href="@{/{lang}/{cat}(
+            lang=${lang},
+            cat=${categorySlug}
+        )}"
+       th:text="${categoryName}">
+        Category
+    </a>
+
+    <!-- Separator -->
+    <span class="breadcrumb-sep">•</span>
+
+    <!-- Current Page -->
+    <span class="current"
+          th:text="${pageTitle}">
+        Title
+    </span>
+
+</nav>

@@ -62,6 +62,15 @@ public class BlogController {
             model.addAttribute("post", post);
 
             // =========================
+            // BREADCRUMB
+            // =========================
+            CategoryType category = post.getCategory();
+
+            model.addAttribute("categoryName", category.getDisplayName());
+            model.addAttribute("categorySlug", category.getSlug());
+            model.addAttribute("pageTitle", post.getTitle());
+
+            // =========================
             // COMMENTS
             // =========================
             model.addAttribute(

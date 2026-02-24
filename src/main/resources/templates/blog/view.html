@@ -68,6 +68,9 @@
                         loading="lazy">
             </div>
 
+            <div th:replace="fragments/breadcrumb"></div>
+            <br>
+
             <!-- Minimal Finance Disclaimer (Below Hero Image) -->
             <p th:if="${post.category.name() == 'FINANCE'}"
                class="finance-disclaimer-mini">

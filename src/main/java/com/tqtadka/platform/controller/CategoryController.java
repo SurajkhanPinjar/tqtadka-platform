@@ -20,10 +20,10 @@ public class CategoryController {
         this.postService = postService;
     }
 
-    @GetMapping("/{lang}/category/{category}")
+    @GetMapping("/{lang}/{categorySlug:learn-ai|ai-tools|ai-at-work|ai-by-industry|ai-future|ai-news}")
     public String viewCategory(
             @PathVariable String lang,
-            @PathVariable CategoryType category,
+            @PathVariable String categorySlug,
             @RequestParam(defaultValue = "latest") String sort,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(required = false) Boolean prompt,
@@ -33,6 +33,8 @@ public class CategoryController {
                 "kn".equalsIgnoreCase(lang)
                         ? LanguageType.KN
                         : LanguageType.EN;
+
+        CategoryType category = fromSlug(categorySlug);
 
         Page<Post> postPage =
                 postService.getPostsByCategory(
@@ -50,6 +52,21 @@ public class CategoryController {
         model.addAttribute("categories", CategoryType.values());
         model.addAttribute("activeCategory", category);
 
+        // =========================
+        // BREADCRUMB
+        // =========================
+        model.addAttribute("categoryName", category.getDisplayName());
+        model.addAttribute("categorySlug", category.getSlug());
+
         return "category";
+    }
+
+    private CategoryType fromSlug(String slug) {
+        for (CategoryType c : CategoryType.values()) {
+            if (c.getSlug().equalsIgnoreCase(slug)) {
+                return c;
+            }
+        }
+        throw new IllegalArgumentException("Invalid category slug: " + slug);
     }
 }

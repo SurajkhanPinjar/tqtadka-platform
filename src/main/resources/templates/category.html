@@ -43,6 +43,8 @@
         activeCategory=${activeCategory}
 ">
     <div th:replace="~{fragments/header :: header}"></div>
+
+
 </th:block>
 
 
@@ -56,37 +58,29 @@
             CATEGORY
         </h2>
 
+        <div th:replace="fragments/breadcrumb"></div>
+        <br>
+
+
         <!-- ================= SORT TABS ================= -->
         <div class="glass-filter-group mb-4"
              th:attr="data-active=${sort}">
 
-            <a th:href="@{/{lang}/category/{category}(
-            lang=${lang},
-            category=${activeCategory},
-            sort='latest'
-        )}"
+            <a th:href="@{/{lang}/{cat.slug}(lang=${lang}, cat=${activeCategory}, sort='latest')}"
                class="glass-filter-btn"
-               th:classappend="${sort == 'latest' ? ' active' : ''}">
+               th:classappend="${sort == 'latest'} ? ' active'">
                 Latest
             </a>
 
-            <a th:href="@{/{lang}/category/{category}(
-            lang=${lang},
-            category=${activeCategory},
-            sort='popular'
-        )}"
+            <a th:href="@{/{lang}/{cat.slug}(lang=${lang}, cat=${activeCategory}, sort='popular')}"
                class="glass-filter-btn"
-               th:classappend="${sort == 'popular' ? ' active' : ''}">
+               th:classappend="${sort == 'popular'} ? ' active'">
                 Popular
             </a>
 
-            <a th:href="@{/{lang}/category/{category}(
-            lang=${lang},
-            category=${activeCategory},
-            sort='oldest'
-        )}"
+            <a th:href="@{/{lang}/{cat.slug}(lang=${lang}, cat=${activeCategory}, sort='oldest')}"
                class="glass-filter-btn"
-               th:classappend="${sort == 'oldest' ? ' active' : ''}">
+               th:classappend="${sort == 'oldest'} ? ' active'">
                 Oldest
             </a>
 
@@ -103,21 +97,13 @@
                      th:classappend="${prompt == true} ? ' right' : ' left'"></div>
 
                 <!-- ALL POSTS -->
-                <a th:href="@{/{lang}/category/{category}(
-                lang=${lang},
-                sort=${sort}
-            )}"
+                <a th:href="@{/{lang}/{cat.slug}(lang=${lang}, cat=${activeCategory}, sort=${sort})}"
                    class="ai-toggle-option"
                    th:classappend="${prompt == null} ? ' active'">
                     All Posts
                 </a>
 
-                <!-- PROMPT POSTS -->
-                <a th:href="@{/{lang}/category/{category}(
-                lang=${lang},
-                sort=${sort},
-                prompt=true
-            )}"
+                <a th:href="@{/{lang}/{cat.slug}(lang=${lang}, cat=${activeCategory}, sort=${sort}, prompt=true)}"
                    class="ai-toggle-option"
                    th:classappend="${prompt == true} ? ' active'">
                     Prompts
@@ -171,7 +157,7 @@
 
                         <!-- CATEGORY -->
                         <small class="text-muted text-uppercase mb-1"
-                               th:text="${post.category}">
+                               th:text="${post.category.displayName}">
                         </small>
 
                         <!-- TITLE -->
@@ -223,7 +209,7 @@
                     <li class="page-item"
                         th:classappend="${currentPage == 0} ? ' disabled'">
                         <a class="page-link"
-                           th:href="@{/{lang}/category/{cat}(
+                           th:href="@{/{lang}/{cat.slug}(
                         lang=${lang},
                         cat=${activeCategory},
                         sort=${sort},
@@ -238,7 +224,7 @@
                         th:classappend="${i == currentPage} ? ' active'">
                         <a class="page-link"
                            th:text="${i + 1}"
-                           th:href="@{/{lang}/category/{cat}(
+                           th:href="@{/{lang}/{cat.slug}(
                         lang=${lang},
                         cat=${activeCategory},
                         sort=${sort},
@@ -250,7 +236,7 @@
                     <li class="page-item"
                         th:classappend="${currentPage + 1 == totalPages} ? ' disabled'">
                         <a class="page-link"
-                           th:href="@{/{lang}/category/{cat}(
+                           th:href="@{/{lang}/{cat.slug}(
                         lang=${lang},
                         cat=${activeCategory},
                         sort=${sort},
