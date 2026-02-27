@@ -41,8 +41,9 @@
                 "@id": /*[[${'https://futorch.com/' + lang + '/' + post.category.slug + '/' + post.slug}]]*/
             },
             "headline": /*[[${post.title}]]*/,
-            "description": /*[[${post.intro}]]*/,
+            "description": /*[[${#strings.replace(post.intro, '\n', ' ')}]]*/,
             "image": /*[[${post.imageUrl != null ? post.imageUrl : 'https://futorch.com/images/placeholder.png'}]]*/,
+            "inLanguage": /*[[${lang}]]*/,
             "author": {
                 "@type": "Person",
                 "name": /*[[${post.authorName != null ? post.authorName : 'Futorch'}]]*/
@@ -52,15 +53,17 @@
                 "name": "Futorch",
                 "logo": {
                     "@type": "ImageObject",
-                    "url": "https://futorch.com/images/logo.png"
+                    "url": "https://futorch.com/images/logo.png",
+                    "width": 512,
+                    "height": 512
                 }
             },
-            "datePublished": /*[[${post.publishedAt}]]*/,
-            "dateModified": /*[[${post.publishedAt}]]*/,
-            "articleSection": /*[[${post.category.displayName}]]*/,
-            "keywords": /*[[${post.tags != null && !post.tags.isEmpty() ? #strings.listJoin(post.tags.![name], ', ') : ''}]]*/
+            "datePublished": /*[[${#temporals.format(post.publishedAt, 'yyyy-MM-dd''T''HH:mm:ssXXX')}]]*/,
+            "dateModified": /*[[${#temporals.format(post.publishedAt, 'yyyy-MM-dd''T''HH:mm:ssXXX')}]]*/,
+            "articleSection": /*[[${post.category.displayName}]]*/
         }
     </script>
+
 </head>
 
 <body>
@@ -331,6 +334,33 @@
                     </div>
                 </div>
             </div>
+
+            <section th:if="${post.faqs != null and !post.faqs.isEmpty()}"
+                     class="mt-5 pt-4 border-top faq-section">
+
+                <h3 class="fw-bold mb-4">Frequently Asked Questions</h3>
+
+                <div class="faq-list">
+
+                    <div class="faq-item mb-4"
+                         th:each="f,iter : ${post.faqs}"
+                         th:if="${f != null}">
+
+                        <!-- Question with number -->
+                        <h5 class="faq-question fw-bold">
+                            <span th:text="${iter.index + 1} + '. '"></span>
+                            <span th:text="${f.question}"></span>
+                        </h5>
+
+                        <!-- Answer -->
+                        <p class="faq-answer mb-0"
+                           th:text="${f.answer}">
+                        </p>
+
+                    </div>
+
+                </div>
+            </section>
 
             <!-- COMMENTS -->
             <section class="mt-5 pt-5 border-top"

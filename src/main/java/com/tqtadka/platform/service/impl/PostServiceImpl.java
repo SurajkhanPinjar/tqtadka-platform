@@ -262,6 +262,7 @@ public class PostServiceImpl implements PostService {
             String[] promptTexts,
             String imageSectionsJson,
             String tagsInput,
+            String safeFaqJson,
             List<String> relatedSlugs
     ) {
 
@@ -284,6 +285,7 @@ public class PostServiceImpl implements PostService {
                 .aiPrompts(new HashSet<>())
                 .imageSections(new HashSet<>())   // 🔥 SAFE INIT
                 .tags(new HashSet<>())
+                .faqs(new HashSet<>())
                 .aiPostMode(
                         category == CategoryType.LEARN_AI
                                 ? (aiPostMode != null ? aiPostMode : AiPostMode.BLOG)
@@ -341,6 +343,38 @@ public class PostServiceImpl implements PostService {
             }
         }
 
+        // ===============================
+// ❓ FAQS (SAFE ADD)
+// ===============================
+        if (safeFaqJson != null && !safeFaqJson.isBlank()) {
+
+            try {
+                ObjectMapper mapper = new ObjectMapper();
+
+                List<FaqItem> faqItems =
+                        mapper.readValue(
+                                safeFaqJson,
+                                new TypeReference<List<FaqItem>>() {}
+                        );
+
+                for (FaqItem dto : faqItems) {
+
+                    if (dto.getQuestion() == null || dto.getQuestion().isBlank()) continue;
+                    if (dto.getAnswer() == null || dto.getAnswer().isBlank()) continue;
+
+                    FaqItem faq = new FaqItem();
+                    faq.setQuestion(dto.getQuestion().trim());
+                    faq.setAnswer(dto.getAnswer().trim());
+                    faq.setPost(post);   // 🔥 IMPORTANT FK
+
+                    post.getFaqs().add(faq);
+                }
+
+            } catch (Exception e) {
+                throw new RuntimeException("Invalid FAQ payload", e);
+            }
+        }
+
         post.setRelatedPostSlugs(
                 normalizeRelatedSlugs(relatedSlugs)
         );
@@ -365,6 +399,7 @@ public class PostServiceImpl implements PostService {
             String[] promptNames,
             String[] promptTexts,
             String tags,
+            String safeFaqJson,
             List<String> relatedSlugs
     ) {
 
@@ -448,6 +483,40 @@ public class PostServiceImpl implements PostService {
         post.getRelatedPostSlugs().clear();
         if (relatedSlugs != null) {
             post.getRelatedPostSlugs().addAll(relatedSlugs);
+        }
+
+        // ===============================
+// ❓ FAQS (REPLACE MODE)
+// ===============================
+        post.getFaqs().clear();   // ⭐ remove old FAQs
+
+        if (safeFaqJson != null && !safeFaqJson.isBlank()) {
+
+            try {
+                ObjectMapper mapper = new ObjectMapper();
+
+                List<FaqItem> faqItems =
+                        mapper.readValue(
+                                safeFaqJson,
+                                new TypeReference<List<FaqItem>>() {}
+                        );
+
+                for (FaqItem dto : faqItems) {
+
+                    if (dto.getQuestion() == null || dto.getQuestion().isBlank()) continue;
+                    if (dto.getAnswer() == null || dto.getAnswer().isBlank()) continue;
+
+                    FaqItem faq = new FaqItem();
+                    faq.setQuestion(dto.getQuestion().trim());
+                    faq.setAnswer(dto.getAnswer().trim());
+                    faq.setPost(post);
+
+                    post.getFaqs().add(faq);
+                }
+
+            } catch (Exception e) {
+                throw new RuntimeException("Invalid FAQ payload", e);
+            }
         }
 
         post.setReadingTimeMinutes(
@@ -578,6 +647,9 @@ public class PostServiceImpl implements PostService {
         // ✅ FORCE INIT (cheap & safe)
         post.getTags().size();                // tags
         post.getRelatedPostSlugs().size();    // related blogs
+        post.getFaqs().size();          // ⭐ FIX — add this
+        post.getSections().size();      // optional but recommended
+        post.getImageSections().size(); // optional if used in view
 
         return post;
     }

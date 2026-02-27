@@ -210,6 +210,30 @@
                           rows="4"
                           placeholder="One bullet per line"></textarea>
 
+                <!-- ===============================
+                     FAQ SECTION
+                ================================ -->
+                <div class="mt-4">
+
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <label class="fw-bold mb-0">❓ FAQs</label>
+
+                        <button type="button"
+                                class="btn btn-sm btn-outline-dark"
+                                onclick="addFaqRow()">
+                            ➕ Add FAQ
+                        </button>
+                    </div>
+
+                    <div id="faqContainer" class="d-flex flex-column gap-2"></div>
+
+                    <small class="text-muted">
+                        Add common questions users search on Google
+                    </small>
+                </div>
+
+                <input type="hidden" name="faqJson" id="faqJson">
+
                 <!-- TIP -->
                 <input class="form-control mb-2"
                        name="tipTitle"
@@ -392,6 +416,27 @@ document.getElementById('postForm').addEventListener('submit', function (e) {
 
     document.getElementById("imageSectionsJson").value =
         JSON.stringify(sections);
+
+     // ❓ Serialize FAQs
+const faqs = [];
+
+document
+    .querySelectorAll("#faqContainer .card")
+    .forEach(card => {
+
+        const question =
+            card.querySelector('[data-field="question"]').value.trim();
+
+        const answer =
+            card.querySelector('[data-field="answer"]').value.trim();
+
+        if (question && answer) {
+            faqs.push({ question, answer });
+        }
+    });
+
+document.getElementById("faqJson").value =
+    JSON.stringify(faqs);
 });
 
     /* =========================
@@ -665,6 +710,7 @@ function addPromptRow() {
     }
 </script>
 
+
 <script>
     function wireSectionImageUpload(card) {
 
@@ -734,6 +780,37 @@ function addPromptRow() {
             preview.style.display = "none";
             removeBtn.style.display = "none";
         });
+    }
+</script>
+
+<script>
+    function addFaqRow(question = '', answer = '') {
+
+        const container = document.getElementById("faqContainer");
+
+        const wrapper = document.createElement("div");
+        wrapper.className = "card p-3";
+
+        wrapper.innerHTML = `
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <strong>FAQ</strong>
+                <button type="button"
+                        class="btn btn-sm btn-danger"
+                        onclick="this.closest('.card').remove()">✕</button>
+            </div>
+
+            <input class="form-control mb-2"
+                   placeholder="Question"
+                   data-field="question"
+                   value="${question}">
+
+            <textarea class="form-control"
+                      rows="3"
+                      placeholder="Answer"
+                      data-field="answer">${answer}</textarea>
+        `;
+
+        container.appendChild(wrapper);
     }
 </script>
 

@@ -270,6 +270,58 @@
                     </button>
                 </div>
 
+                <!-- ===============================
+                     FAQ SECTION (EDIT)
+                ================================ -->
+                <div class="mt-4">
+
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <label class="fw-bold mb-0">❓ FAQs</label>
+
+                        <button type="button"
+                                class="btn btn-sm btn-outline-dark"
+                                onclick="addFaqRow()">
+                            ➕ Add FAQ
+                        </button>
+                    </div>
+
+                    <div id="faqContainer" class="d-flex flex-column gap-2">
+
+                        <!-- Prefill existing FAQs -->
+                        <div class="card p-3"
+                             th:each="f,iter : ${post.faqs}">
+
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <strong>
+                                    FAQ <span th:text="${iter.index + 1}"></span>
+                                </strong>
+
+                                <button type="button"
+                                        class="btn btn-sm btn-danger"
+                                        onclick="this.closest('.card').remove()">✕</button>
+                            </div>
+
+                            <input class="form-control mb-2"
+                                   placeholder="Question"
+                                   data-field="question"
+                                   th:value="${f.question}">
+
+                            <textarea class="form-control"
+                                      rows="3"
+                                      placeholder="Answer"
+                                      data-field="answer"
+                                      th:text="${f.answer}"></textarea>
+                        </div>
+
+                    </div>
+
+                    <small class="text-muted">
+                        Add common questions users search on Google
+                    </small>
+                </div>
+
+                <input type="hidden" name="faqJson" id="faqJson">
+
                 <!-- =========================
      RELATED BLOGS (EDIT)
 ========================= -->
@@ -414,6 +466,27 @@
                 });
             }
         });
+
+    // ❓ Serialize FAQs
+    const faqs = [];
+
+    document
+        .querySelectorAll("#faqContainer .card")
+        .forEach(card => {
+
+            const question =
+                card.querySelector('[data-field="question"]').value.trim();
+
+            const answer =
+                card.querySelector('[data-field="answer"]').value.trim();
+
+            if (question && answer) {
+                faqs.push({ question, answer });
+            }
+        });
+
+    document.getElementById("faqJson").value =
+        JSON.stringify(faqs);
 
     document.getElementById("imageSectionsJson").value =
         JSON.stringify(sections);
@@ -740,6 +813,39 @@ const csrfHeader =
         removeBtn.style.display = "none";
     });
 }
+</script>
+
+<script>
+    function addFaqRow(question = '', answer = '') {
+
+        const container = document.getElementById("faqContainer");
+
+        const index = container.querySelectorAll(".card").length;
+
+        const wrapper = document.createElement("div");
+        wrapper.className = "card p-3";
+
+        wrapper.innerHTML = `
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <strong>FAQ ${index + 1}</strong>
+                <button type="button"
+                        class="btn btn-sm btn-danger"
+                        onclick="this.closest('.card').remove()">✕</button>
+            </div>
+
+            <input class="form-control mb-2"
+                   placeholder="Question"
+                   data-field="question"
+                   value="${question}">
+
+            <textarea class="form-control"
+                      rows="3"
+                      placeholder="Answer"
+                      data-field="answer">${answer}</textarea>
+        `;
+
+        container.appendChild(wrapper);
+    }
 </script>
 
 <!-- ================= FOOTER ================= -->

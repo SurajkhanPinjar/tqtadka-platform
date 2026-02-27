@@ -201,7 +201,10 @@
                         Core concepts, mental models, and system thinking every serious builder should master.
                     </p>
                 </div>
-                <a th:href="@{/{lang}/category/LEARN_AI(lang=${lang})}"
+                <a th:href="@{/{lang}/{cat}(
+                        lang=${lang},
+                        cat=${T(com.tqtadka.platform.entity.CategoryType).LEARN_AI.slug}
+                    )}"
                    class="carousel-view-all">View all</a>
             </div>
 
@@ -273,7 +276,10 @@
                     </p>
                 </div>
 
-                <a th:href="@{/{lang}/category/AI_TOOLS(lang=${lang})}"
+                <a th:href="@{/{lang}/{cat}(
+                        lang=${lang},
+                        cat=${T(com.tqtadka.platform.entity.CategoryType).AI_TOOLS.slug}
+                    )}"
                    class="carousel-view-all">View all</a>
             </div>
 
@@ -345,7 +351,10 @@
                         Real-world applications of AI inside modern teams, workflows, and operations.
                     </p>
                 </div>
-                <a th:href="@{/{lang}/category/AI_AT_WORK(lang=${lang})}"
+                <a th:href="@{/{lang}/{cat}(
+                        lang=${lang},
+                        cat=${T(com.tqtadka.platform.entity.CategoryType).AI_AT_WORK.slug}
+                    )}"
                    class="carousel-view-all">View all</a>
             </div>
 
@@ -418,7 +427,10 @@
                             </p>
                         </div>
 
-                        <a th:href="@{/{lang}/category/AI_BY_INDUSTRY(lang=${lang})}"
+                        <a th:href="@{/{lang}/{cat}(
+                                lang=${lang},
+                                cat=${T(com.tqtadka.platform.entity.CategoryType).AI_BY_INDUSTRY.slug}
+                            )}"
                            class="carousel-view-all">View all</a>
                     </div>
 
@@ -485,13 +497,16 @@
 
                             <div class="carousel-header">
                                 <div>
-                                    <h3 class="carousel-title">AI News</h3>
+                                    <h3 class="carousel-title">AI Future</h3>
                                     <p class="text-muted small mb-0">
                                         Major developments, model releases, and shifts that actually matter.
                                     </p>
                                 </div>
 
-                                <a th:href="@{/{lang}/category/AI_NEWS(lang=${lang})}"
+                                <a th:href="@{/{lang}/{cat}(
+                                    lang=${lang},
+                                    cat=${T(com.tqtadka.platform.entity.CategoryType).AI_FUTURE.slug}
+                                )}"
                                    class="carousel-view-all">View all</a>
                             </div>
 
@@ -564,7 +579,10 @@
                                             </p>
                                         </div>
 
-                                        <a th:href="@{/{lang}/category/AI_NEWS(lang=${lang})}"
+                                        <a th:href="@{/{lang}/{cat}(
+                                            lang=${lang},
+                                            cat=${T(com.tqtadka.platform.entity.CategoryType).AI_NEWS.slug}
+                                        )}"
                                            class="carousel-view-all">View all</a>
                                     </div>
 

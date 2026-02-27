@@ -143,6 +143,7 @@ public class AdminPostController {
 
             // IMAGE SECTIONS JSON
             @RequestParam(required = false) String imageSectionsJson,
+            @RequestParam(required = false) String faqJson,
 
             HttpServletRequest request,
             @RequestParam(required = false) Boolean publish,
@@ -190,6 +191,14 @@ public class AdminPostController {
                         ? null
                         : imageSectionsJson;
 
+        /* FAQ Section */
+        String safeFaqJson =
+                (faqJson == null ||
+                        faqJson.isBlank() ||
+                        faqJson.equals("[]"))
+                        ? null
+                        : faqJson;
+
     /* =========================
        CALL SERVICE
     ========================= */
@@ -207,6 +216,7 @@ public class AdminPostController {
                 promptTextList.toArray(new String[0]),
                 safeImageSectionsJson,   // ✅ SAFE
                 tags,
+                safeFaqJson,
                 relatedSlugs
         );
 
@@ -306,6 +316,7 @@ public class AdminPostController {
                 @RequestParam(required = false) String tags,
                 HttpServletRequest request,
                 @RequestParam(required = false) Boolean publish,
+                @RequestParam(required = false) String faqJson,
                 @RequestParam(required = false) List<String> relatedSlugs
 
         ) {
@@ -371,6 +382,14 @@ public class AdminPostController {
                     log.error("Failed to parse imageSectionsJson", e);
                 }
             }
+            /* FAQ Section */
+            String safeFaqJson =
+                    (faqJson == null ||
+                            faqJson.isBlank() ||
+                            faqJson.equals("[]"))
+                            ? null
+                            : faqJson;
+
 
         /* =========================
            🔥 SERVICE CALL (NO REGRESSION)
@@ -394,6 +413,7 @@ public class AdminPostController {
                     promptNames,
                     promptTextList.toArray(new String[0]),
                     tags,
+                    safeFaqJson,
                     relatedSlugs
             );
 

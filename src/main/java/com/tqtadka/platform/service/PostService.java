@@ -36,6 +36,7 @@ public interface PostService {
             String[] promptTexts,
             String imageSectionsJson,
             String tagsInput, // 🔥 NEW (optional)
+            String safeFaqJson,
             List<String> slugs
     );
 
@@ -107,6 +108,7 @@ public interface PostService {
             String[] promptNames,
             String[] promptTexts,
             String tags,
+            String safeFaqJson,
             List<String> relatedSlugs
     );
 

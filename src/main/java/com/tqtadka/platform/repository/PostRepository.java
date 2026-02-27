@@ -205,11 +205,28 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 //            @Param("language") LanguageType language
 //    );
 
+//    @Query("""
+//select distinct p from Post p
+//left join fetch p.imageSections
+//left join fetch p.sections
+//left join fetch p.aiPrompts
+//where p.slug = :slug
+//  and p.language = :language
+//  and p.published = true
+//""")
+//    Optional<Post> findPostForPublicView(
+//            @Param("slug") String slug,
+//            @Param("language") LanguageType language
+//    );
+
     @Query("""
 select distinct p from Post p
 left join fetch p.imageSections
 left join fetch p.sections
 left join fetch p.aiPrompts
+left join fetch p.tags
+left join fetch p.faqs
+left join fetch p.relatedPostSlugs
 where p.slug = :slug
   and p.language = :language
   and p.published = true
@@ -511,6 +528,7 @@ left join fetch p.tags
 left join fetch p.sections
 left join fetch p.imageSections
 left join fetch p.aiPrompts
+left join fetch p.faqs 
 left join fetch p.relatedPostSlugs
 where p.id = :id
 """)
@@ -648,19 +666,19 @@ order by p.publishedAt desc
 
     // 🔹 Latest Posts
     @Query("""
-    select 
-        p.slug as slug,
-        p.title as title,
-        p.imageUrl as imageUrl,
-        p.category as category,
-        p.views as views,
-        p.applauseCount as applauseCount,
-        p.readingTimeMinutes as readingTimeMinutes,
-        p.publishedAt as publishedAt
-    from Post p
-    where p.language = :language
-      and p.published = true
-    order by p.publishedAt desc
+select 
+    p.slug as slug,
+    p.title as title,
+    p.imageUrl as imageUrl,
+    p.category as category,
+    p.views as views,
+    p.applauseCount as applauseCount,
+    p.readingTimeMinutes as readingTimeMinutes,
+    p.createdAt as createdAt
+from Post p
+where p.language = :language
+  and p.published = true
+order by p.createdAt desc
 """)
     List<HomePostView> findLatestHomePosts(
             @Param("language") LanguageType language,
@@ -698,7 +716,7 @@ order by p.publishedAt desc
             p.views as views,
             p.applauseCount as applauseCount,
             p.readingTimeMinutes as readingTimeMinutes,
-            p.publishedAt as publishedAt
+            p.createdAt as createdAt
         from Post p
         where p.language = :language
           and p.published = true
