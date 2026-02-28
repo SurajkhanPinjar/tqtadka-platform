@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @Controller
@@ -127,6 +128,21 @@ public class BlogController {
                             post.getSlug(),
                             PageRequest.of(0, 8)
                     );
+
+            List<Map<String, Object>> faqSchema = post.getFaqs()
+                    .stream()
+                    .filter(f -> f.getQuestion() != null && f.getAnswer() != null)
+                    .map(f -> Map.of(
+                            "@type", "Question",
+                            "name", f.getQuestion(),
+                            "acceptedAnswer", Map.of(
+                                    "@type", "Answer",
+                                    "text", f.getAnswer()
+                            )
+                    ))
+                    .toList();
+
+            model.addAttribute("faqSchema", faqSchema);
 
             model.addAttribute("youMightLikePosts", youMightLikePosts);
 

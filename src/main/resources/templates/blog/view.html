@@ -63,6 +63,17 @@
             "articleSection": /*[[${post.category.displayName}]]*/
         }
     </script>
+    <script type="application/ld+json"
+            th:if="${faqSchema != null and !faqSchema.isEmpty()}"
+            th:inline="javascript">
+
+        {
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": [[${faqSchema}]]
+        }
+
+    </script>
 
 </head>
 
