@@ -5,6 +5,7 @@ import com.tqtadka.platform.dto.SidebarPostView;
 import com.tqtadka.platform.entity.CategoryType;
 import com.tqtadka.platform.entity.LanguageType;
 import com.tqtadka.platform.entity.Post;
+import com.tqtadka.platform.entity.Tag;
 import com.tqtadka.platform.repository.PostRepository;
 import com.tqtadka.platform.service.CommentService;
 import com.tqtadka.platform.service.PostService;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Controller
 public class BlogController {
@@ -168,6 +170,15 @@ public class BlogController {
                     );
 
             model.addAttribute("youMightLikePosts", youMightLikePosts);
+
+            model.addAttribute("keywordString",
+                    post.getTags() != null
+                            ? post.getTags()
+                            .stream()
+                            .map(Tag::getName)
+                            .collect(Collectors.joining(", "))
+                            : ""
+            );
 
             // =========================
             // INCREMENT VIEWS (SEPARATE TX)

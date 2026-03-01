@@ -136,6 +136,41 @@
                           rows="4"
                           placeholder="Short intro paragraph"></textarea>
 
+                <!-- ===============================
+     SEO META DESCRIPTION
+================================ -->
+                <div class="mb-4">
+
+                    <label class="form-label fw-semibold">
+                        🔎 Meta Description
+                    </label>
+
+                    <textarea class="form-control"
+                              name="metaDescription"
+                              id="metaDescription"
+                              rows="3"
+                              maxlength="160"
+                              placeholder="Write 140–160 characters summary for Google search results"></textarea>
+
+                    <div class="d-flex justify-content-between mt-1">
+                        <small class="text-muted">
+                            Ideal length: 140–160 characters
+                        </small>
+
+                        <small>
+                            <span id="metaCharCount">0</span>/160
+                        </small>
+                    </div>
+
+                    <button type="button"
+                            class="btn btn-sm btn-outline-secondary mt-2"
+                            onclick="generateMetaFromContent()">
+                        ✨ Auto-generate from content
+                    </button>
+
+                </div>
+
+
                 <div class="mb-3">
                     <label class="form-label fw-semibold">Tags</label>
 
@@ -811,6 +846,47 @@ function addPromptRow() {
         `;
 
         container.appendChild(wrapper);
+    }
+</script>
+
+<script>
+    const metaTextarea = document.getElementById("metaDescription");
+    const metaCounter = document.getElementById("metaCharCount");
+
+    function updateMetaCounter() {
+        const length = metaTextarea.value.length;
+        metaCounter.innerText = length;
+
+        if (length > 160) {
+            metaCounter.style.color = "red";
+        } else if (length < 120) {
+            metaCounter.style.color = "orange";
+        } else {
+            metaCounter.style.color = "green";
+        }
+    }
+
+    metaTextarea.addEventListener("input", updateMetaCounter);
+
+    updateMetaCounter();
+
+    function generateMetaFromContent() {
+
+        const plainText = quill.getText().trim();
+
+        if (!plainText) {
+            alert("Write some content first");
+            return;
+        }
+
+        let generated = plainText.substring(0, 155).trim();
+
+        if (plainText.length > 155) {
+            generated += "...";
+        }
+
+        metaTextarea.value = generated;
+        updateMetaCounter();
     }
 </script>
 

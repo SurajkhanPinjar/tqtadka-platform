@@ -25,6 +25,7 @@ public interface PostService {
     public Post createPost(
             String title,
             String intro,
+            String finalMetaDescription,
             CategoryType category,
             LanguageType language,
             String imageUrl,
@@ -95,6 +96,7 @@ public interface PostService {
             Long postId,
             String title,
             String intro,
+            String finalMetaDescription,
             CategoryType category,
             LanguageType language,
             String imageUrl,

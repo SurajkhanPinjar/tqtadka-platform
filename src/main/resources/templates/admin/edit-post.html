@@ -141,6 +141,26 @@
                           th:text="${post.intro}">
                 </textarea>
 
+                <!-- META DESCRIPTION -->
+                <div class="mb-4">
+                    <label class="form-label fw-semibold">
+                        Meta Description
+                        <span class="text-muted small">(155–160 characters recommended)</span>
+                    </label>
+
+                    <textarea class="form-control"
+                              name="metaDescription"
+                              rows="3"
+                              maxlength="160"
+                              th:text="${post.effectiveMetaDescription}"
+                              placeholder="Write a compelling search snippet for Google...">
+    </textarea>
+
+                    <small class="text-muted">
+                        This appears in Google search results.
+                    </small>
+                </div>
+
                 <!-- TAGS -->
                 <div class="mb-3">
                     <label class="form-label fw-semibold">
@@ -421,10 +441,10 @@
     }
 
     // 🔥 HERO IMAGE MANDATORY
-    const heroImageUrl =
-        document.getElementById("imageUrl").value.trim();
+    const heroImageUrl = document.getElementById("imageUrl").value.trim();
+    const removeChecked = document.getElementById("removeImageCheck").checked;
 
-    if (!heroImageUrl) {
+    if (!heroImageUrl && !removeChecked) {
         alert("Hero image is mandatory");
         e.preventDefault();
         return;
@@ -846,6 +866,38 @@ const csrfHeader =
 
         container.appendChild(wrapper);
     }
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+    const meta = document.querySelector("textarea[name='metaDescription']");
+
+    if (!meta) return;
+
+    const counter = document.createElement("div");
+    counter.className = "small text-muted mt-1";
+    meta.after(counter);
+
+    function updateCount() {
+    const length = meta.value.length;
+
+    counter.innerText = length + " / 160 characters";
+
+    if (length < 120) {
+        counter.classList.remove("text-success");
+        counter.classList.add("text-warning");
+    } else if (length <= 160) {
+        counter.classList.remove("text-warning");
+        counter.classList.add("text-success");
+    } else {
+        counter.classList.remove("text-success");
+        counter.classList.add("text-danger");
+    }
+}
+
+    meta.addEventListener("input", updateCount);
+    updateCount();
+});
 </script>
 
 <!-- ================= FOOTER ================= -->

@@ -125,6 +125,7 @@ public class AdminPostController {
 
             @RequestParam String title,
             @RequestParam(required = false) String intro,
+            @RequestParam(required = false) String metaDescription,
             @RequestParam CategoryType category,
             @RequestParam LanguageType language,
             @RequestParam(required = false) String imageUrl,
@@ -153,7 +154,8 @@ public class AdminPostController {
         requireAuth(userDetails);
         User currentUser = userDetails.getUser();
 
-        if (imageUrl == null || imageUrl.isBlank()) {
+        if ((imageUrl == null || imageUrl.isBlank()) &&
+                (existingImageUrl == null || existingImageUrl.isBlank())) {
             throw new IllegalArgumentException("Hero image is mandatory");
         }
 
@@ -199,12 +201,21 @@ public class AdminPostController {
                         ? null
                         : faqJson;
 
+        String finalMetaDescription;
+
+        if (metaDescription != null && !metaDescription.isBlank()) {
+            finalMetaDescription = clean(metaDescription.trim());
+        } else {
+            finalMetaDescription = generateMetaFromContent(sectionContent);
+        }
+
     /* =========================
        CALL SERVICE
     ========================= */
         postService.createPost(
                 title.trim(),
                 clean(intro),
+                finalMetaDescription,
                 category,
                 language,
                 clean(imageUrl),
@@ -280,6 +291,7 @@ public class AdminPostController {
         model.addAttribute("tagString", tagString);
         model.addAttribute("relatedSlugs", post.getRelatedPostSlugs());
         model.addAttribute("categories", allowedCategories);
+        model.addAttribute("metaDescription", post.getEffectiveMetaDescription());
 
         return "admin/edit-post";
     }
@@ -291,6 +303,7 @@ public class AdminPostController {
 
                 @RequestParam String title,
                 @RequestParam(required = false) String intro,
+                @RequestParam(required = false) String metaDescription,
                 @RequestParam CategoryType category,
                 @RequestParam LanguageType language,
 
@@ -390,6 +403,13 @@ public class AdminPostController {
                             ? null
                             : faqJson;
 
+            String finalMetaDescription;
+
+            if (metaDescription != null && !metaDescription.isBlank()) {
+                finalMetaDescription = clean(metaDescription.trim());
+            } else {
+                finalMetaDescription = generateMetaFromContent(sectionContent);
+            }
 
         /* =========================
            🔥 SERVICE CALL (NO REGRESSION)
@@ -398,6 +418,7 @@ public class AdminPostController {
                     postId,
                     title.trim(),
                     clean(intro),
+                    finalMetaDescription,
                     category,
                     language,
 
@@ -590,5 +611,21 @@ public class AdminPostController {
 
     private String stripHtml(String html) {
         return html.replaceAll("<[^>]*>", "");
+    }
+
+    private String generateMetaFromContent(String htmlContent) {
+
+        if (htmlContent == null) return null;
+
+        // Remove HTML tags
+        String plain = htmlContent.replaceAll("<[^>]*>", " ")
+                .replaceAll("\\s+", " ")
+                .trim();
+
+        if (plain.length() <= 155) {
+            return plain;
+        }
+
+        return plain.substring(0, 155).trim() + "...";
     }
 }

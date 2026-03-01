@@ -253,6 +253,7 @@ public class PostServiceImpl implements PostService {
     public Post createPost(
             String title,
             String intro,
+            String finalMetaDescription,
             CategoryType category,
             LanguageType language,
             String imageUrl,
@@ -275,6 +276,7 @@ public class PostServiceImpl implements PostService {
                 .title(title.trim())
                 .slug(slug)
                 .intro(clean(intro))
+                .metaDescription(finalMetaDescription)
                 .category(category)
                 .language(language)
                 .imageUrl(clean(imageUrl))
@@ -307,9 +309,18 @@ public class PostServiceImpl implements PostService {
         Set<Tag> tags = resolveTags(tagsInput);
         post.setTags(tags);
 
+        post.setUpdatedAt(LocalDateTime.now());
+
+        // ===============================
+        // 🔢 WORD COUNT + READING TIME
+        // ===============================
+        int wordCount = calculateWordCount(post.getSections());
+
+        post.setWordCount(wordCount);
         post.setReadingTimeMinutes(
-                calculateReadingTime(post.getSections())
+                Math.max((int) Math.ceil(wordCount / 200.0), 1)
         );
+        post.setUpdatedAt(LocalDateTime.now());
 
         // ===============================
         // 🔥 IMAGE SECTIONS (SAFE ADD)
@@ -388,6 +399,7 @@ public class PostServiceImpl implements PostService {
             Long postId,
             String title,
             String intro,
+            String finalMetaDescription,
             CategoryType category,
             LanguageType language,
             String imageUrl,
@@ -416,28 +428,16 @@ public class PostServiceImpl implements PostService {
         String oldImage = clean(existingImageUrl);
 
 
-        /* =========================
-   🔥 TAGS – MINIMAL FIX
-========================= */
-//        if (tags != null) {
-//
-//            // remove old tag relations
-//            post.getTags().clear();
-//
-//            if (!tags.isBlank()) {
-//                Set<Tag> newTags = Arrays.stream(tags.split(","))
-//                        .map(String::trim)
-//                        .filter(s -> !s.isEmpty())
-//                        .map(tagService::findOrCreate) // existing method you already use
-//                        .collect(Collectors.toSet());
-//
-//                post.getTags().removeIf(t -> true); // or clear()
-//
-//                for (Tag tag : newTags) {
-//                    post.getTags().add(tag);
-//                }
-//            }
-//        }
+        post.setMetaDescription(clean(finalMetaDescription));
+        post.setUpdatedAt(LocalDateTime.now());
+
+        int wordCount = calculateWordCount(post.getSections());
+
+        post.setWordCount(wordCount);
+        post.setReadingTimeMinutes(
+                Math.max((int) Math.ceil(wordCount / 200.0), 1)
+        );
+
 
         // 🔥 IMAGE LOGIC (FIXED)
         if (removeImage && (newImage == null || newImage.isBlank())) {
@@ -926,6 +926,35 @@ public class PostServiceImpl implements PostService {
         } catch (Exception e) {
             return null;
         }
+    }
+
+
+    private int calculateWordCount(Set<PostSection> sections) {
+
+        if (sections == null || sections.isEmpty()) {
+            return 0;
+        }
+
+        String combinedContent = sections.stream()
+                .map(PostSection::getContent)
+                .filter(Objects::nonNull)
+                .collect(Collectors.joining(" "));
+
+        if (combinedContent.isBlank()) {
+            return 0;
+        }
+
+        String plainText = combinedContent
+                .replaceAll("<[^>]*>", " ")
+                .replaceAll("&nbsp;", " ")
+                .replaceAll("\\s+", " ")
+                .trim();
+
+        if (plainText.isBlank()) {
+            return 0;
+        }
+
+        return plainText.split("\\s+").length;
     }
 
 
