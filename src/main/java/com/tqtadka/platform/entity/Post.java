@@ -18,6 +18,26 @@ import java.util.*;
         name = "post",
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = {"slug", "language"})
+        },
+        indexes = {
+
+                // 🔥 Homepage (latest)
+                @Index(
+                        name = "idx_post_home_listing",
+                        columnList = "published,deleted,language,published_at"
+                ),
+
+                // 🔥 Category latest
+                @Index(
+                        name = "idx_post_category_listing",
+                        columnList = "published,deleted,category,language,published_at"
+                ),
+
+                // 🔥 Trending by category
+                @Index(
+                        name = "idx_post_trending",
+                        columnList = "published,deleted,category,language,engagement_score"
+                )
         }
 )
 public class Post {
@@ -44,6 +64,12 @@ public class Post {
     @Lob
     @Column(columnDefinition = "TEXT")
     private String intro;
+
+    @Column(length = 300)
+    private String metaDescription;
+
+    @Column(name = "engagement_score", nullable = false)
+    private Long engagementScore = 0L;
 
     /* =========================
        ENUMS
@@ -97,12 +123,29 @@ public class Post {
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    @Column(name = "published_at")
     private LocalDateTime publishedAt;
 
     @PrePersist
     protected void onCreate() {
         if (this.createdAt == null) {
             this.createdAt = LocalDateTime.now();
+        }
+        this.updatedAt = LocalDateTime.now();
+        normalizeSlugInternal();
+        recalculateEngagementScore();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
+        normalizeSlugInternal();
+        recalculateEngagementScore();
+    }
+
+    private void normalizeSlugInternal() {
+        if (slug != null) {
+            slug = slug.trim().toLowerCase();
         }
     }
 
@@ -182,6 +225,14 @@ public Set<Tag> getTags() {
     @Column(name = "reading_time_minutes")
     private Integer readingTimeMinutes;
 
+    private LocalDateTime updatedAt;
+
+    @Column(name = "word_count")
+    private Integer wordCount;
+
+    @Column(nullable = false)
+    private boolean deleted = false;
+
     public String getTimeAgo() {
 
         if (this.publishedAt == null) {
@@ -213,6 +264,43 @@ public Set<Tag> getTags() {
         return publishedAt.format(
                 DateTimeFormatter.ofPattern("dd MMM yyyy")
         );
+    }
+
+    public String getEffectiveMetaDescription() {
+
+        if (metaDescription != null && !metaDescription.isBlank()) {
+            return metaDescription;
+        }
+
+        if (intro != null && !intro.isBlank()) {
+            return trimTo160(stripHtml(intro));
+        }
+
+        if (sections != null && !sections.isEmpty()) {
+            for (PostSection section : sections) {
+                if (section.getContent() != null && !section.getContent().isBlank()) {
+                    return trimTo160(stripHtml(section.getContent()));
+                }
+            }
+        }
+
+        return "Structured AI insights, tools, and systems thinking for serious builders.";
+    }
+
+    private String stripHtml(String input) {
+        return input == null ? "" :
+                input.replaceAll("<[^>]*>", "")
+                        .replaceAll("\\s+", " ")
+                        .trim();
+    }
+
+    private String trimTo160(String input) {
+        String clean = input.trim();
+        return clean.length() > 160 ? clean.substring(0, 157) + "..." : clean;
+    }
+
+    public void recalculateEngagementScore() {
+        this.engagementScore = this.views + this.applauseCount;
     }
 
 }

@@ -27,29 +27,3 @@
     </span>
 
 </nav>
-<script type="application/ld+json" th:inline="javascript">
-    {
-        "@context": "https://schema.org",
-        "@type": "BreadcrumbList",
-        "itemListElement": [
-            {
-                "@type": "ListItem",
-                "position": 1,
-                "name": "Home",
-                "item": /*[[${'https://futorch.com/' + lang}]]*/
-            },
-            {
-                "@type": "ListItem",
-                "position": 2,
-                "name": /*[[${categoryName}]]*/,
-                "item": /*[[${'https://futorch.com/' + lang + '/' + categorySlug}]]*/
-            },
-            {
-                "@type": "ListItem",
-                "position": 3,
-                "name": /*[[${pageTitle}]]*/,
-                "item": /*[[${'https://futorch.com/' + lang + '/' + categorySlug + '/' + postSlug}]]*/
-            }
-        ]
-    }
-</script>

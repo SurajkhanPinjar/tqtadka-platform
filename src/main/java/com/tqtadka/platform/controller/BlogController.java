@@ -41,6 +41,7 @@ public class BlogController {
     @GetMapping("/{lang:en|kn}/{categorySlug}/{slug}")
     public String viewPost(
             @PathVariable String lang,
+            @PathVariable String categorySlug,
             @PathVariable String slug,
             Model model
     ) {
@@ -51,11 +52,20 @@ public class BlogController {
                         : LanguageType.EN;
 
         try {
-            // ✅ PURE READ (no heavy joins, no LOBs)
-            Post post = postService.getPostForPublicView(slug, language);
 
             // =========================
-            // MODEL BASICS
+            // FETCH POST
+            // =========================
+            Post post = postService.getPostForPublicView(slug, language);
+
+            // Safety: Ensure URL category matches DB category
+            if (!post.getCategory().getSlug().equalsIgnoreCase(categorySlug)) {
+                return "redirect:/" + lang + "/" +
+                        post.getCategory().getSlug() + "/" + slug;
+            }
+
+            // =========================
+            // BASIC MODEL
             // =========================
             model.addAttribute("lang", lang.toLowerCase());
             model.addAttribute("categories", CategoryType.values());
@@ -63,13 +73,28 @@ public class BlogController {
             model.addAttribute("post", post);
 
             // =========================
+            // CANONICAL URL
+            // =========================
+            String canonicalUrl = "https://futorch.com/"
+                    + lang + "/"
+                    + post.getCategory().getSlug() + "/"
+                    + post.getSlug();
+
+            model.addAttribute("canonicalUrl", canonicalUrl);
+
+            // =========================
+            // SEO META
+            // =========================
+            model.addAttribute("pageTitle", post.getTitle());
+            model.addAttribute("metaDescription", post.getEffectiveMetaDescription());
+            model.addAttribute("ogImage", post.getImageUrl());
+
+            // =========================
             // BREADCRUMB
             // =========================
             CategoryType category = post.getCategory();
-
             model.addAttribute("categoryName", category.getDisplayName());
             model.addAttribute("categorySlug", category.getSlug());
-            model.addAttribute("pageTitle", post.getTitle());
 
             // =========================
             // COMMENTS
@@ -88,7 +113,7 @@ public class BlogController {
             );
 
             // =========================
-            // 🔗 RELATED POSTS (SAFE)
+            // RELATED POSTS
             // =========================
             Set<String> relatedSlugs =
                     post.getRelatedPostSlugs() == null
@@ -105,14 +130,27 @@ public class BlogController {
 
             model.addAttribute("relatedPosts", relatedPosts);
 
+            // =========================
+            // FAQ SCHEMA
+            // =========================
+            List<Map<String, Object>> faqSchema = post.getFaqs()
+                    .stream()
+                    .filter(f -> f.getQuestion() != null && f.getAnswer() != null)
+                    .map(f -> Map.of(
+                            "@type", "Question",
+                            "name", f.getQuestion(),
+                            "acceptedAnswer", Map.of(
+                                    "@type", "Answer",
+                                    "text", f.getAnswer()
+                            )
+                    ))
+                    .toList();
+
+            model.addAttribute("faqSchema", faqSchema);
 
             // =========================
-            // 🔥 WRITE IN SEPARATE TX
+            // TRENDING
             // =========================
-            postService.incrementViews(slug, language);
-
-
-            // Trending Posts
             model.addAttribute(
                     "trendingPosts",
                     postRepository.findTrendingPosts(
@@ -129,29 +167,21 @@ public class BlogController {
                             PageRequest.of(0, 8)
                     );
 
-            List<Map<String, Object>> faqSchema = post.getFaqs()
-                    .stream()
-                    .filter(f -> f.getQuestion() != null && f.getAnswer() != null)
-                    .map(f -> Map.of(
-                            "@type", "Question",
-                            "name", f.getQuestion(),
-                            "acceptedAnswer", Map.of(
-                                    "@type", "Answer",
-                                    "text", f.getAnswer()
-                            )
-                    ))
-                    .toList();
-
-            model.addAttribute("faqSchema", faqSchema);
-
             model.addAttribute("youMightLikePosts", youMightLikePosts);
+
+            // =========================
+            // INCREMENT VIEWS (SEPARATE TX)
+            // =========================
+            postService.incrementViews(slug, language);
 
             return "blog/view";
 
         } catch (RuntimeException ex) {
+
             model.addAttribute("lang", lang.toLowerCase());
             model.addAttribute("categories", CategoryType.values());
             model.addAttribute("activeCategory", null);
+
             return "error/404";
         }
     }

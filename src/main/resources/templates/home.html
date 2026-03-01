@@ -1,8 +1,57 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>TQtadka</title>
+    <title th:text="${pageTitle ?: 'Futorch – AI Systems, Tools & Career Intelligence'}">Futorch – AI Systems, Tools & Career Intelligence</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Canonical -->
+    <link rel="canonical" th:href="${canonicalUrl}" />
+
+    <!-- Meta Description -->
+    <meta name="description"
+          th:content="${metaDescription ?: 'Structured AI learning, tools, and systems thinking for serious AI Enthusiast..'}" />
+
+    <!-- ================= Open Graph ================= -->
+    <meta property="og:type" content="website" />
+
+    <meta property="og:title"
+          th:content="${pageTitle ?: 'Futorch'}" />
+
+    <meta property="og:description"
+          th:content="${metaDescription ?: 'Structured AI learning, tools, and systems thinking for serious AI Enthusiast.'}" />
+
+    <meta property="og:url"
+          th:content="${canonicalUrl}" />
+
+    <meta property="og:image"
+          th:content="${ogImage ?: 'https://futorch.com/images/default-og.jpg'}" />
+
+    <meta property="og:site_name" content="Futorch" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title"
+          th:content="${pageTitle ?: 'Futorch'}" />
+    <meta name="twitter:description"
+          th:content="${metaDescription ?: 'Structured AI learning, tools, and systems thinking for serious AI Enthusiast..'}" />
+    <meta name="twitter:image"
+          th:content="${ogImage ?: 'https://futorch.com/images/default-og.jpg'}" />
+
+    <!-- ================= Structured Data ================= -->
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "name": "Futorch",
+            "url": "https://futorch.com",
+            "potentialAction": {
+                "@type": "SearchAction",
+                "target": "https://futorch.com/en/search?q={search_term_string}",
+                "query-input": "required name=search_term_string"
+            }
+        }
+    </script>
+
 
     <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&display=swap"
@@ -17,6 +66,7 @@
 
     <!-- Custom Styles -->
     <link rel="stylesheet" th:href="@{/css/style.css}">
+
     <!-- Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-273B0GBB8C"></script>
     <script>
@@ -52,7 +102,7 @@
                 Structured foundation + systems + workflows for long-term leverage.
             </p>
 
-            <a href="https://futorch.com/en/learn_ai/complete-guide-to-ai-for-everyone-2026-edition" class="btn btn-dark mt-3">Read Guide</a>
+            <a href="https://futorch.com/en/learn-ai/complete-guide-to-ai-for-everyone-2026-edition" class="btn btn-dark mt-3">Read Guide</a>
 
         </div>
     </section>
@@ -79,7 +129,7 @@
                 </div>
 
                 <div class="col-md-3">
-                    <a th:href="@{/{lang}/learn_ai/how-ai-actually-works-step-by-step-clear(lang=${lang})}"
+                    <a th:href="@{/{lang}/learn-ai/how-ai-actually-works-step-by-step-clear(lang=${lang})}"
                        class="start-card text-decoration-none text-dark">
                         <h6 class="fw-bold">How AI Works</h6>
                         <p class="small text-muted mb-0">
@@ -89,7 +139,7 @@
                 </div>
 
                 <div class="col-md-3">
-                    <a th:href="@{/{lang}/ai_tools/best-ai-tools-in-2026(lang=${lang})}"
+                    <a th:href="@{/{lang}/ai-tools/best-ai-tools-in-2026(lang=${lang})}"
                        class="start-card text-decoration-none text-dark">
                         <h6 class="fw-bold">Best AI Tools</h6>
                         <p class="small text-muted mb-0">
@@ -99,7 +149,7 @@
                 </div>
 
                 <div class="col-md-3">
-                    <a th:href="@{/{lang}/ai_at_work/ai-for-professionals-the-complete-daily-leverage-blueprint-2026-edition(lang=${lang})}"
+                    <a th:href="@{/{lang}/ai-at-work/ai-for-professionals-the-complete-daily-leverage-blueprint-2026-edition(lang=${lang})}"
                        class="start-card text-decoration-none text-dark">
                         <h6 class="fw-bold">AI at Work</h6>
                         <p class="small text-muted mb-0">
@@ -118,7 +168,7 @@
 
         <div class="row g-4">
             <div class="col-md-6">
-                <a th:href="@{/{lang}/learn_ai/complete-guide-to-ai-for-everyone-2026-edition(lang=${lang})}"
+                <a th:href="@{/{lang}/learn-ai/complete-guide-to-ai-for-everyone-2026-edition(lang=${lang})}"
                    class="core-guide-card text-decoration-none text-dark shadow-sm">
                     <h5 class="fw-bold">Complete Guide to AI for Everyone (2026)</h5>
                     <p class="text-muted mb-0">
@@ -128,7 +178,7 @@
             </div>
 
             <div class="col-md-6">
-                <a th:href="@{/{lang}/ai_tools/best-top-10-ai-productivity-tools(lang=${lang})}"
+                <a th:href="@{/{lang}/ai-tools/best-top-10-ai-productivity-tools(lang=${lang})}"
                    class="core-guide-card text-decoration-none text-dark shadow-sm">
                     <h5 class="fw-bold">AI Productivity Systems</h5>
                     <p class="text-muted mb-0">

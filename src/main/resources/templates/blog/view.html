@@ -1,29 +1,80 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+
+    <!-- ================= BASIC META ================= -->
     <title th:text="${post.title}">Blog</title>
+
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- CSRF -->
+    <!-- Meta Description -->
+    <meta name="description"
+          th:content="${metaDescription}" />
+
+    <!-- Canonical -->
+    <link rel="canonical"
+          th:href="${canonicalUrl}" />
+
+    <!-- hreflang (EN / KN) -->
+    <link rel="alternate"
+          hreflang="en"
+          th:href="@{/en/{cat}/{slug}(
+                cat=${post.category.slug},
+                slug=${post.slug}
+          )}" />
+
+    <link rel="alternate"
+          hreflang="kn"
+          th:href="@{/kn/{cat}/{slug}(
+                cat=${post.category.slug},
+                slug=${post.slug}
+          )}" />
+
+    <!-- ================= OpenGraph ================= -->
+    <meta property="og:type" content="article" />
+
+    <meta property="og:title"
+          th:content="${post.title}" />
+
+    <meta property="og:description"
+          th:content="${metaDescription}" />
+
+    <meta property="og:url"
+          th:content="${canonicalUrl}" />
+
+    <meta property="og:image"
+          th:content="${post.imageUrl != null ? post.imageUrl : 'https://futorch.com/images/placeholder.png'}" />
+
+    <meta property="og:site_name" content="Futorch" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title"
+          th:content="${post.title}" />
+    <meta name="twitter:description"
+          th:content="${metaDescription}" />
+    <meta name="twitter:image"
+          th:content="${post.imageUrl != null ? post.imageUrl : 'https://futorch.com/images/placeholder.png'}" />
+
+    <!-- ================= CSRF ================= -->
     <meta name="_csrf" th:content="${_csrf.token}"/>
 
-    <!-- Fonts -->
+    <!-- ================= Fonts ================= -->
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&display=swap"
           rel="stylesheet">
 
-    <!-- Bootstrap -->
+    <!-- ================= Bootstrap ================= -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
           rel="stylesheet">
 
-
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
           rel="stylesheet">
 
+    <!-- Custom Styles -->
     <link rel="stylesheet" th:href="@{/css/style.css}">
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
-          rel="stylesheet">
-    <!-- Google Analytics -->
+    <!-- ================= Google Analytics ================= -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-273B0GBB8C"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
@@ -32,16 +83,26 @@
         gtag('config', 'G-273B0GBB8C');
     </script>
 
+    <meta property="article:published_time"
+          th:content="${#temporals.format(post.publishedAt, 'yyyy-MM-dd''T''HH:mm:ssXXX')}" />
+
+    <meta property="article:modified_time"
+          th:content="${#temporals.format(
+          post.updatedAt != null ? post.updatedAt : post.publishedAt,
+          'yyyy-MM-dd''T''HH:mm:ssXXX'
+      )}" />
+
+    <!-- ================= BlogPosting Schema ================= -->
     <script type="application/ld+json" th:inline="javascript">
         {
             "@context": "https://schema.org",
             "@type": "BlogPosting",
             "mainEntityOfPage": {
                 "@type": "WebPage",
-                "@id": /*[[${'https://futorch.com/' + lang + '/' + post.category.slug + '/' + post.slug}]]*/
+                "@id": /*[[${canonicalUrl}]]*/
             },
             "headline": /*[[${post.title}]]*/,
-            "description": /*[[${#strings.replace(post.intro, '\n', ' ')}]]*/,
+            "description": /*[[${metaDescription}]]*/,
             "image": /*[[${post.imageUrl != null ? post.imageUrl : 'https://futorch.com/images/placeholder.png'}]]*/,
             "inLanguage": /*[[${lang}]]*/,
             "author": {
@@ -59,24 +120,56 @@
                 }
             },
             "datePublished": /*[[${#temporals.format(post.publishedAt, 'yyyy-MM-dd''T''HH:mm:ssXXX')}]]*/,
-            "dateModified": /*[[${#temporals.format(post.publishedAt, 'yyyy-MM-dd''T''HH:mm:ssXXX')}]]*/,
-            "articleSection": /*[[${post.category.displayName}]]*/
+            "dateModified":
+            /*[[${#temporals.format(
+                post.updatedAt != null ? post.updatedAt : post.publishedAt,
+                'yyyy-MM-dd''T''HH:mm:ssXXX'
+            )}]]*/,
+            "articleSection": /*[[${post.category.displayName}]]*/,
+            "wordCount": /*[[${post.readingTimeMinutes != null ? post.readingTimeMinutes * 200 : 800}]]*/,
+            "timeRequired": /*[[${post.readingTimeMinutes != null ? 'PT' + post.readingTimeMinutes + 'M' : 'PT5M'}]]*/
         }
     </script>
+
+    <script type="application/ld+json" th:inline="javascript">
+        {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+                {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "Home",
+                    "item": /*[[${'https://futorch.com/' + lang}]]*/
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": /*[[${post.category.displayName}]]*/,
+                    "item": /*[[${'https://futorch.com/' + lang + '/' + post.category.slug}]]*/
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 3,
+                    "name": /*[[${post.title}]]*/,
+                    "item": /*[[${canonicalUrl}]]*/
+                }
+            ]
+        }
+    </script>
+
+    <!-- ================= FAQ Schema ================= -->
     <script type="application/ld+json"
             th:if="${faqSchema != null and !faqSchema.isEmpty()}"
             th:inline="javascript">
-
         {
             "@context": "https://schema.org",
             "@type": "FAQPage",
             "mainEntity": [[${faqSchema}]]
         }
-
     </script>
 
 </head>
-
 <body>
 
 <!-- HEADER -->
@@ -300,7 +393,11 @@
 
                 <div class="row g-4">
                     <div class="col-md-6 col-lg-4" th:each="rp : ${relatedPosts}">
-                        <a th:href="@{/{lang}/{category}/{slug}(lang=${lang},slug=${rp.slug})}"
+                        <a th:href="@{/{lang}/{cat}/{slug}(
+                            lang=${lang},
+                            cat=${rp.category.slug},
+                            slug=${rp.slug}
+                        )}">
                            class="text-decoration-none text-dark">
 
                             <div class="card h-100 shadow-sm border-0">

@@ -674,11 +674,12 @@ select
     p.views as views,
     p.applauseCount as applauseCount,
     p.readingTimeMinutes as readingTimeMinutes,
-    p.createdAt as createdAt
+    p.publishedAt as publishedAt
 from Post p
 where p.language = :language
   and p.published = true
-order by p.createdAt desc
+  and p.deleted = false
+order by p.publishedAt desc
 """)
     List<HomePostView> findLatestHomePosts(
             @Param("language") LanguageType language,
@@ -708,21 +709,22 @@ order by p.createdAt desc
 
     // 🔥 Trending by category
     @Query("""
-        select
-            p.slug as slug,
-            p.title as title,
-            p.imageUrl as imageUrl,
-            p.category as category,
-            p.views as views,
-            p.applauseCount as applauseCount,
-            p.readingTimeMinutes as readingTimeMinutes,
-            p.createdAt as createdAt
-        from Post p
-        where p.language = :language
-          and p.published = true
-          and p.category = :category
-        order by (p.views + p.applauseCount) desc
-    """)
+    select
+        p.slug as slug,
+        p.title as title,
+        p.imageUrl as imageUrl,
+        p.category as category,
+        p.views as views,
+        p.applauseCount as applauseCount,
+        p.readingTimeMinutes as readingTimeMinutes,
+        p.publishedAt as publishedAt
+    from Post p
+    where p.language = :language
+      and p.published = true
+      and p.deleted = false
+      and p.category = :category
+    order by p.engagementScore desc
+""")
     List<HomePostView> findTrendingByCategory(
             @Param("language") LanguageType language,
             @Param("category") CategoryType category,

@@ -2,6 +2,8 @@ package com.tqtadka.platform.service.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.tqtadka.platform.dto.ImageSectionDto;
 import com.tqtadka.platform.entity.*;
 import com.tqtadka.platform.repository.PostImageSectionRepository;
@@ -844,6 +846,86 @@ public class PostServiceImpl implements PostService {
         return auth != null
                 && auth.isAuthenticated()
                 && !"anonymousUser".equals(auth.getPrincipal());
+    }
+
+    public String buildItemListSchema(
+            List<Post> posts,
+            String lang,
+            int currentPage,
+            int pageSize
+    ) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+
+            ObjectNode root = mapper.createObjectNode();
+            root.put("@context", "https://schema.org");
+            root.put("@type", "ItemList");
+
+            ArrayNode items = mapper.createArrayNode();
+
+            for (int i = 0; i < posts.size(); i++) {
+                Post post = posts.get(i);
+
+                ObjectNode item = mapper.createObjectNode();
+                item.put("@type", "ListItem");
+                item.put("position", currentPage * pageSize + i + 1);
+                item.put("url",
+                        "https://futorch.com/"
+                                + lang + "/"
+                                + post.getCategory().getSlug() + "/"
+                                + post.getSlug()
+                );
+
+                items.add(item);
+            }
+
+            root.set("itemListElement", items);
+            root.put("numberOfItems", posts.size());
+
+            return mapper.writeValueAsString(root);
+
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public String buildCategoryBreadcrumbSchema(
+            String lang,
+            CategoryType category
+    ) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+
+            ObjectNode root = mapper.createObjectNode();
+            root.put("@context", "https://schema.org");
+            root.put("@type", "BreadcrumbList");
+
+            ArrayNode list = mapper.createArrayNode();
+
+            ObjectNode home = mapper.createObjectNode();
+            home.put("@type", "ListItem");
+            home.put("position", 1);
+            home.put("name", "Home");
+            home.put("item", "https://futorch.com/" + lang);
+
+            ObjectNode cat = mapper.createObjectNode();
+            cat.put("@type", "ListItem");
+            cat.put("position", 2);
+            cat.put("name", category.getDisplayName());
+            cat.put("item",
+                    "https://futorch.com/" + lang + "/" + category.getSlug()
+            );
+
+            list.add(home);
+            list.add(cat);
+
+            root.set("itemListElement", list);
+
+            return mapper.writeValueAsString(root);
+
+        } catch (Exception e) {
+            return null;
+        }
     }
 
 

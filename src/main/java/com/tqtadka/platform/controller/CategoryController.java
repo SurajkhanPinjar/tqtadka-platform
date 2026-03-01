@@ -58,6 +58,29 @@ public class CategoryController {
         model.addAttribute("categoryName", category.getDisplayName());
         model.addAttribute("categorySlug", category.getSlug());
 
+        model.addAttribute("pageSize", postPage.getSize());
+
+        // =====================
+        // SCHEMA GENERATION
+        // =====================
+
+        String itemListJson =
+                postService.buildItemListSchema(
+                        postPage.getContent(),
+                        lang,
+                        page,
+                        postPage.getSize()
+                );
+
+        String breadcrumbJson =
+                postService.buildCategoryBreadcrumbSchema(
+                        lang,
+                        category
+                );
+
+        model.addAttribute("itemListJson", itemListJson);
+        model.addAttribute("breadcrumbJson", breadcrumbJson);
+
         return "category";
     }
 

@@ -168,6 +168,18 @@ public interface PostService {
 
     public Post findFullPostForCopy(Long id);
 
+    public String buildCategoryBreadcrumbSchema(
+            String lang,
+            CategoryType category
+    );
+
+    public String buildItemListSchema(
+            List<Post> posts,
+            String lang,
+            int currentPage,
+            int pageSize
+    );
+
 
 
 
