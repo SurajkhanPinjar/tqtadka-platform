@@ -7,4 +7,5 @@ public interface RecentPostView {
     LanguageType getLanguage();
     String getImageUrl();
     java.time.LocalDateTime getPublishedAt();
+    CategoryType getCategory();
 }

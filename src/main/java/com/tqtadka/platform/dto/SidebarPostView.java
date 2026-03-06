@@ -1,5 +1,6 @@
 package com.tqtadka.platform.dto;
 
+import com.tqtadka.platform.entity.CategoryType;
 import com.tqtadka.platform.entity.LanguageType;
 
 import java.time.LocalDateTime;
@@ -14,4 +15,5 @@ public interface SidebarPostView {
     long getApplauseCount();
     LanguageType getLanguage();
     LocalDateTime getPublishedAt();
+    CategoryType getCategory();
 }

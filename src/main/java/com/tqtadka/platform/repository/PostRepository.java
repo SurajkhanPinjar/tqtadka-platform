@@ -263,7 +263,8 @@ where p.slug in :slugs
            p.slug as slug,
            p.language as language,
            p.imageUrl as imageUrl,
-           p.publishedAt as publishedAt
+           p.publishedAt as publishedAt,
+           p.category as category
     from Post p
     where p.language = :language
       and p.published = true
@@ -591,6 +592,10 @@ select
     p.title as title,
     p.imageUrl as imageUrl,
     p.language as language,
+    p.category as category,
+    p.views as views,
+    p.applauseCount as applauseCount,
+    p.commentCount as commentCount,
     p.publishedAt as publishedAt
 from Post p
 where p.published = true
@@ -612,6 +617,7 @@ select
     p.title as title,
     p.imageUrl as imageUrl,
     p.language as language,
+    p.category as category,
     p.publishedAt as publishedAt
 from Post p
 where p.category = :category

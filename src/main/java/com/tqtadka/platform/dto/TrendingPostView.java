@@ -1,5 +1,6 @@
 package com.tqtadka.platform.dto;
 
+import com.tqtadka.platform.entity.CategoryType;
 import com.tqtadka.platform.entity.LanguageType;
 
 import java.time.LocalDateTime;
@@ -13,4 +14,5 @@ public interface TrendingPostView {
     long getApplauseCount();
     long getCommentCount();
     LocalDateTime getPublishedAt();
+    CategoryType getCategory();
 }

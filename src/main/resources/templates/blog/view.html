@@ -398,7 +398,7 @@
                             lang=${lang},
                             cat=${rp.category.slug},
                             slug=${rp.slug}
-                        )}">
+                        )}"
                            class="text-decoration-none text-dark">
 
                             <div class="card h-100 shadow-sm border-0">
@@ -561,7 +561,11 @@
                 <div class="recent-post"
                      th:each="p : ${recentPosts}">
 
-                    <a th:href="@{'/' + ${p.language.name().toLowerCase()} + '/blog/' + ${p.slug}}"
+                    <a th:href="@{/{lang}/{cat}/{slug}(
+                            lang=${p.language.name().toLowerCase()},
+                            cat=${p.category.slug},
+                            slug=${p.slug}
+                        )}"
                        class="recent-post-link">
 
                         <img th:if="${p.imageUrl}"
@@ -585,7 +589,11 @@
                 <div class="recent-post"
                      th:each="p : ${trendingPosts}">
 
-                    <a th:href="@{'/' + ${p.language.name().toLowerCase()} + '/blog/' + ${p.slug}}"
+                    <a th:href="@{/{lang}/{cat}/{slug}(
+                            lang=${p.language.name().toLowerCase()},
+                            cat=${p.category.slug},
+                            slug=${p.slug}
+                        )}"
                        class="recent-post-link">
 
                         <img th:if="${p.imageUrl}"
@@ -610,7 +618,11 @@
                 <div class="recent-post"
                      th:each="p : ${youMightLikePosts}">
 
-                    <a th:href="@{'/' + ${p.language.name().toLowerCase()} + '/blog/' + ${p.slug}}"
+                    <a th:href="@{/{lang}/{cat}/{slug}(
+                            lang=${p.language.name().toLowerCase()},
+                            cat=${p.category.slug},
+                            slug=${p.slug}
+                        )}"
                        class="recent-post-link">
 
                         <img th:if="${p.imageUrl}"

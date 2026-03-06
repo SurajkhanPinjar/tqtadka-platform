@@ -78,7 +78,7 @@ public class BlogController {
             // CANONICAL URL
             // =========================
             String canonicalUrl = "https://futorch.com/"
-                    + lang + "/"
+                    + lang.toLowerCase() + "/"
                     + post.getCategory().getSlug() + "/"
                     + post.getSlug();
 
