@@ -771,8 +771,8 @@ public class PostServiceImpl implements PostService {
     ) {
         Sort sortSpec = switch (sort) {
             case "popular" -> Sort.by(Sort.Direction.DESC, "views");
-            case "oldest"  -> Sort.by(Sort.Direction.ASC, "publishedAt");
-            default        -> Sort.by(Sort.Direction.DESC, "publishedAt");
+            case "oldest"  -> Sort.by(Sort.Direction.ASC, "createdAt");
+            default        -> Sort.by(Sort.Direction.DESC, "createdAt");
         };
 
         Pageable pageable = PageRequest.of(page, 9, sortSpec);

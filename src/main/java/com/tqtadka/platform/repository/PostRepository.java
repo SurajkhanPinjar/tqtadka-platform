@@ -681,12 +681,12 @@ select
     p.views as views,
     p.applauseCount as applauseCount,
     p.readingTimeMinutes as readingTimeMinutes,
-    p.publishedAt as publishedAt
+    p.createdAt as createdAt
 from Post p
 where p.language = :language
   and p.published = true
   and p.deleted = false
-order by p.publishedAt desc
+order by p.createdAt desc
 """)
     List<HomePostView> findLatestHomePosts(
             @Param("language") LanguageType language,

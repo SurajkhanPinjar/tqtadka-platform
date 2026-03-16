@@ -2467,3 +2467,59 @@ td.text-end, th.text-end {
 #editor .ql-editor{
   min-height:450px;
 }
+.hero-categories{
+    margin-top:24px;
+    display:flex;
+    gap:14px;
+    flex-wrap:wrap;
+}
+
+.hero-categories a{
+
+    position:relative;
+
+    padding:8px 16px;
+    font-size:14px;
+    font-weight:500;
+    text-decoration:none;
+
+    color:#2563eb;
+
+    border-radius:999px;
+
+    /* GLASS BACKGROUND */
+    background:rgba(255,255,255,0.45);
+
+    /* GLASS BLUR */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+
+    /* GLASS BORDER */
+    border:1px solid rgba(255,255,255,0.6);
+
+    /* SOFT SHADOW */
+    box-shadow:
+        0 2px 6px rgba(0,0,0,0.06),
+        inset 0 1px 0 rgba(255,255,255,0.4);
+
+    transition: all .25s ease;
+}
+
+/* PREMIUM HOVER */
+.hero-categories a:hover{
+
+    color:white;
+
+    background:linear-gradient(
+        135deg,
+        #2563eb,
+        #4f46e5
+    );
+
+    border-color:transparent;
+
+    box-shadow:
+        0 6px 18px rgba(37,99,235,0.35);
+
+    transform:translateY(-2px);
+}

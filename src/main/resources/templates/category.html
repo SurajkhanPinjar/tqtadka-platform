@@ -191,13 +191,14 @@
                      th:classappend="${prompt == true} ? ' right' : ' left'"></div>
 
                 <!-- ALL POSTS -->
-                <a th:href="@{/{lang}/{cat}(lang=${lang}, cat=${activeCategory}, sort=${sort})}"
+                <a th:href="@{/{lang}/{cat}(lang=${lang}, cat=${activeCategory.slug}, sort=${sort})}"
                    class="ai-toggle-option"
                    th:classappend="${prompt == null} ? ' active'">
                     All Posts
                 </a>
 
-                <a th:href="@{/{lang}/{cat}(lang=${lang}, cat=${activeCategory}, sort=${sort}, prompt=true)}"
+                <!-- PROMPTS -->
+                <a th:href="@{/{lang}/{cat}(lang=${lang}, cat=${activeCategory.slug}, sort=${sort}, prompt=true)}"
                    class="ai-toggle-option"
                    th:classappend="${prompt == true} ? ' active'">
                     Prompts

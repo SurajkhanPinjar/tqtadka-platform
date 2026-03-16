@@ -235,15 +235,13 @@ public Set<Tag> getTags() {
 
     public String getTimeAgo() {
 
-        if (this.publishedAt == null) {
+        if (this.createdAt == null) {
             return "";
         }
 
         LocalDateTime now = LocalDateTime.now();
 
-        long minutes = ChronoUnit.MINUTES.between(publishedAt, now);
-        long hours = ChronoUnit.HOURS.between(publishedAt, now);
-        long days = ChronoUnit.DAYS.between(publishedAt, now);
+        long minutes = ChronoUnit.MINUTES.between(createdAt, now);
 
         if (minutes < 1) {
             return "Just now";
@@ -253,15 +251,19 @@ public Set<Tag> getTags() {
             return minutes + " min ago";
         }
 
+        long hours = ChronoUnit.HOURS.between(createdAt, now);
+
         if (hours < 24) {
             return hours + " hr ago";
         }
+
+        long days = ChronoUnit.DAYS.between(createdAt, now);
 
         if (days < 7) {
             return days + " day" + (days > 1 ? "s" : "") + " ago";
         }
 
-        return publishedAt.format(
+        return createdAt.format(
                 DateTimeFormatter.ofPattern("dd MMM yyyy")
         );
     }
