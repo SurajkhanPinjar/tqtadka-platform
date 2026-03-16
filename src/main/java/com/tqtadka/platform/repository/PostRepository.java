@@ -2,6 +2,7 @@ package com.tqtadka.platform.repository;
 
 import com.tqtadka.platform.dto.*;
 import com.tqtadka.platform.entity.*;
+import com.tqtadka.platform.seo.SitemapPost;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.*;
@@ -849,6 +850,16 @@ ORDER BY p.publishedAt DESC
 """)
     Optional<Post> findFullPostForCopy(@Param("id") Long id);
 
+    @Query("""
+SELECT p.slug as slug,
+       p.category as category,
+       p.publishedAt as publishedAt
+FROM Post p
+WHERE p.published = true
+AND p.deleted = false
+ORDER BY p.publishedAt DESC
+""")
+    List<SitemapPost> findAllPublishedPosts();
 
 
 
