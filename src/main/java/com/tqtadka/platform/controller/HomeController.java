@@ -44,30 +44,25 @@ public class HomeController {
         );
 
         // 🔥 Trending by category
-        model.addAttribute("learnAI",
+        model.addAttribute("ai",
                 postRepository.findTrendingByCategory(
-                        language, CategoryType.LEARN_AI, PageRequest.of(0, 10)));
+                        language, CategoryType.AI, PageRequest.of(0, 10)));
 
-        model.addAttribute("aiTools",
+        model.addAttribute("socialMedia",
                 postRepository.findTrendingByCategory(
-                        language, CategoryType.AI_TOOLS, PageRequest.of(0, 10)));
+                        language, CategoryType.SOCIAL_MEDIA, PageRequest.of(0, 10)));
 
-        model.addAttribute("aiAtWork",
+        model.addAttribute("jobs",
                 postRepository.findTrendingByCategory(
-                        language, CategoryType.AI_AT_WORK, PageRequest.of(0, 10)));
+                        language, CategoryType.JOBS, PageRequest.of(0, 10)));
 
-        model.addAttribute("aiByIndustry",
+        model.addAttribute("career",
                 postRepository.findTrendingByCategory(
-                        language, CategoryType.AI_BY_INDUSTRY, PageRequest.of(0, 10)));
+                        language, CategoryType.CAREER, PageRequest.of(0, 10)));
 
-
-        model.addAttribute("aiFuture",
+        model.addAttribute("schemes",
                 postRepository.findTrendingByCategory(
-                        language, CategoryType.AI_FUTURE, PageRequest.of(0, 10)));
-
-        model.addAttribute("aiNews",
-                postRepository.findTrendingByCategory(
-                        language, CategoryType.AI_NEWS, PageRequest.of(0, 10)));
+                        language, CategoryType.SCHEMES, PageRequest.of(0, 10)));
 
         return "home";
     }

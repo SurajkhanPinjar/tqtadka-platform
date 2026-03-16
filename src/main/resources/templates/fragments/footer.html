@@ -4,12 +4,14 @@
         <!-- BRAND -->
         <div class="footer-brand">
             <div class="footer-logo">Futorch</div>
+
             <p class="footer-description">
-                Clarity on AI, intelligent systems, and the future of modern careers.
+                Insights on AI, digital growth, careers, and opportunities shaping modern work.
             </p>
 
-            <!-- 🔥 Stamp + Signature -->
+            <!-- Stamp + Signature -->
             <div class="footer-stamp-wrapper">
+
                 <img src="/images/tqtadka-stamp.png"
                      alt="TQtadka Vintage Stamp"
                      class="footer-stamp">
@@ -17,6 +19,7 @@
                 <img src="/images/signature.png"
                      alt="Signature"
                      class="footer-signature">
+
             </div>
         </div>
 
@@ -25,30 +28,78 @@
 
             <!-- Explore -->
             <div class="footer-column">
+
                 <div class="footer-column-title">Explore</div>
-                <a class="footer-link" th:href="@{/en}">Home</a>
+
+                <a class="footer-link"
+                   th:href="@{/{lang}(lang=${lang})}">
+                    Home
+                </a>
+
             </div>
 
             <!-- Categories -->
             <div class="footer-column">
+
                 <div class="footer-column-title">Categories</div>
-                <a class="footer-link" th:href="@{/en/category/LEARN_AI}">Learn AI</a>
-                <a class="footer-link" th:href="@{/en/category/AI_TOOLS}">AI Tools</a>
-                <a class="footer-link" th:href="@{/en/category/AI_AT_WORK}">AI at Work</a>
-                <a class="footer-link" th:href="@{/en/category/AI_BY_INDUSTRY}">AI by Industry</a>
-                <a class="footer-link" th:href="@{/en/category/AI_FUTURE}">AI Future</a>
-                <a class="footer-link" th:href="@{/en/category/AI_NEWS}">AI News</a>
+
+                <a class="footer-link"
+                   th:href="@{/{lang}/ai(lang=${lang})}">
+                    AI
+                </a>
+
+                <a class="footer-link"
+                   th:href="@{/{lang}/social-media(lang=${lang})}">
+                    Social Media
+                </a>
+
+                <a class="footer-link"
+                   th:href="@{/{lang}/jobs(lang=${lang})}">
+                    Jobs
+                </a>
+
+                <a class="footer-link"
+                   th:href="@{/{lang}/career(lang=${lang})}">
+                    Career
+                </a>
+
+                <a class="footer-link"
+                   th:href="@{/{lang}/schemes(lang=${lang})}">
+                    Government Schemes
+                </a>
 
             </div>
 
             <!-- About -->
             <div class="footer-column">
+
                 <div class="footer-column-title">About</div>
-                <a class="footer-link" th:href="@{/en/about}">About Us</a>
-                <a class="footer-link" th:href="@{/en/contact}">Contact Us</a>
-                <a class="footer-link" th:href="@{/en/privacy}">Privacy Policy</a>
-                <a class="footer-link" th:href="@{/en/terms-and-conditions}">Terms & Conditions</a>
-                <a class="footer-link" th:href="@{/en/disclaimer}">Disclaimer</a>
+
+                <a class="footer-link"
+                   th:href="@{/{lang}/about(lang=${lang})}">
+                    About Us
+                </a>
+
+                <a class="footer-link"
+                   th:href="@{/{lang}/contact(lang=${lang})}">
+                    Contact Us
+                </a>
+
+                <a class="footer-link"
+                   th:href="@{/{lang}/privacy(lang=${lang})}">
+                    Privacy Policy
+                </a>
+
+                <a class="footer-link"
+                   th:href="@{/{lang}/terms-and-conditions(lang=${lang})}">
+                    Terms & Conditions
+                </a>
+
+                <a class="footer-link"
+                   th:href="@{/{lang}/disclaimer(lang=${lang})}">
+                    Disclaimer
+                </a>
+
             </div>
 
         </div>
@@ -61,4 +112,5 @@
             Futorch. Built with clarity.
         </span>
     </div>
+
 </footer>

@@ -89,107 +89,6 @@
     <!-- ================= HERO ================= -->
     <div th:replace="~{fragments/hero :: hero}"></div>
 
-    <section class="container mt-5">
-        <div class="spotlight-card p-5 rounded-4">
-
-            <small class="text-uppercase text-muted">Featured Guide</small>
-
-            <h3 class="fw-bold mt-2">
-                Complete Guide to AI for Everyone (2026 Edition)
-            </h3>
-
-            <p class="text-muted">
-                Structured foundation + systems + workflows for long-term leverage.
-            </p>
-
-            <a href="https://futorch.com/en/learn-ai/complete-guide-to-ai-for-everyone-2026-edition" class="btn btn-dark mt-3">Read Guide</a>
-
-        </div>
-    </section>
-
-    <!-- ================= START HERE ================= -->
-    <section class="container mt-5">
-        <div class="start-here-box p-4 p-md-5 rounded-4 shadow-sm">
-
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h3 class="fw-bold mb-0">Start Here</h3>
-                <span class="text-muted small">Structured Learning Path</span>
-            </div>
-
-            <div class="row g-4">
-
-                <div class="col-md-3">
-                    <a th:href="@{/{lang}/learn-ai/complete-guide-to-ai-for-everyone-everyday-2026-edition-a-practical-blueprint-for-learning-work-and-leverage(lang=${lang})}"
-                       class="start-card text-decoration-none text-dark">
-                        <h6 class="fw-bold">What Is AI?</h6>
-                        <p class="small text-muted mb-0">
-                            Clear beginner guide. No hype.
-                        </p>
-                    </a>
-                </div>
-
-                <div class="col-md-3">
-                    <a th:href="@{/{lang}/learn-ai/how-ai-actually-works-step-by-step-clear(lang=${lang})}"
-                       class="start-card text-decoration-none text-dark">
-                        <h6 class="fw-bold">How AI Works</h6>
-                        <p class="small text-muted mb-0">
-                            Step-by-step breakdown.
-                        </p>
-                    </a>
-                </div>
-
-                <div class="col-md-3">
-                    <a th:href="@{/{lang}/ai-tools/best-ai-tools-in-2026(lang=${lang})}"
-                       class="start-card text-decoration-none text-dark">
-                        <h6 class="fw-bold">Best AI Tools</h6>
-                        <p class="small text-muted mb-0">
-                            Tested for real workflows.
-                        </p>
-                    </a>
-                </div>
-
-                <div class="col-md-3">
-                    <a th:href="@{/{lang}/ai-at-work/ai-for-professionals-the-complete-daily-leverage-blueprint-2026-edition(lang=${lang})}"
-                       class="start-card text-decoration-none text-dark">
-                        <h6 class="fw-bold">AI at Work</h6>
-                        <p class="small text-muted mb-0">
-                            Practical use cases.
-                        </p>
-                    </a>
-                </div>
-
-            </div>
-        </div>
-    </section>
-
-    <!-- ================= CORE GUIDES ================= -->
-    <section class="container mt-5">
-        <h3 class="fw-bold mb-4">Core AI Guides</h3>
-
-        <div class="row g-4">
-            <div class="col-md-6">
-                <a th:href="@{/{lang}/learn-ai/complete-guide-to-ai-for-everyone-2026-edition(lang=${lang})}"
-                   class="core-guide-card text-decoration-none text-dark shadow-sm">
-                    <h5 class="fw-bold">Complete Guide to AI for Everyone (2026)</h5>
-                    <p class="text-muted mb-0">
-                        Structured foundation + systems + workflows.
-                    </p>
-                </a>
-            </div>
-
-            <div class="col-md-6">
-                <a th:href="@{/{lang}/ai-tools/best-top-10-ai-productivity-tools(lang=${lang})}"
-                   class="core-guide-card text-decoration-none text-dark shadow-sm">
-                    <h5 class="fw-bold">AI Productivity Systems</h5>
-                    <p class="text-muted mb-0">
-                        Practical frameworks for daily leverage.
-                    </p>
-                </a>
-            </div>
-        </div>
-    </section>
-
-
     <!-- ================= MAIN ================= -->
     <div class="container mt-0 pt-5">
 
@@ -240,72 +139,66 @@
             </div>
         </div>
 
-        <!-- ================= TRENDING AI ================= -->
+        <!-- ================= AI ================= -->
         <section class="home-carousel-section mt-5"
-                 th:if="${learnAI != null and !#lists.isEmpty(learnAI)}">
+                 th:if="${ai != null and !#lists.isEmpty(ai)}">
 
             <div class="carousel-header">
                 <div>
-                    <h3 class="carousel-title">AI Foundations</h3>
+                    <h3 class="carousel-title">AI</h3>
                     <p class="text-muted small mb-0">
-                        Core concepts, mental models, and system thinking every serious builder should master.
+                        Latest AI tools, workflows, and insights shaping modern work.
                     </p>
                 </div>
-                <a th:href="@{/{lang}/{cat}(
-                        lang=${lang},
-                        cat=${T(com.tqtadka.platform.entity.CategoryType).LEARN_AI.slug}
-                    )}"
-                   class="carousel-view-all">View all</a>
+
+                <a th:href="@{/{lang}/ai(lang=${lang})}" class="carousel-view-all">
+                    View all
+                </a>
             </div>
 
             <div class="carousel-wrapper">
 
-                <!-- LEFT -->
                 <button class="carousel-arrow left hidden"
                         onclick="scrollCarousel(this, -1)">
                     <i class="bi bi-chevron-left"></i>
                 </button>
 
-                <!-- TRACK -->
                 <div class="carousel-track">
-                    <a th:each="post : ${learnAI}"
+                    <a th:each="post : ${ai}"
                        th:href="@{/{lang}/{cat}/{slug}(
-    lang=${lang},
-    cat=${T(com.tqtadka.platform.entity.CategoryType)
-        .valueOf(post.category).slug},
-    slug=${post.slug}
-)}"
+                    lang=${lang},
+                    cat=${T(com.tqtadka.platform.entity.CategoryType)
+                    .valueOf(post.category).slug},
+                    slug=${post.slug})}"
                        class="carousel-card">
 
                         <img th:src="${post.imageUrl ?: '/images/placeholder.png'}"/>
 
                         <div class="carousel-card-body">
-                            <small>Learn AI</small>
+                            <small>AI</small>
                             <h6 th:text="${post.title}"></h6>
 
-                            <!-- STATS -->
                             <div class="carousel-meta">
-                                <span>
-                                    <i class="bi bi-eye"></i>
-                                    <span th:text="${post.views}">0</span>
-                                </span>
+                        <span>
+                            <i class="bi bi-eye"></i>
+                            <span th:text="${post.views}">0</span>
+                        </span>
 
                                 <span class="dot">•</span>
 
                                 <span>
-                                    <span th:text="${post.readingTimeMinutes ?: 1}">1</span> min read
-                                </span>
+                            <span th:text="${post.readingTimeMinutes ?: 1}"></span> min read
+                        </span>
 
                                 <span class="dot">•</span>
 
-                                <span th:text="${post.timeAgo}">2 hr ago</span>
-
+                                <span th:text="${post.timeAgo}"></span>
                             </div>
+
                         </div>
                     </a>
                 </div>
 
-                <!-- RIGHT -->
                 <button class="carousel-arrow right"
                         onclick="scrollCarousel(this, 1)">
                     <i class="bi bi-chevron-right"></i>
@@ -314,73 +207,66 @@
             </div>
         </section>
 
-        <!-- ================= TRENDING AI Tools ================= -->
+        <!-- ================= SOCIAL MEDIA ================= -->
         <section class="home-carousel-section mt-5"
-                 th:if="${aiTools != null and !#lists.isEmpty(aiTools)}">
+                 th:if="${socialMedia != null and !#lists.isEmpty(socialMedia)}">
 
             <div class="carousel-header">
                 <div>
-                    <h3 class="carousel-title">AI Tools</h3>
+                    <h3 class="carousel-title">Social Media</h3>
                     <p class="text-muted small mb-0">
-                        Tested tools that actually improve real workflows — not hype lists.
+                        Instagram growth, creator tools, and audience-building strategies.
                     </p>
                 </div>
 
-                <a th:href="@{/{lang}/{cat}(
-                        lang=${lang},
-                        cat=${T(com.tqtadka.platform.entity.CategoryType).AI_TOOLS.slug}
-                    )}"
-                   class="carousel-view-all">View all</a>
+                <a th:href="@{/{lang}/social-media(lang=${lang})}" class="carousel-view-all">
+                    View all
+                </a>
             </div>
 
             <div class="carousel-wrapper">
 
-                <!-- LEFT -->
                 <button class="carousel-arrow left hidden"
                         onclick="scrollCarousel(this, -1)">
                     <i class="bi bi-chevron-left"></i>
                 </button>
 
-                <!-- TRACK -->
                 <div class="carousel-track">
-                    <a th:each="post : ${aiTools}"
+                    <a th:each="post : ${socialMedia}"
                        th:href="@{/{lang}/{cat}/{slug}(
-    lang=${lang},
-    cat=${T(com.tqtadka.platform.entity.CategoryType)
-        .valueOf(post.category).slug},
-    slug=${post.slug}
-)}"
+                    lang=${lang},
+                    cat=${T(com.tqtadka.platform.entity.CategoryType)
+                    .valueOf(post.category).slug},
+                    slug=${post.slug})}"
                        class="carousel-card">
 
                         <img th:src="${post.imageUrl ?: '/images/placeholder.png'}"/>
 
                         <div class="carousel-card-body">
-                            <small>AI Tools</small>
+                            <small>Social Media</small>
                             <h6 th:text="${post.title}"></h6>
 
-                            <!-- STATS -->
                             <div class="carousel-meta">
-                                <span>
-                                    <i class="bi bi-eye"></i>
-                                    <span th:text="${post.views}">0</span>
-                                </span>
+                        <span>
+                            <i class="bi bi-eye"></i>
+                            <span th:text="${post.views}"></span>
+                        </span>
 
                                 <span class="dot">•</span>
 
                                 <span>
-                                    <span th:text="${post.readingTimeMinutes ?: 1}">1</span> min read
-                                </span>
+                            <span th:text="${post.readingTimeMinutes ?: 1}"></span> min read
+                        </span>
 
                                 <span class="dot">•</span>
 
-                                <span th:text="${post.timeAgo}">2 hr ago</span>
-
+                                <span th:text="${post.timeAgo}"></span>
                             </div>
+
                         </div>
                     </a>
                 </div>
 
-                <!-- RIGHT -->
                 <button class="carousel-arrow right"
                         onclick="scrollCarousel(this, 1)">
                     <i class="bi bi-chevron-right"></i>
@@ -389,74 +275,66 @@
             </div>
         </section>
 
-
-        <!-- ================= AI At Work ================= -->
+        <!-- ================= JOBS ================= -->
         <section class="home-carousel-section mt-5"
-                 th:if="${aiAtWork != null and !#lists.isEmpty(aiAtWork)}">
+                 th:if="${jobs != null and !#lists.isEmpty(jobs)}">
 
             <div class="carousel-header">
                 <div>
-                    <h3 class="carousel-title">AI AT WORK</h3>
+                    <h3 class="carousel-title">Latest Jobs</h3>
                     <p class="text-muted small mb-0">
-                        Real-world applications of AI inside modern teams, workflows, and operations.
+                        Government jobs, private opportunities, and recruitment updates.
                     </p>
                 </div>
-                <a th:href="@{/{lang}/{cat}(
-                        lang=${lang},
-                        cat=${T(com.tqtadka.platform.entity.CategoryType).AI_AT_WORK.slug}
-                    )}"
-                   class="carousel-view-all">View all</a>
+
+                <a th:href="@{/{lang}/jobs(lang=${lang})}" class="carousel-view-all">
+                    View all
+                </a>
             </div>
 
-            <!-- ⬅️➡️ REQUIRED WRAPPER -->
             <div class="carousel-wrapper">
 
-                <!-- LEFT ARROW -->
                 <button class="carousel-arrow left hidden"
                         onclick="scrollCarousel(this, -1)">
                     <i class="bi bi-chevron-left"></i>
                 </button>
 
-                <!-- TRACK -->
                 <div class="carousel-track">
-                    <a th:each="post : ${aiAtWork}"
+                    <a th:each="post : ${jobs}"
                        th:href="@{/{lang}/{cat}/{slug}(
-    lang=${lang},
-    cat=${T(com.tqtadka.platform.entity.CategoryType)
-        .valueOf(post.category).slug},
-    slug=${post.slug}
-)}"
+                    lang=${lang},
+                    cat=${T(com.tqtadka.platform.entity.CategoryType)
+                    .valueOf(post.category).slug},
+                    slug=${post.slug})}"
                        class="carousel-card">
 
                         <img th:src="${post.imageUrl ?: '/images/placeholder.png'}"/>
 
                         <div class="carousel-card-body">
-                            <small>AI At Work</small>
+                            <small>Jobs</small>
                             <h6 th:text="${post.title}"></h6>
 
-                            <!-- STATS -->
                             <div class="carousel-meta">
-                                <span>
-                                    <i class="bi bi-eye"></i>
-                                    <span th:text="${post.views}">0</span>
-                                </span>
+                        <span>
+                            <i class="bi bi-eye"></i>
+                            <span th:text="${post.views}"></span>
+                        </span>
 
                                 <span class="dot">•</span>
 
                                 <span>
-                                    <span th:text="${post.readingTimeMinutes ?: 1}">1</span> min read
-                                </span>
+                            <span th:text="${post.readingTimeMinutes ?: 1}"></span> min read
+                        </span>
 
                                 <span class="dot">•</span>
 
-                                <span th:text="${post.timeAgo}">2 hr ago</span>
-
+                                <span th:text="${post.timeAgo}"></span>
                             </div>
+
                         </div>
                     </a>
                 </div>
 
-                <!-- RIGHT -->
                 <button class="carousel-arrow right"
                         onclick="scrollCarousel(this, 1)">
                     <i class="bi bi-chevron-right"></i>
@@ -465,235 +343,159 @@
             </div>
         </section>
 
-                <!-- ================= AI By Industry================= -->
-                <section class="home-carousel-section mt-5"
-                         th:if="${aiByIndustry != null and !#lists.isEmpty(aiByIndustry)}">
+        <!-- ================= CAREER ================= -->
+        <section class="home-carousel-section mt-5"
+                 th:if="${career != null and !#lists.isEmpty(career)}">
 
-                    <div class="carousel-header">
-                        <div>
-                            <h3 class="carousel-title">AI By Industry</h3>
-                            <p class="text-muted small mb-0">
-                                Industry-level impact analysis: where AI creates real structural change.
-                            </p>
-                        </div>
+            <div class="carousel-header">
+                <div>
+                    <h3 class="carousel-title">Career Guidance</h3>
+                    <p class="text-muted small mb-0">
+                        Courses, skills, and career paths to help you build a better future.
+                    </p>
+                </div>
 
-                        <a th:href="@{/{lang}/{cat}(
-                                lang=${lang},
-                                cat=${T(com.tqtadka.platform.entity.CategoryType).AI_BY_INDUSTRY.slug}
-                            )}"
-                           class="carousel-view-all">View all</a>
-                    </div>
+                <a th:href="@{/{lang}/career(lang=${lang})}"
+                   class="carousel-view-all">
+                    View all
+                </a>
+            </div>
 
-                    <!-- ⬅️➡️ REQUIRED WRAPPER -->
-                    <div class="carousel-wrapper">
+            <div class="carousel-wrapper">
 
-                        <!-- LEFT ARROW -->
-                        <button class="carousel-arrow left hidden"
-                                onclick="scrollCarousel(this, -1)">
-                            <i class="bi bi-chevron-left"></i>
-                        </button>
+                <button class="carousel-arrow left hidden"
+                        onclick="scrollCarousel(this, -1)">
+                    <i class="bi bi-chevron-left"></i>
+                </button>
 
-                        <!-- TRACK -->
-                        <div class="carousel-track">
-                            <a th:each="post : ${aiByIndustry}"
-                               th:href="@{/{lang}/{cat}/{slug}(
-                            lang=${lang},
-                            cat=${T(com.tqtadka.platform.entity.CategoryType)
-                                .valueOf(post.category).slug},
-                            slug=${post.slug}
-                        )}"
-                               class="carousel-card">
+                <div class="carousel-track">
 
-                                <img th:src="${post.imageUrl ?: '/images/placeholder.png'}"/>
+                    <a th:each="post : ${career}"
+                       th:href="@{/{lang}/{cat}/{slug}(
+                    lang=${lang},
+                    cat=${T(com.tqtadka.platform.entity.CategoryType)
+                    .valueOf(post.category).slug},
+                    slug=${post.slug})}"
+                       class="carousel-card">
 
-                                <div class="carousel-card-body">
-                                    <small>AI By Industry</small>
-                                    <h6 th:text="${post.title}"></h6>
+                        <img th:src="${post.imageUrl ?: '/images/placeholder.png'}"/>
 
-                                    <!-- STATS -->
-                                    <div class="carousel-meta">
+                        <div class="carousel-card-body">
+
+                            <small>Career</small>
+
+                            <h6 th:text="${post.title}"></h6>
+
+                            <div class="carousel-meta">
+
+                        <span>
+                            <i class="bi bi-eye"></i>
+                            <span th:text="${post.views}"></span>
+                        </span>
+
+                                <span class="dot">•</span>
+
                                 <span>
-                                    <i class="bi bi-eye"></i>
-                                    <span th:text="${post.views}">0</span>
-                                </span>
+                            <span th:text="${post.readingTimeMinutes ?: 1}"></span> min read
+                        </span>
 
-                                        <span class="dot">•</span>
+                                <span class="dot">•</span>
 
-                                        <span>
-                                    <span th:text="${post.readingTimeMinutes ?: 1}">1</span> min read
-                                </span>
+                                <span th:text="${post.timeAgo}"></span>
 
-                                        <span class="dot">•</span>
-
-                                        <span th:text="${post.timeAgo}">2 hr ago</span>
-
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-
-                        <!-- RIGHT -->
-                        <button class="carousel-arrow right"
-                                onclick="scrollCarousel(this, 1)">
-                            <i class="bi bi-chevron-right"></i>
-                        </button>
-
-                    </div>
-                </section>
-
-                        <!-- ================= AI Future ================= -->
-                        <section class="home-carousel-section mt-5"
-                                 th:if="${aiNews != null and !#lists.isEmpty(aiNews)}">
-
-                            <div class="carousel-header">
-                                <div>
-                                    <h3 class="carousel-title">AI Future</h3>
-                                    <p class="text-muted small mb-0">
-                                        Major developments, model releases, and shifts that actually matter.
-                                    </p>
-                                </div>
-
-                                <a th:href="@{/{lang}/{cat}(
-                                    lang=${lang},
-                                    cat=${T(com.tqtadka.platform.entity.CategoryType).AI_FUTURE.slug}
-                                )}"
-                                   class="carousel-view-all">View all</a>
                             </div>
 
-                            <!-- ⬅️➡️ REQUIRED WRAPPER -->
-                            <div class="carousel-wrapper">
+                        </div>
 
-                                <!-- LEFT ARROW -->
-                                <button class="carousel-arrow left hidden"
-                                        onclick="scrollCarousel(this, -1)">
-                                    <i class="bi bi-chevron-left"></i>
-                                </button>
+                    </a>
 
-                                <!-- TRACK -->
-                                <div class="carousel-track">
-                                    <a th:each="post : ${aiNews}"
-                                       th:href="@{/{lang}/{cat}/{slug}(
-    lang=${lang},
-    cat=${T(com.tqtadka.platform.entity.CategoryType)
-        .valueOf(post.category).slug},
-    slug=${post.slug}
-)}"
-                                       class="carousel-card">
+                </div>
 
-                                        <img th:src="${post.imageUrl ?: '/images/placeholder.png'}"/>
-
-                                        <div class="carousel-card-body">
-                                            <small>AI Future</small>
-                                            <h6 th:text="${post.title}"></h6>
-
-                                            <!-- STATS -->
-                                            <div class="carousel-meta">
-                                <span>
-                                    <i class="bi bi-eye"></i>
-                                    <span th:text="${post.views}">0</span>
-                                </span>
-
-                                                <span class="dot">•</span>
-
-                                                <span>
-                                    <span th:text="${post.readingTimeMinutes ?: 1}">1</span> min read
-                                </span>
-
-                                                <span class="dot">•</span>
-
-                                                <span th:text="${post.timeAgo}">2 hr ago</span>
-
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-
-                                <!-- RIGHT -->
-                                <button class="carousel-arrow right"
-                                        onclick="scrollCarousel(this, 1)">
-                                    <i class="bi bi-chevron-right"></i>
-                                </button>
-
-                            </div>
-                        </section>
-
-                                <!-- ================= AI Future ================= -->
-                                <section class="home-carousel-section mt-5"
-                                         th:if="${aiAtWork != null and !#lists.isEmpty(aiAtWork)}">
-
-                                    <div class="carousel-header">
-                                        <div>
-                                            <h3 class="carousel-title">AI News</h3>
-                                            <p class="text-muted small mb-0">
-                                                Structural shifts shaping the next phase of intelligent systems.
-                                            </p>
-                                        </div>
-
-                                        <a th:href="@{/{lang}/{cat}(
-                                            lang=${lang},
-                                            cat=${T(com.tqtadka.platform.entity.CategoryType).AI_NEWS.slug}
-                                        )}"
-                                           class="carousel-view-all">View all</a>
-                                    </div>
-
-                                    <!-- ⬅️➡️ REQUIRED WRAPPER -->
-                                    <div class="carousel-wrapper">
-
-                                        <!-- LEFT ARROW -->
-                                        <button class="carousel-arrow left hidden"
-                                                onclick="scrollCarousel(this, -1)">
-                                            <i class="bi bi-chevron-left"></i>
-                                        </button>
-
-                                        <!-- TRACK -->
-                                        <div class="carousel-track">
-                                            <a th:each="post : ${aiFuture}"
-                                               th:href="@{/{lang}/{cat}/{slug}(
-    lang=${lang},
-    cat=${T(com.tqtadka.platform.entity.CategoryType)
-        .valueOf(post.category).slug},
-    slug=${post.slug}
-)}"
-                                               class="carousel-card">
-
-                                                <img th:src="${post.imageUrl ?: '/images/placeholder.png'}"/>
-
-                                                <div class="carousel-card-body">
-                                                    <small>AI Future</small>
-                                                    <h6 th:text="${post.title}"></h6>
-
-                                                    <!-- STATS -->
-                                                    <div class="carousel-meta">
-                                <span>
-                                    <i class="bi bi-eye"></i>
-                                    <span th:text="${post.views}">0</span>
-                                </span>
-
-                                                        <span class="dot">•</span>
-
-                                                        <span>
-                                    <span th:text="${post.readingTimeMinutes ?: 1}">1</span> min read
-                                </span>
-
-                                                        <span class="dot">•</span>
-
-                                                        <span th:text="${post.timeAgo}">2 hr ago</span>
-
-                                                    </div>
-                                                </div>
-                                            </a>
-                                        </div>
-
-                <!-- RIGHT ARROW -->
                 <button class="carousel-arrow right"
                         onclick="scrollCarousel(this, 1)">
                     <i class="bi bi-chevron-right"></i>
                 </button>
 
             </div>
+
         </section>
 
+        <!-- ================= GOVERNMENT SCHEMES ================= -->
+        <section class="home-carousel-section mt-5"
+                 th:if="${schemes != null and !#lists.isEmpty(schemes)}">
 
+            <div class="carousel-header">
+                <div>
+                    <h3 class="carousel-title">Government Schemes</h3>
+                    <p class="text-muted small mb-0">
+                        Latest government schemes, benefits, and eligibility guides.
+                    </p>
+                </div>
+
+                <a th:href="@{/{lang}/schemes(lang=${lang})}"
+                   class="carousel-view-all">
+                    View all
+                </a>
+            </div>
+
+            <div class="carousel-wrapper">
+
+                <button class="carousel-arrow left hidden"
+                        onclick="scrollCarousel(this, -1)">
+                    <i class="bi bi-chevron-left"></i>
+                </button>
+
+                <div class="carousel-track">
+
+                    <a th:each="post : ${schemes}"
+                       th:href="@{/{lang}/{cat}/{slug}(
+                    lang=${lang},
+                    cat=${T(com.tqtadka.platform.entity.CategoryType)
+                    .valueOf(post.category).slug},
+                    slug=${post.slug})}"
+                       class="carousel-card">
+
+                        <img th:src="${post.imageUrl ?: '/images/placeholder.png'}"/>
+
+                        <div class="carousel-card-body">
+
+                            <small>Schemes</small>
+
+                            <h6 th:text="${post.title}"></h6>
+
+                            <div class="carousel-meta">
+
+                        <span>
+                            <i class="bi bi-eye"></i>
+                            <span th:text="${post.views}"></span>
+                        </span>
+
+                                <span class="dot">•</span>
+
+                                <span>
+                            <span th:text="${post.readingTimeMinutes ?: 1}"></span> min read
+                        </span>
+
+                                <span class="dot">•</span>
+
+                                <span th:text="${post.timeAgo}"></span>
+
+                            </div>
+
+                        </div>
+
+                    </a>
+
+                </div>
+
+                <button class="carousel-arrow right"
+                        onclick="scrollCarousel(this, 1)">
+                    <i class="bi bi-chevron-right"></i>
+                </button>
+
+            </div>
+
+        </section>
 
     </div>
 </div>

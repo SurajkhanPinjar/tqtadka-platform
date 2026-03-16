@@ -291,7 +291,7 @@ public class PostServiceImpl implements PostService {
                 .tags(new HashSet<>())
                 .faqs(new HashSet<>())
                 .aiPostMode(
-                        category == CategoryType.LEARN_AI
+                        category == CategoryType.AI
                                 ? (aiPostMode != null ? aiPostMode : AiPostMode.BLOG)
                                 : null
                 )
@@ -459,7 +459,7 @@ public class PostServiceImpl implements PostService {
         );
 
         post.setAiPostMode(
-                category == CategoryType.LEARN_AI
+                category == CategoryType.AI
                         ? (aiPostMode != null ? aiPostMode : AiPostMode.BLOG)
                         : null
         );
@@ -556,7 +556,7 @@ public class PostServiceImpl implements PostService {
             String[] promptNames,
             String[] promptTexts
     ) {
-        if (category != CategoryType.LEARN_AI) return;
+        if (category != CategoryType.AI) return;
         if (post.getAiPostMode() != AiPostMode.PROMPT) return;
         if (promptNames == null || promptTexts == null) return;
 
@@ -777,7 +777,7 @@ public class PostServiceImpl implements PostService {
 
         Pageable pageable = PageRequest.of(page, 9, sortSpec);
 
-        if (category == CategoryType.LEARN_AI && Boolean.TRUE.equals(promptOnly)) {
+        if (category == CategoryType.AI && Boolean.TRUE.equals(promptOnly)) {
             return postRepository.findAiPromptPosts(
                     language, pageable
             );

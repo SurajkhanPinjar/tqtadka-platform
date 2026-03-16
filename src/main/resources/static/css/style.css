@@ -2462,4 +2462,8 @@ td.text-end, th.text-end {
 
 .breadcrumb-sep {
     color: #d1d5db;
-}}
+}
+
+#editor .ql-editor{
+  min-height:450px;
+}

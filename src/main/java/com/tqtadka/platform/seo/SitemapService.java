@@ -11,7 +11,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SitemapService {
 
-    private static final String BASE_URL = "https://futorch.com/en/";
+    private static final String BASE_URL = "https://futorch.com/";
 
     private final PostRepository postRepository;
 
@@ -26,46 +26,75 @@ public class SitemapService {
         <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
         """);
 
-        // Homepage
+        // Homepages
         xml.append("""
         <url>
         <loc>https://futorch.com/en</loc>
         <changefreq>daily</changefreq>
         <priority>1.0</priority>
         </url>
+        <url>
+        <loc>https://futorch.com/kn</loc>
+        <changefreq>daily</changefreq>
+        <priority>1.0</priority>
+        </url>
         """);
 
-        // Category pages
+        // Category pages (EN)
         xml.append("""
         <url>
-        <loc>https://futorch.com/en/learn-ai</loc>
+        <loc>https://futorch.com/en/ai</loc>
         <changefreq>weekly</changefreq>
         <priority>0.9</priority>
         </url>
         <url>
-        <loc>https://futorch.com/en/ai-tools</loc>
+        <loc>https://futorch.com/en/social-media</loc>
         <changefreq>weekly</changefreq>
         <priority>0.9</priority>
         </url>
         <url>
-        <loc>https://futorch.com/en/ai-at-work</loc>
-        <changefreq>weekly</changefreq>
-        <priority>0.9</priority>
-        </url>
-        <url>
-        <loc>https://futorch.com/en/ai-news</loc>
+        <loc>https://futorch.com/en/jobs</loc>
         <changefreq>daily</changefreq>
         <priority>0.9</priority>
         </url>
         <url>
-        <loc>https://futorch.com/en/ai-by-industry</loc>
+        <loc>https://futorch.com/en/career</loc>
         <changefreq>weekly</changefreq>
-        <priority>0.8</priority>
+        <priority>0.9</priority>
         </url>
         <url>
-        <loc>https://futorch.com/en/ai-future</loc>
+        <loc>https://futorch.com/en/schemes</loc>
+        <changefreq>daily</changefreq>
+        <priority>0.9</priority>
+        </url>
+        """);
+
+        // Category pages (KN)
+        xml.append("""
+        <url>
+        <loc>https://futorch.com/kn/ai</loc>
         <changefreq>weekly</changefreq>
-        <priority>0.8</priority>
+        <priority>0.9</priority>
+        </url>
+        <url>
+        <loc>https://futorch.com/kn/social-media</loc>
+        <changefreq>weekly</changefreq>
+        <priority>0.9</priority>
+        </url>
+        <url>
+        <loc>https://futorch.com/kn/jobs</loc>
+        <changefreq>daily</changefreq>
+        <priority>0.9</priority>
+        </url>
+        <url>
+        <loc>https://futorch.com/kn/career</loc>
+        <changefreq>weekly</changefreq>
+        <priority>0.9</priority>
+        </url>
+        <url>
+        <loc>https://futorch.com/kn/schemes</loc>
+        <changefreq>daily</changefreq>
+        <priority>0.9</priority>
         </url>
         """);
 
@@ -77,7 +106,9 @@ public class SitemapService {
 
             xml.append("<loc>")
                     .append(BASE_URL)
-                    .append(post.getCategory().name().toLowerCase().replace("_","-"))
+                    .append(post.getLang())
+                    .append("/")
+                    .append(post.getCategory().name().toLowerCase().replace("_", "-"))
                     .append("/")
                     .append(post.getSlug())
                     .append("</loc>");

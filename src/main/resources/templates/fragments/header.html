@@ -40,19 +40,19 @@
             <div class="nav-right d-flex align-items-center gap-3">
 
                 <!-- LANGUAGE TOGGLE -->
-<!--                <div class="btn-group btn-group-sm">-->
-<!--                    <a th:href="@{/en}"-->
-<!--                       class="btn btn-outline-dark"-->
-<!--                       th:classappend="${lang == 'en'} ? ' active' : ''">-->
-<!--                        EN-->
-<!--                    </a>-->
+                <div class="btn-group btn-group-sm">
+                    <a th:href="@{/en}"
+                       class="btn btn-outline-dark"
+                       th:classappend="${lang == 'en'} ? ' active' : ''">
+                        EN
+                    </a>
 
-<!--                    <a th:href="@{/kn}"-->
-<!--                       class="btn btn-outline-dark"-->
-<!--                       th:classappend="${lang == 'kn'} ? ' active' : ''">-->
-<!--                        ಕನ್ನಡ-->
-<!--                    </a>-->
-<!--                </div>-->
+                    <a th:href="@{/kn}"
+                       class="btn btn-outline-dark"
+                       th:classappend="${lang == 'kn'} ? ' active' : ''">
+                        ಕನ್ನಡ
+                    </a>
+                </div>
 
                 <!-- LOGGED IN -->
                 <div sec:authorize="isAuthenticated()"

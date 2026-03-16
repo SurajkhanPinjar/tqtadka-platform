@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
+
 <section th:fragment="hero"
          class="hero-section py-5">
 
@@ -9,18 +10,43 @@
         <!-- ================= TITLE ================= -->
         <h1 class="hero-title mb-3"
             th:text="${lang == 'kn'
-                ? 'ಭವಿಷ್ಯದ ಬುದ್ಧಿವಂತ ಬೆಳವಣಿಗೆಗೆ ದಾರಿ.'
-                : 'Artificial Intelligence for Serious Builders'}">
-            Artificial Intelligence for Serious Builders
+                ? 'ಉದ್ಯೋಗ, ವೃತ್ತಿ ಮತ್ತು ತಂತ್ರಜ್ಞಾನಕ್ಕೆ ನಿಮ್ಮ ವಿಶ್ವಾಸಾರ್ಹ ಮಾಹಿತಿ ಕೇಂದ್ರ.'
+                : 'Your Daily Source for Jobs, Career Growth, and Technology'}">
+
+            Your Daily Source for Jobs, Career Growth, and Technology
+
         </h1>
 
         <!-- ================= SUBTITLE ================= -->
         <p class="hero-subtitle"
            th:text="${lang == 'kn'
-               ? 'AI, ತಂತ್ರಜ್ಞಾನ, ಹಣಕಾಸು ಮತ್ತು ವೃತ್ತಿಜೀವನದ ಬಗ್ಗೆ ನಿಖರವಾದ ಹಾಗೂ ಅರ್ಥಪೂರ್ಣ ಲೇಖನಗಳು — ಅಪ್ರಯೋಜಕ ಶಬ್ದವಿಲ್ಲದೆ.'
-               : 'Learn AI systems, workflows, and tools that create long-term leverage.'}">
-            Learn AI systems, workflows, and tools that create long-term leverage.
+               ? 'ಉದ್ಯೋಗ ಅವಕಾಶಗಳು, ಸರ್ಕಾರಿ ಯೋಜನೆಗಳು, ಸಾಮಾಜಿಕ ಮಾಧ್ಯಮ ಬೆಳವಣಿಗೆ ಮತ್ತು ಹೊಸ ತಂತ್ರಜ್ಞಾನಗಳ ಬಗ್ಗೆ ಸ್ಪಷ್ಟ ಮಾರ್ಗದರ್ಶಿಗಳು.'
+               : 'Latest job updates, government schemes, social media growth insights, and practical AI tools — explained clearly.'}">
+
+            Latest job updates, government schemes, social media growth insights, and practical AI tools — explained clearly.
+
         </p>
+
+        <!-- ================= CATEGORY QUICK LINKS ================= -->
+        <div class="hero-categories mt-4 d-flex flex-wrap gap-3">
+
+            <a th:href="@{/{lang}/ai(lang=${lang})}"
+               class="hero-chip">AI</a>
+
+            <a th:href="@{/{lang}/social-media(lang=${lang})}"
+               class="hero-chip">Social Media</a>
+
+            <a th:href="@{/{lang}/jobs(lang=${lang})}"
+               class="hero-chip">Jobs</a>
+
+            <a th:href="@{/{lang}/career(lang=${lang})}"
+               class="hero-chip">Career</a>
+
+            <a th:href="@{/{lang}/schemes(lang=${lang})}"
+               class="hero-chip">Schemes</a>
+
+        </div>
+
     </div>
 
 </section>

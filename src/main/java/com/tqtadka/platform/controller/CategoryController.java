@@ -20,7 +20,7 @@ public class CategoryController {
         this.postService = postService;
     }
 
-    @GetMapping("/{lang}/{categorySlug:learn-ai|ai-tools|ai-at-work|ai-by-industry|ai-future|ai-news}")
+    @GetMapping("/{lang}/{categorySlug:ai|social-media|jobs|career|schemes}")
     public String viewCategory(
             @PathVariable String lang,
             @PathVariable String categorySlug,
@@ -28,7 +28,7 @@ public class CategoryController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(required = false) Boolean prompt,
             Model model
-    ) {
+    ){
         LanguageType language =
                 "kn".equalsIgnoreCase(lang)
                         ? LanguageType.KN

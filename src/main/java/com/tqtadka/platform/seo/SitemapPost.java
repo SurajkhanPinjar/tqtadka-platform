@@ -10,5 +10,7 @@ public interface SitemapPost {
 
     CategoryType getCategory();
 
+    String getLang();
+
     LocalDateTime getPublishedAt();
 }
